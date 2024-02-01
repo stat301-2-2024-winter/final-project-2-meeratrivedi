@@ -1,0 +1,107 @@
+---
+title: "Progress Memo 1"
+subtitle: |
+  | Final Project 
+  | Data Science 2 with R (STAT 301-2)
+author: "Meera Trivedi"
+date: today
+
+format:
+  html:
+    toc: true
+    embed-resources: true
+    
+execute:
+  warning: false
+
+from: markdown+emoji 
+reference-location: margin
+citation-location: margin
+---
+
+::: {.callout-important}
+## Memo format
+
+Like all other submissions for this course, we expect the memo to be neat and well organized. This a template to get you started. 
+
+You should make this document your own. To help with this we have added a date to the yaml above (good whenever writing memos). You should remove this block when making this document your own.
+
+:::
+
+::: {.callout-tip icon=false}
+
+## Github Repo Link
+
+[My GitHub Repo](https://github.com/stat301-2-2024-winter/final-project-2-meeratrivedi.git)
+
+:::
+
+::: {.callout-warning}
+GitHub (free account) cannot store large files. If you try to commit and push a large dataset you will have an ERROR! Any file over 100 MB (100,000 KB) needs to be added to the `.gitignore` file BEFORE committing.
+
+**We may need to do that for files in your final project!**
+:::
+
+## Prediction Problem
+
+My prediction problem is going to be to use various types of data on real estate properties, ranging from data on the actual construction of the house to the environment around it, to predict the overall quality of living of the people living in those properties. Currently quality of living is a numerical variable corresponding to an index but because of this I could change it to a factor variable with different ordered levels as ranges of 10 perhaps (0-10, 10-20, 20-30, etc.) Once it is a factor variable this will be a classification problem. The data I found happens to be from Slovakia which is interesting because I don't ever see that country represented in media so it would be nice to learn a little more about it but the main reason I chose this data is because I've noticed how possible it is to get a real estate license after you turn 18 and I've seen people I know do it and succeed and make money and so while I don't think I'll personally pursue a real estate license I do want to learn a little bit more about house data. I also used to watch house flipping and renovating shows with my dad when I was younger all the time so I thought it might be fun to look into what would make a property successful, and a way to measure that is quality of living. I think it's very useful to uncover relationships between the quality of living and every available aspect of a house because in order for a house to be marketable people have to gain some benefit from living there. A model to predict something as useful as quality of living would be helpful to understand the value of a house based on its various metrics and categorical data.
+
+## Data source
+
+Blah blah blah^[an example of footnote --- [content in margins](https://quarto.org/docs/blog/posts/2022-02-17-advanced-layout/)]
+
+::: {.callout-tip icon=false}
+
+## Data Link
+
+[https://www.kaggle.com/datasets/arnoldkakas/real-estate-dataset/data](https://www.kaggle.com/datasets/arnoldkakas/real-estate-dataset/data)
+
+:::
+
+## Why this data
+
+covered in prediction problem^[another footnote]
+
+## Data quality & complexity check
+
+Blah blah blah
+```{r}
+#| echo: false
+# load packages ----
+library(tidyverse)
+library(here)
+library(skimr)
+library(naniar)
+library(janitor)
+```
+
+```{r}
+#| message: false
+realestate <- read_delim("data/Real_Estate_Dataset.csv", 
+                         delim = ";", escape_double = FALSE, trim_ws = TRUE) |> 
+  clean_names()
+```
+
+```{r}
+#| echo: false
+miss_table <- miss_var_summary(realestate) |> 
+  filter(n_miss != 0)
+
+miss_names <- miss_table |> 
+  pull(variable)
+
+realestate |> 
+  select(miss_names) |> 
+  gg_miss_var()
+```
+
+## Target Variable Analysis
+
+
+## Potential data issues
+
+Blah blah blah
+
+## Misc
+
+Blah Blah
