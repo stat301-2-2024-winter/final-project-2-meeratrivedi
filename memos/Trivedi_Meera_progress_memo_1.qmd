@@ -4,7 +4,6 @@ subtitle: |
   | Final Project 
   | Data Science 2 with R (STAT 301-2)
 author: "Meera Trivedi"
-date: today
 
 format:
   html:
@@ -19,15 +18,6 @@ reference-location: margin
 citation-location: margin
 ---
 
-::: {.callout-important}
-## Memo format
-
-Like all other submissions for this course, we expect the memo to be neat and well organized. This a template to get you started. 
-
-You should make this document your own. To help with this we have added a date to the yaml above (good whenever writing memos). You should remove this block when making this document your own.
-
-:::
-
 ::: {.callout-tip icon=false}
 
 ## Github Repo Link
@@ -36,15 +26,11 @@ You should make this document your own. To help with this we have added a date t
 
 :::
 
-::: {.callout-warning}
-GitHub (free account) cannot store large files. If you try to commit and push a large dataset you will have an ERROR! Any file over 100 MB (100,000 KB) needs to be added to the `.gitignore` file BEFORE committing.
-
-**We may need to do that for files in your final project!**
-:::
 
 ## Prediction Problem
 
-My prediction problem is going to be to use various types of data on real estate properties, ranging from data on the actual construction of the house to the environment around it, to predict the overall quality of living of the people living in those properties. Currently quality of living is a numerical variable corresponding to an index but because of this I could change it to a factor variable with different ordered levels as ranges of 10 perhaps (0-10, 10-20, 20-30, etc.) Once it is a factor variable this will be a classification problem. The data I found happens to be from Slovakia which is interesting because I don't ever see that country represented in media so it would be nice to learn a little more about it but the main reason I chose this data is because I've noticed how possible it is to get a real estate license after you turn 18 and I've seen people I know do it and succeed and make money and so while I don't think I'll personally pursue a real estate license I do want to learn a little bit more about house data. I also used to watch house flipping and renovating shows with my dad when I was younger all the time so I thought it might be fun to look into what would make a property successful, and a way to measure that is quality of living. I think it's very useful to uncover relationships between the quality of living and every available aspect of a house because in order for a house to be marketable people have to gain some benefit from living there. A model to predict something as useful as quality of living would be helpful to understand the value of a house based on its various metrics and categorical data.
+My prediction problem is going to be to use various types of data on real estate properties, ranging from data on the actual construction of the building to the environment around it, to predict the overall quality of living of the people living in those properties. Currently quality of living is a numerical variable corresponding to an index but because of this I could change it to a factor variable with different ordered levels as ranges of values (example: 0-10, 10-20, 20-30, etc.) Once it is a factor variable this will be a classification problem. The data I found happens to be from Slovakia which is interesting because I don't ever see that country represented in the media so it would be nice to learn a little more about it. The main reason I chose this data though is because I am a sophomore moving off campus next year so I have looked into apartments both by myself and with friends and finally signed my own lease. In the process I had to evaluate data on each building to decide what would be the best option for me. I also used to watch house flipping and renovating shows with my dad when I was younger all the time so I thought it might be fun to look into what would make a property successful, and a way to measure that is quality of living. I think it's very useful to uncover relationships between the quality of living and every available aspect of a building because in order for a building to be marketable people have to gain some benefit from living there. A model to predict something as useful as quality of living would be helpful to understand the value of a building based on its various metrics and categorical data.
+
 
 ## Data source
 
@@ -58,15 +44,13 @@ Blah blah blah^[an example of footnote --- [content in margins](https://quarto.o
 
 :::
 
-## Why this data
-
-covered in prediction problem^[another footnote]
+My data is called “Real Estate Dataset” and has been downloaded from Kaggle, on which it is described as a dataset that explores “spatial dynamics, price, and quality of apartments in Slovakia”. The data comes from scraping advertising data from the [nehnutelnosti.sk](nehnutelnosti.sk) website as of November 2023, so this is fairly recent data, and only pertains to apartment listings. The Nehnutelnosti website has real estate listings and provides services to help find available properties in Slovakia. Each observation refers to an apartment listing and the variables measured about each listing range from costs, to dimensions, to features, to the safety and environment around the apartment’s building. It was posted to Kaggle by Arnold Kakas, who notes that he has intentionally left the dataset completely raw for the purpose of people using it to learn data cleaning, data visualization, and training predictive models, which is the purpose of this project. 
 
 ## Data quality & complexity check
 
-Blah blah blah
 ```{r}
 #| echo: false
+#| message: false
 # load packages ----
 library(tidyverse)
 library(here)
@@ -75,17 +59,26 @@ library(naniar)
 library(janitor)
 ```
 
+
+### Data
 ```{r}
 #| message: false
-realestate <- read_delim("data/Real_Estate_Dataset.csv", 
-                         delim = ";", escape_double = FALSE, trim_ws = TRUE) |> 
+realestate <- read_delim("data/raw/Real_Estate_Dataset.csv", 
+                         delim = ";", 
+                         escape_double = FALSE, 
+                         trim_ws = TRUE) |> 
   clean_names()
 ```
 
+This dataset has 27 variables and 15,403 observations. Out of the 27 variables, 7 are character variables: `name_nsi`, `condition`, `certificate`, `construction_type`, `orientation`, `type` and `district`. `name_nsi` is the name of the apartment, `condition` is whether it is in its original condition or has gone through some sort of renovation, `certificate` is what energy certificate the building has, and `construction_type` is the material the apartment is made out of, like brick or paneling. `orientation` is what geographical direction it faces, `type` is what type of apartment it is in terms of the number of bedrooms (ex: 3-bedroom) and `district` is the name of the district in Slovakia it is in. The other 20 are numerical, and consist of `price`, `index`, `environment`, `quality_of_living`, `safety`, `transport`, `services`, `relax`, `area`, `energy_costs`, `provision`, `year_built`, `last_reconstruction`, `total_floors`, `floor`, `lift`, `balkonies`, `loggia`, `cellar`, and `rooms`. The `price` variable is the price of the listing in euros, `index` is a number on an Index of Living from 0-10, according to Kaggle this was “calculated by the Slovak startup City Performer” using the values of these 6 variables in the dataset: `environment`, `quality_of_living`, `safety`, `transport`, `services`, and `relax`. Unfortunately the source explaining how this number was calculated was in the form of a broken link on Kaggle so more research will need to be done on my part to figure out how this variable was calculated. Each value of these 6 variables represents an index rating for just that variable. The `area` variable is the area in square meters of the apartment, `energy_costs` is the energy costs in euros for that apartment, `provision` is a binary variable with a value of 1 if the provision of the agency is included in the price, and if not is 0. This could perhaps be changed to a “yes” or “no” variable because this doesn’t make sense as a numerical variable. The `year_built` is the year it was built, `last_reconstruction` is the most recent year any sort of construction work was done on it, `floor` is the floor of the building the apartment is on, which could be made into a categorical variable to organize the apartments in one building by floor perhaps, and `lift` and `cellar` are both binary indicator variables like `provision` is to show whether or not the building has a lift or a cellar, so they could also be changed to be binary classification and say “yes” or “no”. The rest of the variables are features, and the value of each is the number of features each individual apartment or building has. 
+
+### Missingness
+
+Unfortunately there are a lot of missing values of most of the variables in this dataset as shown below. 19 out of the 27 variables have values missing and 16 have missing values for more than half of the dataset. Fortunately since the dataset is so large, subsetting the data set to filter out missing values still leaves thousands of observations to analyze; however not as many as would be ideal.
+
 ```{r}
 #| echo: false
-miss_table <- miss_var_summary(realestate) |> 
-  filter(n_miss != 0)
+miss_table <- miss_var_summary(realestate)
 
 miss_names <- miss_table |> 
   pull(variable)
@@ -95,13 +88,94 @@ realestate |>
   gg_miss_var()
 ```
 
+Since I am using `quality_of_living` as my target variable, I made a subset of the data that filters out observations that have missing values of that variable and found that the result was 4132 observations. This is over 3000 but not close to 15000 like the raw dataset is. There are a lot more variables that do not have missing values in this subset which will be helpful going forward. 
+
+```{r}
+#| echo: false
+#missingness qol
+clean_qol <- realestate |> 
+  filter(!is.na(quality_of_living)) |> 
+  mutate(quality_of_living = factor(quality_of_living)) |> 
+  arrange((quality_of_living))
+
+miss_table1 <- miss_var_summary(clean_qol)
+
+miss_names1 <- miss_table1 |> 
+  pull(variable)
+
+clean_qol |> 
+  select(miss_names1) |> 
+  gg_miss_var()
+```
+
 ## Target Variable Analysis
 
+This is a density plot of the ratings of the quality of living of each apartment listing. As you can see, there are two peaks in this plot where the density is the highest, meaning that there are more apartments with rankings a little lower than 12 than 25-50 but most of the ranked apartments have rankings above 75. This is a good thing for the people who want to live in those apartments but from an analysis perspective it is very skewed and will need to be transformed.
 
-## Potential data issues
+```{r}
+#| echo: false
+#density plot
+realestate |> 
+  filter(!is.na(quality_of_living)) |> 
+  ggplot(aes(x = quality_of_living))+
+  geom_density(color = "pink", fill = "pink", alpha = 0.5)+
+  theme_minimal()+
+  labs(title = "Density Plot of Quality of Living", x = "Quality of Living", y = NULL)+
+  theme(plot.title = element_text(hjust = 0.5, size = 15, face = "bold"))
+```
 
-Blah blah blah
+I attempted a log transformation and a log10 transformation but neither really pushed the skew towards a more normal distribution, so I’ll need to see what else is possible. Perhaps I can split the subset in half (from 0-50 and 50-100) to transform each peak separately and maybe analyze separately. Shown here is the log10 transformation, and the log transformation looked almost exactly the same:
 
-## Misc
+```{r}
+#| echo: false
+realestate |> 
+  filter(!is.na(quality_of_living)) |> 
+  mutate(qol_log10= log10(quality_of_living)) |> 
+  ggplot(aes(x = qol_log10))+
+  geom_density(color = "pink", fill = "pink", alpha = 0.5)+
+  theme_minimal()+
+  labs(title = "Density Plot of Quality of Living - Log10", x = "Quality of Living (Log10)", y = NULL)+
+  theme(plot.title = element_text(hjust = 0.5, size = 15, face = "bold"))
+```
 
-Blah Blah
+I also decided to explore this variable as if it were a factor because I will probably continue with it as a factor to make this a classification problem. Since each value of this variable is a number on an index from 0-100, each number represents a level of quality of living so I thought it made sense that it should be categorical. This is what the distribution of it as a factor looks like: 
+
+```{r}
+#| echo: false
+#barplot
+clean_qol |> 
+  ggplot(aes(x = quality_of_living))+
+  geom_bar()+
+  theme_minimal()+
+  labs(x = "Quality of Living", y = "Number of Houses")
+```
+This is helpful to understand the skew in the same way that the density plot shows, but these labels are incredibly difficult to read because of the wide range of values for this variable. So, I made another barplot with specified levels with ranges of these values to see the distribution easier. Each range of values is not the same numerically though because of the very reduced amount of values from 10-40.
+
+```{r}
+#| echo: false
+#barplot w ordered levels
+clean_qol_lvls <- clean_qol |> 
+  mutate(quality_of_living = fct_collapse(quality_of_living, 
+                                          "4-10" = c("4", "5", "6", "7", "8", "9", "10"), 
+                                          "27-51" = c("27", "37", "38", "44", "49", "51"), 
+                                          "53-61" = c("53", "55", "57", "58", "59", "61"), 
+                                          "62-69" = c("62", "63", "64", "65", "66", "67", '68', "69"), 
+                                          "71-79" = c("71", "72", "73", "74", "75", "76", '77', '78', "79"), 
+                                          "81-89" = c("81", "82", "83", "84", "85", "86", '87', '88', "89"), 
+                                          "91-99" = c("91", "92", "93", "94", "95", "96", '97', '98', "99")))
+
+qol_levels = c("4-10", "27-51", "53-61", "62-69", "71-79", "81-89", "91-99")
+
+ggplot(clean_qol_lvls) +
+  geom_bar(aes(x = factor(quality_of_living, levels = qol_levels)), 
+           fill = "lightseagreen") +
+  theme_minimal()+
+  labs(x = "Quality of Living (on Index from 0-100)", y = "Number of Houses")
+
+```
+
+
+## Potential data issues/Misc
+
+The only issue I can think of right now is the missingness. I definitely want to create subsets of the data to use for analysis and get everything cleaned and finalized before the next progress memo is announced so I am ready to start modeling as soon as possible since I have many predictor variables I could use. 
+
