@@ -6,7 +6,7 @@ This is what can be found in the data folder:
 
 ### Data Source
 
-Kakas, Arnold. (2023, Nov.). *Real Estate Data*. Kaggle. [https://www.kaggle.com/datasets/arnoldkakas/real-estate-dataset/data](https://www.kaggle.com/datasets/arnoldkakas/real-estate-dataset/data)
+Kakas, Arnold. (2023, Nov.). *Real Estate Dataset*. Kaggle. [https://www.kaggle.com/datasets/arnoldkakas/real-estate-dataset/data](https://www.kaggle.com/datasets/arnoldkakas/real-estate-dataset/data)
 
 
 The datasets in the main section of the data folder will be derived from this raw data and have been cleaned and stored as new datasets in the form of csv files. 

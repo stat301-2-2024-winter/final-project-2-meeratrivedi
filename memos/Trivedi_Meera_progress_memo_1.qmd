@@ -34,17 +34,7 @@ My prediction problem is going to be to use various types of data on real estate
 
 ## Data source
 
-Blah blah blah^[an example of footnote --- [content in margins](https://quarto.org/docs/blog/posts/2022-02-17-advanced-layout/)]
-
-::: {.callout-tip icon=false}
-
-## Data Link
-
-[https://www.kaggle.com/datasets/arnoldkakas/real-estate-dataset/data](https://www.kaggle.com/datasets/arnoldkakas/real-estate-dataset/data)
-
-:::
-
-My data is called “Real Estate Dataset” and has been downloaded from Kaggle, on which it is described as a dataset that explores “spatial dynamics, price, and quality of apartments in Slovakia”. The data comes from scraping advertising data from the [nehnutelnosti.sk](nehnutelnosti.sk) website as of November 2023, so this is fairly recent data, and only pertains to apartment listings. The Nehnutelnosti website has real estate listings and provides services to help find available properties in Slovakia. Each observation refers to an apartment listing and the variables measured about each listing range from costs, to dimensions, to features, to the safety and environment around the apartment’s building. It was posted to Kaggle by Arnold Kakas, who notes that he has intentionally left the dataset completely raw for the purpose of people using it to learn data cleaning, data visualization, and training predictive models, which is the purpose of this project. 
+My data is called "Real Estate Dataset"^[Kakas, Arnold. (2023, Nov.). *Real Estate Dataset*. Kaggle. --- [https://www.kaggle.com/datasets/arnoldkakas/real-estate-dataset/data](https://www.kaggle.com/datasets/arnoldkakas/real-estate-dataset/data)] and has been downloaded from Kaggle, on which it is described as a dataset that explores “spatial dynamics, price, and quality of apartments in Slovakia”. The data comes from scraping advertising data from the [nehnutelnosti.sk](nehnutelnosti.sk) website as of November 2023, so this is fairly recent data, and only pertains to apartment listings. The Nehnutelnosti website has real estate listings and provides services to help find available properties in Slovakia. Each observation refers to an apartment listing and the variables measured about each listing range from costs, to dimensions, to features, to the safety and environment around the apartment’s building. It was posted to Kaggle by Arnold Kakas, who notes that he has intentionally left the dataset completely raw for the purpose of people using it to learn data cleaning, data visualization, and training predictive models, which is the purpose of this project. 
 
 ## Data quality & complexity check
 
@@ -72,9 +62,15 @@ realestate <- read_delim("data/raw/Real_Estate_Dataset.csv",
 
 This dataset has 27 variables and 15,403 observations. Out of the 27 variables, 7 are character variables: `name_nsi`, `condition`, `certificate`, `construction_type`, `orientation`, `type` and `district`. `name_nsi` is the name of the apartment, `condition` is whether it is in its original condition or has gone through some sort of renovation, `certificate` is what energy certificate the building has, and `construction_type` is the material the apartment is made out of, like brick or paneling. `orientation` is what geographical direction it faces, `type` is what type of apartment it is in terms of the number of bedrooms (ex: 3-bedroom) and `district` is the name of the district in Slovakia it is in. The other 20 are numerical, and consist of `price`, `index`, `environment`, `quality_of_living`, `safety`, `transport`, `services`, `relax`, `area`, `energy_costs`, `provision`, `year_built`, `last_reconstruction`, `total_floors`, `floor`, `lift`, `balkonies`, `loggia`, `cellar`, and `rooms`. The `price` variable is the price of the listing in euros, `index` is a number on an Index of Living from 0-10, according to Kaggle this was “calculated by the Slovak startup City Performer” using the values of these 6 variables in the dataset: `environment`, `quality_of_living`, `safety`, `transport`, `services`, and `relax`. Unfortunately the source explaining how this number was calculated was in the form of a broken link on Kaggle so more research will need to be done on my part to figure out how this variable was calculated. Each value of these 6 variables represents an index rating for just that variable. The `area` variable is the area in square meters of the apartment, `energy_costs` is the energy costs in euros for that apartment, `provision` is a binary variable with a value of 1 if the provision of the agency is included in the price, and if not is 0. This could perhaps be changed to a “yes” or “no” variable because this doesn’t make sense as a numerical variable. The `year_built` is the year it was built, `last_reconstruction` is the most recent year any sort of construction work was done on it, `floor` is the floor of the building the apartment is on, which could be made into a categorical variable to organize the apartments in one building by floor perhaps, and `lift` and `cellar` are both binary indicator variables like `provision` is to show whether or not the building has a lift or a cellar, so they could also be changed to be binary classification and say “yes” or “no”. The rest of the variables are features, and the value of each is the number of features each individual apartment or building has. 
 
+### Skim
+```{r}
+#| echo: false
+skimr::skim_without_charts(realestate)
+```
+
 ### Missingness
 
-Unfortunately there are a lot of missing values of most of the variables in this dataset as shown below. 19 out of the 27 variables have values missing and 16 have missing values for more than half of the dataset. Fortunately since the dataset is so large, subsetting the data set to filter out missing values still leaves thousands of observations to analyze; however not as many as would be ideal.
+Unfortunately there are a lot of missing values of most of the variables in this dataset as shown above and below. 19 out of the 27 variables have values missing and most of those 19 have missing values for more than half of the dataset. Fortunately since the dataset is so large, subsetting the data set to filter out missing values still leaves thousands of observations to analyze; however not as many as would be ideal.
 
 ```{r}
 #| echo: false

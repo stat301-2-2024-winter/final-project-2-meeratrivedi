@@ -3081,6 +3081,7 @@ vertical-align: -.125em;
   <li><a href="#data-quality-complexity-check" id="toc-data-quality-complexity-check" class="nav-link" data-scroll-target="#data-quality-complexity-check">Data quality &amp; complexity check</a>
   <ul class="collapse">
   <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a></li>
+  <li><a href="#skim" id="toc-skim" class="nav-link" data-scroll-target="#skim">Skim</a></li>
   <li><a href="#missingness" id="toc-missingness" class="nav-link" data-scroll-target="#missingness">Missingness</a></li>
   </ul></li>
   <li><a href="#target-variable-analysis" id="toc-target-variable-analysis" class="nav-link" data-scroll-target="#target-variable-analysis">Target Variable Analysis</a></li>
@@ -3136,22 +3137,8 @@ Github Repo Link
 </section>
 <section id="data-source" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="data-source">Data source</h2>
-<p>Blah blah blah<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
-<div class="no-row-height column-margin column-container"><li id="fn1"><p><sup>1</sup> an example of footnote — <a href="https://quarto.org/docs/blog/posts/2022-02-17-advanced-layout/">content in margins</a></p></li></div><div class="callout callout-style-default callout-tip no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Data Link
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><a href="https://www.kaggle.com/datasets/arnoldkakas/real-estate-dataset/data">https://www.kaggle.com/datasets/arnoldkakas/real-estate-dataset/data</a></p>
-</div>
-</div>
-<p>My data is called “Real Estate Dataset” and has been downloaded from Kaggle, on which it is described as a dataset that explores “spatial dynamics, price, and quality of apartments in Slovakia”. The data comes from scraping advertising data from the <a href="nehnutelnosti.sk">nehnutelnosti.sk</a> website as of November 2023, so this is fairly recent data, and only pertains to apartment listings. The Nehnutelnosti website has real estate listings and provides services to help find available properties in Slovakia. Each observation refers to an apartment listing and the variables measured about each listing range from costs, to dimensions, to features, to the safety and environment around the apartment’s building. It was posted to Kaggle by Arnold Kakas, who notes that he has intentionally left the dataset completely raw for the purpose of people using it to learn data cleaning, data visualization, and training predictive models, which is the purpose of this project.</p>
-</section>
+<p>My data is called “Real Estate Dataset”<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> and has been downloaded from Kaggle, on which it is described as a dataset that explores “spatial dynamics, price, and quality of apartments in Slovakia”. The data comes from scraping advertising data from the <a href="nehnutelnosti.sk">nehnutelnosti.sk</a> website as of November 2023, so this is fairly recent data, and only pertains to apartment listings. The Nehnutelnosti website has real estate listings and provides services to help find available properties in Slovakia. Each observation refers to an apartment listing and the variables measured about each listing range from costs, to dimensions, to features, to the safety and environment around the apartment’s building. It was posted to Kaggle by Arnold Kakas, who notes that he has intentionally left the dataset completely raw for the purpose of people using it to learn data cleaning, data visualization, and training predictive models, which is the purpose of this project.</p>
+<div class="no-row-height column-margin column-container"><li id="fn1"><p><sup>1</sup> Kakas, Arnold. (2023, Nov.). <em>Real Estate Dataset</em>. Kaggle. — <a href="https://www.kaggle.com/datasets/arnoldkakas/real-estate-dataset/data">https://www.kaggle.com/datasets/arnoldkakas/real-estate-dataset/data</a></p></li></div></section>
 <section id="data-quality-complexity-check" class="level2">
 <h2 class="anchored" data-anchor-id="data-quality-complexity-check">Data quality &amp; complexity check</h2>
 <section id="data" class="level3">
@@ -3165,9 +3152,425 @@ Data Link
 </div>
 <p>This dataset has 27 variables and 15,403 observations. Out of the 27 variables, 7 are character variables: <code>name_nsi</code>, <code>condition</code>, <code>certificate</code>, <code>construction_type</code>, <code>orientation</code>, <code>type</code> and <code>district</code>. <code>name_nsi</code> is the name of the apartment, <code>condition</code> is whether it is in its original condition or has gone through some sort of renovation, <code>certificate</code> is what energy certificate the building has, and <code>construction_type</code> is the material the apartment is made out of, like brick or paneling. <code>orientation</code> is what geographical direction it faces, <code>type</code> is what type of apartment it is in terms of the number of bedrooms (ex: 3-bedroom) and <code>district</code> is the name of the district in Slovakia it is in. The other 20 are numerical, and consist of <code>price</code>, <code>index</code>, <code>environment</code>, <code>quality_of_living</code>, <code>safety</code>, <code>transport</code>, <code>services</code>, <code>relax</code>, <code>area</code>, <code>energy_costs</code>, <code>provision</code>, <code>year_built</code>, <code>last_reconstruction</code>, <code>total_floors</code>, <code>floor</code>, <code>lift</code>, <code>balkonies</code>, <code>loggia</code>, <code>cellar</code>, and <code>rooms</code>. The <code>price</code> variable is the price of the listing in euros, <code>index</code> is a number on an Index of Living from 0-10, according to Kaggle this was “calculated by the Slovak startup City Performer” using the values of these 6 variables in the dataset: <code>environment</code>, <code>quality_of_living</code>, <code>safety</code>, <code>transport</code>, <code>services</code>, and <code>relax</code>. Unfortunately the source explaining how this number was calculated was in the form of a broken link on Kaggle so more research will need to be done on my part to figure out how this variable was calculated. Each value of these 6 variables represents an index rating for just that variable. The <code>area</code> variable is the area in square meters of the apartment, <code>energy_costs</code> is the energy costs in euros for that apartment, <code>provision</code> is a binary variable with a value of 1 if the provision of the agency is included in the price, and if not is 0. This could perhaps be changed to a “yes” or “no” variable because this doesn’t make sense as a numerical variable. The <code>year_built</code> is the year it was built, <code>last_reconstruction</code> is the most recent year any sort of construction work was done on it, <code>floor</code> is the floor of the building the apartment is on, which could be made into a categorical variable to organize the apartments in one building by floor perhaps, and <code>lift</code> and <code>cellar</code> are both binary indicator variables like <code>provision</code> is to show whether or not the building has a lift or a cellar, so they could also be changed to be binary classification and say “yes” or “no”. The rest of the variables are features, and the value of each is the number of features each individual apartment or building has.</p>
 </section>
+<section id="skim" class="level3">
+<h3 class="anchored" data-anchor-id="skim">Skim</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Name</td>
+<td style="text-align: left;">realestate</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Number of rows</td>
+<td style="text-align: left;">15403</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Number of columns</td>
+<td style="text-align: left;">27</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">_______________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Column type frequency:</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">character</td>
+<td style="text-align: left;">7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">numeric</td>
+<td style="text-align: left;">20</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">________________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Group variables</td>
+<td style="text-align: left;">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 23%">
+<col style="width: 13%">
+<col style="width: 18%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 7%">
+<col style="width: 11%">
+<col style="width: 14%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">min</th>
+<th style="text-align: right;">max</th>
+<th style="text-align: right;">empty</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: right;">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">name_nsi</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">46</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">598</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">condition</td>
+<td style="text-align: right;">327</td>
+<td style="text-align: right;">0.98</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">certificate</td>
+<td style="text-align: right;">8958</td>
+<td style="text-align: right;">0.42</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">construction_type</td>
+<td style="text-align: right;">13036</td>
+<td style="text-align: right;">0.15</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">orientation</td>
+<td style="text-align: right;">14380</td>
+<td style="text-align: right;">0.07</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">type</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">district</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">79</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 8%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">sd</th>
+<th style="text-align: right;">p0</th>
+<th style="text-align: right;">p25</th>
+<th style="text-align: right;">p50</th>
+<th style="text-align: right;">p75</th>
+<th style="text-align: right;">p100</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">price</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">165205.67</td>
+<td style="text-align: right;">162973.63</td>
+<td style="text-align: right;">11500</td>
+<td style="text-align: right;">99900</td>
+<td style="text-align: right;">136900</td>
+<td style="text-align: right;">190000</td>
+<td style="text-align: right;">9936000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">index</td>
+<td style="text-align: right;">10241</td>
+<td style="text-align: right;">0.34</td>
+<td style="text-align: right;">70.79</td>
+<td style="text-align: right;">22.87</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">69</td>
+<td style="text-align: right;">78</td>
+<td style="text-align: right;">84</td>
+<td style="text-align: right;">95</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">environment</td>
+<td style="text-align: right;">11271</td>
+<td style="text-align: right;">0.27</td>
+<td style="text-align: right;">70.03</td>
+<td style="text-align: right;">24.45</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">69</td>
+<td style="text-align: right;">77</td>
+<td style="text-align: right;">84</td>
+<td style="text-align: right;">99</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">quality_of_living</td>
+<td style="text-align: right;">11271</td>
+<td style="text-align: right;">0.27</td>
+<td style="text-align: right;">77.31</td>
+<td style="text-align: right;">28.12</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">77</td>
+<td style="text-align: right;">88</td>
+<td style="text-align: right;">94</td>
+<td style="text-align: right;">99</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">safety</td>
+<td style="text-align: right;">11271</td>
+<td style="text-align: right;">0.27</td>
+<td style="text-align: right;">56.18</td>
+<td style="text-align: right;">34.50</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">69</td>
+<td style="text-align: right;">87</td>
+<td style="text-align: right;">98</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">transport</td>
+<td style="text-align: right;">11271</td>
+<td style="text-align: right;">0.27</td>
+<td style="text-align: right;">65.52</td>
+<td style="text-align: right;">32.72</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">48</td>
+<td style="text-align: right;">79</td>
+<td style="text-align: right;">91</td>
+<td style="text-align: right;">98</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">services</td>
+<td style="text-align: right;">11271</td>
+<td style="text-align: right;">0.27</td>
+<td style="text-align: right;">73.55</td>
+<td style="text-align: right;">24.98</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">66</td>
+<td style="text-align: right;">82</td>
+<td style="text-align: right;">92</td>
+<td style="text-align: right;">99</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">relax</td>
+<td style="text-align: right;">11271</td>
+<td style="text-align: right;">0.27</td>
+<td style="text-align: right;">51.62</td>
+<td style="text-align: right;">23.00</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">38</td>
+<td style="text-align: right;">54</td>
+<td style="text-align: right;">69</td>
+<td style="text-align: right;">95</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">area</td>
+<td style="text-align: right;">716</td>
+<td style="text-align: right;">0.95</td>
+<td style="text-align: right;">1523.09</td>
+<td style="text-align: right;">3946.18</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">74</td>
+<td style="text-align: right;">615</td>
+<td style="text-align: right;">209900</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">energy_costs</td>
+<td style="text-align: right;">14423</td>
+<td style="text-align: right;">0.06</td>
+<td style="text-align: right;">150.62</td>
+<td style="text-align: right;">52.32</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">150</td>
+<td style="text-align: right;">190</td>
+<td style="text-align: right;">365</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">provision</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">0.16</td>
+<td style="text-align: right;">0.36</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">year_built</td>
+<td style="text-align: right;">11525</td>
+<td style="text-align: right;">0.25</td>
+<td style="text-align: right;">1901.70</td>
+<td style="text-align: right;">499.06</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1971</td>
+<td style="text-align: right;">1980</td>
+<td style="text-align: right;">2020</td>
+<td style="text-align: right;">19741</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">last_reconstruction</td>
+<td style="text-align: right;">14721</td>
+<td style="text-align: right;">0.04</td>
+<td style="text-align: right;">2018.30</td>
+<td style="text-align: right;">6.01</td>
+<td style="text-align: right;">1968</td>
+<td style="text-align: right;">2016</td>
+<td style="text-align: right;">2020</td>
+<td style="text-align: right;">2023</td>
+<td style="text-align: right;">2024</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">total_floors</td>
+<td style="text-align: right;">8117</td>
+<td style="text-align: right;">0.47</td>
+<td style="text-align: right;">5.61</td>
+<td style="text-align: right;">3.66</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">46</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">floor</td>
+<td style="text-align: right;">7087</td>
+<td style="text-align: right;">0.54</td>
+<td style="text-align: right;">3.49</td>
+<td style="text-align: right;">2.63</td>
+<td style="text-align: right;">-7</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">34</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">lift</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">0.27</td>
+<td style="text-align: right;">0.44</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">balkonies</td>
+<td style="text-align: right;">13636</td>
+<td style="text-align: right;">0.11</td>
+<td style="text-align: right;">1.11</td>
+<td style="text-align: right;">0.39</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">6</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">loggia</td>
+<td style="text-align: right;">13883</td>
+<td style="text-align: right;">0.10</td>
+<td style="text-align: right;">1.11</td>
+<td style="text-align: right;">0.36</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">cellar</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">0.01</td>
+<td style="text-align: right;">0.12</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">rooms</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2.48</td>
+<td style="text-align: right;">0.89</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">5</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
 <section id="missingness" class="level3">
 <h3 class="anchored" data-anchor-id="missingness">Missingness</h3>
-<p>Unfortunately there are a lot of missing values of most of the variables in this dataset as shown below. 19 out of the 27 variables have values missing and 16 have missing values for more than half of the dataset. Fortunately since the dataset is so large, subsetting the data set to filter out missing values still leaves thousands of observations to analyze; however not as many as would be ideal.</p>
+<p>Unfortunately there are a lot of missing values of most of the variables in this dataset as shown above and below. 19 out of the 27 variables have values missing and most of those 19 have missing values for more than half of the dataset. Fortunately since the dataset is so large, subsetting the data set to filter out missing values still leaves thousands of observations to analyze; however not as many as would be ideal.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
