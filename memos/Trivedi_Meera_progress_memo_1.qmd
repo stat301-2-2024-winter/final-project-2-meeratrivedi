@@ -53,7 +53,7 @@ library(janitor)
 ### Data
 ```{r}
 #| message: false
-realestate <- read_delim("data/raw/Real_Estate_Dataset.csv", 
+realestate <- read_delim(here("data/raw/Real_Estate_Dataset.csv"), 
                          delim = ";", 
                          escape_double = FALSE, 
                          trim_ws = TRUE) |> 
@@ -74,6 +74,7 @@ Unfortunately there are a lot of missing values of most of the variables in this
 
 ```{r}
 #| echo: false
+#| message: false
 miss_table <- miss_var_summary(realestate)
 
 miss_names <- miss_table |> 
@@ -88,6 +89,7 @@ Since I am using `quality_of_living` as my target variable, I made a subset of t
 
 ```{r}
 #| echo: false
+#| message: false
 #missingness qol
 clean_qol <- realestate |> 
   filter(!is.na(quality_of_living)) |> 

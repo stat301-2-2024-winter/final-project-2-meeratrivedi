@@ -33,6 +33,8 @@ clean_qol <- realestate |>
   mutate(quality_of_living = factor(quality_of_living)) |> 
   arrange((quality_of_living))
 
+write_csv(clean_qol, here("data/clean_qol.csv"))
+
 #quality of living w ordered levels
 clean_qol_lvls <- clean_qol |> 
   mutate(quality_of_living = fct_collapse(quality_of_living, 
@@ -45,5 +47,4 @@ clean_qol_lvls <- clean_qol |>
                                           "91-99" = c("91", "92", "93", "94", "95", "96", '97', '98', "99")))
 
 qol_levels = c("4-10", "27-51", "53-61", "62-69", "71-79", "81-89", "91-99")
-
 

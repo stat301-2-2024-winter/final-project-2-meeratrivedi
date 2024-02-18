@@ -34,6 +34,26 @@ realestate |>
   labs(title = "Density Plot of Quality of Living", x = "Quality of Living", y = NULL)+
   theme(plot.title = element_text(hjust = 0.5, size = 15, face = "bold"))
 
+#density plot
+realestate |> 
+  filter(!is.na(quality_of_living)) |> 
+  filter(quality_of_living >= 50) |> 
+  ggplot(aes(x = log10(quality_of_living)))+
+  geom_density(color = "pink", fill = "pink", alpha = 0.5)+
+  theme_minimal()+
+  labs(title = "Density Plot of Quality of Living - Top Half", x = "Quality of Living", y = NULL)+
+  theme(plot.title = element_text(hjust = 0.5, size = 15, face = "bold"))
+
+#density plot
+realestate |> 
+  filter(!is.na(quality_of_living)) |> 
+  filter(quality_of_living <= 50) |> 
+  ggplot(aes(x = log10(quality_of_living)))+
+  geom_density(color = "pink", fill = "pink", alpha = 0.5)+
+  theme_minimal()+
+  labs(title = "Density Plot of Quality of Living - Bottom Half", x = "Quality of Living", y = NULL)+
+  theme(plot.title = element_text(hjust = 0.5, size = 15, face = "bold"))
+
 #density plot log10
 realestate |> 
   filter(!is.na(quality_of_living)) |> 
