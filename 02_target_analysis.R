@@ -10,7 +10,7 @@ library(janitor)
 
 
 #load data
-realestate <- read_delim("data/Real_Estate_Dataset.csv", 
+realestate <- read_delim("data/raw/Real_Estate_Dataset.csv", 
                          delim = ";", escape_double = FALSE, trim_ws = TRUE) |> 
   clean_names()
 

@@ -33,7 +33,9 @@ clean_qol <- realestate |>
   mutate(quality_of_living = factor(quality_of_living)) |> 
   arrange((quality_of_living))
 
-write_csv(clean_qol, here("data/clean_qol.csv"))
+clean_qol
+
+save(clean_qol, file = "data/clean_qol.rda")
 
 #quality of living w ordered levels
 clean_qol_lvls <- clean_qol |> 
