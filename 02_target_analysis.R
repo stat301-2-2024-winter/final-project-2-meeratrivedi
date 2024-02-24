@@ -14,6 +14,9 @@ realestate <- read_delim("data/raw/Real_Estate_Dataset.csv",
                          delim = ";", escape_double = FALSE, trim_ws = TRUE) |> 
   clean_names()
 
+load(here("data/clean_qol.rda"))
+
+
 #missingness qol
 miss_table1 <- miss_var_summary(clean_qol)
 
@@ -24,6 +27,7 @@ clean_qol |>
   select(miss_names1) |> 
   gg_miss_var()
 
+##mention these options in final report as potential other/future work
 
 #density plot
 realestate |> 

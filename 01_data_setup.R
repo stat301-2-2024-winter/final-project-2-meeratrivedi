@@ -30,10 +30,18 @@ realestate |>
 clean_qol <- realestate |> 
   filter(!is.na(quality_of_living)) |> 
   #changing to factor
-  mutate(quality_of_living = factor(quality_of_living)) |> 
-  arrange((quality_of_living))
+  mutate(
+    #check threshold number later
+    target = if_else(quality_of_living <= 85, "unsatisfied", "satisfied") |> 
+      factor(levels = c("satisfied", "unsatisfied")),
+    quality_of_living = factor(quality_of_living)
+    ) |>
+  arrange((quality_of_living)) |> 
+  relocate(target)
 
-clean_qol
+clean_qol |> 
+  count(target) |> 
+  janitor::adorn_percentages(denominator = "col")
 
 save(clean_qol, file = "data/clean_qol.rda")
 
@@ -49,4 +57,7 @@ clean_qol_lvls <- clean_qol |>
                                           "91-99" = c("91", "92", "93", "94", "95", "96", '97', '98', "99")))
 
 qol_levels = c("4-10", "27-51", "53-61", "62-69", "71-79", "81-89", "91-99")
+
+#potential lm model with the index variables to predict outcome 
+
 
