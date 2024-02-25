@@ -1,5 +1,5 @@
-
-# Setup pre-processing/recipes
+# Final Project ----
+# Setup pre-processing/recipes for non-tree models
 
 # load packages ----
 library(tidyverse)
@@ -20,15 +20,17 @@ load(here("results/estate_split.rda"))
 basic_recipe <- recipe(satisfaction ~ ., data = estate_train) |> 
   step_rm(name_nsi, last_reconstruction, energy_costs, 
           orientation, loggia, balkonies, construction_type, 
-          year_built, certificate, total_floors, floor) |>
+          year_built, certificate, total_floors, floor, 
+          quality_of_living, index, condition, type, district) |>
   step_impute_median(area) |> 
-  #step_dummy(all_nominal_predictors()) |> 
+  step_dummy(all_nominal_predictors()) |> 
   step_zv(all_predictors()) |> 
   step_center(all_predictors()) |> 
   step_scale(all_predictors())
 
 prep_basic <- prep(basic_recipe) |> 
-  bake(new_data = NULL)
+  bake(new_data = NULL) |> 
+  view()
 
 save(basic_recipe, file = here("results/basic_recipe.rda"))
 
@@ -37,8 +39,8 @@ main_recipe <- recipe(satisfaction ~ ., data = estate_train) |>
   update_role(quality_of_living, index, new_role = "indices") |> 
   step_rm(name_nsi, last_reconstruction, energy_costs, 
           orientation, loggia, balkonies, construction_type, 
-          year_built, certificate) |>
-  step_impute_median(area) |> 
+          year_built, certificate, condition, type, district) |>
+  step_impute_median(area) |>
   step_mutate(total_floors = 
                 case_when(
                   total_floors >= 23 ~ "23-46",
@@ -55,12 +57,13 @@ main_recipe <- recipe(satisfaction ~ ., data = estate_train) |>
               floor = factor(floor)) |> 
   step_unknown(total_floors, new_level = "unknown") |> 
   step_unknown(floor, new_level = "unknown") |> 
-  #step_dummy(all_nominal_predictors()) |> 
+  step_dummy(all_nominal_predictors()) |> 
   step_zv(all_predictors()) |> 
   step_center(all_predictors()) |> 
   step_scale(all_predictors())
 
 prep_main <- prep(main_recipe) |> 
-  bake(new_data = NULL)
+  bake(new_data = NULL) |> 
+  view()
 
 save(main_recipe, file = here("results/main_recipe.rda"))

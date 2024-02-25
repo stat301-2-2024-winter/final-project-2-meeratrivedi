@@ -1,5 +1,5 @@
-# L05 Resampling ----
-# Initial data checks, data splitting, & data folding
+# Final Project ----
+# Initial data splitting, & data folding
 
 # load packages ----
 library(tidyverse)
@@ -30,7 +30,7 @@ estate_test <- testing(estate_split)
 
 #TASK 2----
 
-estate_folds <- vfold_cv(estate_train, v = 10, repeats = 3,
+estate_folds <- vfold_cv(estate_train, v = 10, repeats = 5,
                      strata = satisfaction)
 
 save(estate_train, estate_test, estate_folds, file = here("results/estate_split.rda"))

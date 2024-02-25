@@ -1,4 +1,4 @@
-
+# Final Project ----
 # Reading in Data and Quality Check
   
 # load packages ----
@@ -37,6 +37,9 @@ clean_qol <- realestate |>
   arrange((quality_of_living)) |> 
   relocate(satisfaction)
 
+save(clean_qol, file = "data/clean_qol.rda")
+
+#checking proportions of variables im making/messing with
 clean_qol |> 
   count(satisfaction) |> 
   janitor::adorn_percentages(denominator = "col")
@@ -63,9 +66,7 @@ clean_qol|>
   count(floor) |> 
   janitor::adorn_percentages(denominator = "col")
 
-save(clean_qol, file = "data/clean_qol.rda")
-
-#quality of living w ordered levels
+#quality of living w ordered levels - not relevant anymore
 clean_qol_lvls <- clean_qol |> 
   mutate(quality_of_living = fct_collapse(quality_of_living, 
                                           "4-10" = c("4", "5", "6", "7", "8", "9", "10"), 
@@ -77,7 +78,4 @@ clean_qol_lvls <- clean_qol |>
                                           "91-99" = c("91", "92", "93", "94", "95", "96", '97', '98', "99")))
 
 qol_levels = c("4-10", "27-51", "53-61", "62-69", "71-79", "81-89", "91-99")
-
-#potential lm model with the index variables to predict outcome 
-
 

@@ -1,4 +1,4 @@
-
+# Final Project ----
 # Target Variable Analysis
 
 # load packages ----
@@ -10,11 +10,8 @@ library(janitor)
 
 
 #load data
-realestate <- read_delim("data/raw/Real_Estate_Dataset.csv", 
-                         delim = ";", escape_double = FALSE, trim_ws = TRUE) |> 
-  clean_names()
-
 load(here("data/clean_qol.rda"))
+load(here("results/estate_split.rda"))
 
 
 #missingness qol
@@ -27,8 +24,19 @@ clean_qol |>
   select(miss_names1) |> 
   gg_miss_var()
 
-##mention these options in final report as potential other/future work
+#missingness qol - WITH TRAINING SET
+miss_table2 <- miss_var_summary(estate_train) |> 
+  filter(n_miss > 0)
 
+miss_names2 <- miss_table2 |> 
+  pull(variable)
+
+estate_train |> 
+  select(miss_names2) |> 
+  gg_miss_var()
+
+#mention these options in final report as potential other/future work
+# PREVIOUS PLAN - USING quality_of_living AS TARGET VARIABLE ------
 #density plot
 realestate |> 
   filter(!is.na(quality_of_living)) |> 
@@ -38,48 +46,10 @@ realestate |>
   labs(title = "Density Plot of Quality of Living", x = "Quality of Living", y = NULL)+
   theme(plot.title = element_text(hjust = 0.5, size = 15, face = "bold"))
 
-#density plot
-realestate |> 
-  filter(!is.na(quality_of_living)) |> 
-  filter(quality_of_living >= 50) |> 
-  ggplot(aes(x = log10(quality_of_living)))+
-  geom_density(color = "pink", fill = "pink", alpha = 0.5)+
-  theme_minimal()+
-  labs(title = "Density Plot of Quality of Living - Top Half", x = "Quality of Living", y = NULL)+
-  theme(plot.title = element_text(hjust = 0.5, size = 15, face = "bold"))
-
-#density plot
-realestate |> 
-  filter(!is.na(quality_of_living)) |> 
-  filter(quality_of_living <= 50) |> 
-  ggplot(aes(x = log10(quality_of_living)))+
-  geom_density(color = "pink", fill = "pink", alpha = 0.5)+
-  theme_minimal()+
-  labs(title = "Density Plot of Quality of Living - Bottom Half", x = "Quality of Living", y = NULL)+
-  theme(plot.title = element_text(hjust = 0.5, size = 15, face = "bold"))
-
-#density plot log10
-realestate |> 
-  filter(!is.na(quality_of_living)) |> 
-  mutate(qol_log10= log10(quality_of_living)) |> 
-  ggplot(aes(x = qol_log10))+
-  geom_density(color = "pink", fill = "pink", alpha = 0.5)+
-  theme_minimal()+
-  labs(title = "Density Plot of Quality of Living - Log10", x = "Quality of Living (Log10)", y = NULL)+
-  theme(plot.title = element_text(hjust = 0.5, size = 15, face = "bold"))
-
-
 #barplot
 clean_qol |> 
   ggplot(aes(x = quality_of_living))+
   geom_bar()+
-  theme_minimal()+
-  labs(x = "Quality of Living", y = "Number of Houses")
-
-#barplot with new target variable - USE THIS ONE
-clean_qol |> 
-  ggplot(aes(x = satisfaction, fill = satisfaction))+
-  geom_bar(show.legend = FALSE)+
   theme_minimal()+
   labs(x = "Quality of Living", y = "Number of Houses")
 
@@ -101,3 +71,24 @@ ggplot(clean_qol_lvls) +
            fill = "lightseagreen") +
   theme_minimal()+
   labs(x = "Quality of Living (on Index from 0-100)", y = "Number of Houses")
+
+
+
+
+# NEW PLAN GOING FORWARD - using satisfaction AS TARGET VARIABLE------
+
+#barplot of satisfaction
+
+estate_train |> 
+  ggplot(aes(x = satisfaction, fill = satisfaction))+
+  geom_bar(show.legend = FALSE)+
+  scale_fill_brewer(palette = "Pastel2")+
+  theme_minimal()+
+  labs(x = "Quality of Living", y = "Number of Apartments", 
+       title = "Satisfaction with Apartments in Slovakia") +
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"), 
+        axis.text.x = element_text(hjust = 0.5, size = 10), 
+        axis.title.x = element_text(hjust = 0.5, size = 11, face = "bold"), 
+        axis.title.y = element_text(hjust = 0.5, size = 11, face = "bold"))
+
+
