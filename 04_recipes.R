@@ -13,28 +13,54 @@ tidymodels_prefer()
 #load data
 load(here("results/estate_split.rda"))
 
-#make this my fancy one and make the null one just remove all the missing variables and impute area
+#null: remove all the missing variables and impute area
 #use logistic reg w the basic recipe
 
-
-#kitchen recipe
-kitchen_recipe <- recipe(target ~ ., data = estate_train) |> 
-  #add other index variables to this list
-  update_role(quality_of_living, new_role = "indices") |> 
-  #remove index variables
-  #step_rm(name_nsi, district, type, condition, construction_type) |>
-  #step_rm top missing variables up till yrbuilt
+#basic recipe
+basic_recipe <- recipe(satisfaction ~ ., data = estate_train) |> 
+  step_rm(name_nsi, last_reconstruction, energy_costs, 
+          orientation, loggia, balkonies, construction_type, 
+          year_built, certificate, total_floors, floor) |>
   step_impute_median(area) |> 
-  #certificate total floors and floor make category be "unknown" as an ex with step_mutate
-  #case when if else statement pipe to factor
-  #then do step_unknown to change the category to be unknown (no more than 2-3 levels for each one)
-  step_filter_missing(all_predictors(), threshold = 0) |> 
-  step_dummy(all_nominal_predictors()) |> 
+  #step_dummy(all_nominal_predictors()) |> 
   step_zv(all_predictors()) |> 
   step_center(all_predictors()) |> 
   step_scale(all_predictors())
 
-prep_kitchen <- prep(kitchen_recipe) |> 
+prep_basic <- prep(basic_recipe) |> 
   bake(new_data = NULL)
 
-save(kitchen_recipe, file = here("results/kitchen_recipe.rda"))
+save(basic_recipe, file = here("results/basic_recipe.rda"))
+
+#main recipe
+main_recipe <- recipe(satisfaction ~ ., data = estate_train) |> 
+  update_role(quality_of_living, index, new_role = "indices") |> 
+  step_rm(name_nsi, last_reconstruction, energy_costs, 
+          orientation, loggia, balkonies, construction_type, 
+          year_built, certificate) |>
+  step_impute_median(area) |> 
+  step_mutate(total_floors = 
+                case_when(
+                  total_floors >= 23 ~ "23-46",
+                  total_floors <= 22 ~ "1-22",
+                  NA ~ "unknown"
+                  ),
+              total_floors = factor(total_floors)) |> 
+  step_mutate(floor = 
+                case_when(
+                  floor >= 15 ~ "15-34",
+                  floor < 15 ~ "below 15",
+                  NA ~ "unknown"
+                  ),
+              floor = factor(floor)) |> 
+  step_unknown(total_floors, new_level = "unknown") |> 
+  step_unknown(floor, new_level = "unknown") |> 
+  #step_dummy(all_nominal_predictors()) |> 
+  step_zv(all_predictors()) |> 
+  step_center(all_predictors()) |> 
+  step_scale(all_predictors())
+
+prep_main <- prep(main_recipe) |> 
+  bake(new_data = NULL)
+
+save(main_recipe, file = here("results/main_recipe.rda"))

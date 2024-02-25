@@ -24,14 +24,14 @@ set.seed(1234)
 #split data
 estate_split <- initial_split(clean_qol, 
                               prop = 0.8, 
-                              strata = quality_of_living, breaks = 4)
+                              strata = satisfaction, breaks = 4)
 estate_train <- training(estate_split)
 estate_test <- testing(estate_split)
 
 #TASK 2----
 
 estate_folds <- vfold_cv(estate_train, v = 10, repeats = 3,
-                     strata = quality_of_living)
+                     strata = satisfaction)
 
 save(estate_train, estate_test, estate_folds, file = here("results/estate_split.rda"))
 

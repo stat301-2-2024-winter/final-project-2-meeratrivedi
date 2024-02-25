@@ -76,6 +76,13 @@ clean_qol |>
   theme_minimal()+
   labs(x = "Quality of Living", y = "Number of Houses")
 
+#barplot with new target variable - USE THIS ONE
+clean_qol |> 
+  ggplot(aes(x = satisfaction, fill = satisfaction))+
+  geom_bar(show.legend = FALSE)+
+  theme_minimal()+
+  labs(x = "Quality of Living", y = "Number of Houses")
+
 #barplot w ordered levels
 clean_qol_lvls <- clean_qol |> 
   mutate(quality_of_living = fct_collapse(quality_of_living, 

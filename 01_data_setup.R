@@ -29,18 +29,38 @@ realestate |>
 #quality of living filtered na values out
 clean_qol <- realestate |> 
   filter(!is.na(quality_of_living)) |> 
-  #changing to factor
   mutate(
-    #check threshold number later
-    target = if_else(quality_of_living <= 85, "unsatisfied", "satisfied") |> 
+    satisfaction = if_else(quality_of_living <= 85, "unsatisfied", "satisfied") |> 
       factor(levels = c("satisfied", "unsatisfied")),
     quality_of_living = factor(quality_of_living)
     ) |>
   arrange((quality_of_living)) |> 
-  relocate(target)
+  relocate(satisfaction)
 
 clean_qol |> 
-  count(target) |> 
+  count(satisfaction) |> 
+  janitor::adorn_percentages(denominator = "col")
+
+clean_qol|> 
+  mutate(
+    total_floors = case_when(
+      total_floors >= 23 ~ "23-46",
+      total_floors <= 22 ~ "1-22",
+      NA ~ "unknown"
+      ), 
+  total_floors = factor(total_floors))|> 
+  count(total_floors) |> 
+  janitor::adorn_percentages(denominator = "col")
+
+clean_qol|> 
+  mutate(
+    floor = case_when(
+      floor >= 15 ~ "15-34",
+      floor < 15 ~ "below 15",
+      NA ~ "unknown" 
+    ), 
+    floor = factor(floor))|> 
+  count(floor) |> 
   janitor::adorn_percentages(denominator = "col")
 
 save(clean_qol, file = "data/clean_qol.rda")
