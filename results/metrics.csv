@@ -1,0 +1,7 @@
+.metric,.estimator,mean,n,std_err,.config,model
+accuracy,binary,0.5888049228660588,15,1.0166214622222957e-4,Preprocessor1_Model1,null
+roc_auc,binary,0.5,15,0,Preprocessor1_Model1,null
+accuracy,binary,0.6686013946200358,50,0.0034982389624655867,Preprocessor1_Model1,baseline
+roc_auc,binary,0.7323936599752249,50,0.004094139542094436,Preprocessor1_Model1,baseline
+accuracy,binary,0.6728996665522988,50,0.0035543481947804215,Preprocessor1_Model1,logistic
+roc_auc,binary,0.7335520806877693,50,0.004268692971831881,Preprocessor1_Model1,logistic
