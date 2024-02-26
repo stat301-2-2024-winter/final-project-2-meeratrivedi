@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Meera Trivedi">
-<meta name="dcterms.date" content="2024-02-25">
+<meta name="dcterms.date" content="2024-02-26">
 
 <title>Progress Memo 2</title>
 <style>
@@ -3045,8 +3045,7 @@ vertical-align: -.125em;
   <ul>
   <li><a href="#prediction-problem" id="toc-prediction-problem" class="nav-link active" data-scroll-target="#prediction-problem">Prediction Problem</a></li>
   <li><a href="#data-source" id="toc-data-source" class="nav-link" data-scroll-target="#data-source">Data source</a></li>
-  <li><a href="#data-quality-complexity-check" id="toc-data-quality-complexity-check" class="nav-link" data-scroll-target="#data-quality-complexity-check">Data quality &amp; complexity check</a></li>
-  <li><a href="#data-overview-quality-check" id="toc-data-overview-quality-check" class="nav-link" data-scroll-target="#data-overview-quality-check">Data Overview &amp; Quality Check</a>
+  <li><a href="#data-overview" id="toc-data-overview" class="nav-link" data-scroll-target="#data-overview">Data Overview</a>
   <ul class="collapse">
   <li><a href="#original-data" id="toc-original-data" class="nav-link" data-scroll-target="#original-data">Original Data</a></li>
   <li><a href="#cleaned-data" id="toc-cleaned-data" class="nav-link" data-scroll-target="#cleaned-data">Cleaned Data</a></li>
@@ -3082,7 +3081,7 @@ Data Science 2 with R (STAT 301-2)</div><p></p>
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">February 25, 2024</p>
+      <p class="date">February 26, 2024</p>
     </div>
   </div>
   
@@ -3113,13 +3112,10 @@ Github Repo Link
 </section>
 <section id="data-source" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="data-source">Data source</h2>
-<p>“Real Estate Dataset”<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> The data comes from scraping advertising data from the <a href="nehnutelnosti.sk">nehnutelnosti.sk</a> website as of November 2023</p>
+<p>My dataset is called “Real Estate Dataset”<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> and was downloaded from Kaggle. The data comes from scraping advertising data from the <a href="nehnutelnosti.sk">nehnutelnosti.sk</a> website as of November 2023.</p>
 <div class="no-row-height column-margin column-container"><li id="fn1"><p><sup>1</sup> Kakas, Arnold. (2023, Nov.). <em>Real Estate Dataset</em>. Kaggle. — <a href="https://www.kaggle.com/datasets/arnoldkakas/real-estate-dataset/data">https://www.kaggle.com/datasets/arnoldkakas/real-estate-dataset/data</a></p></li></div></section>
-<section id="data-quality-complexity-check" class="level2">
-<h2 class="anchored" data-anchor-id="data-quality-complexity-check">Data quality &amp; complexity check</h2>
-</section>
-<section id="data-overview-quality-check" class="level2">
-<h2 class="anchored" data-anchor-id="data-overview-quality-check">Data Overview &amp; Quality Check</h2>
+<section id="data-overview" class="level2">
+<h2 class="anchored" data-anchor-id="data-overview">Data Overview</h2>
 <section id="original-data" class="level3">
 <h3 class="anchored" data-anchor-id="original-data">Original Data</h3>
 <p>This dataset has 27 variables and 15,403 observations. Out of the 27 variables, 7 are character variables: <code>name_nsi</code>, <code>condition</code>, <code>certificate</code>, <code>construction_type</code>, <code>orientation</code>, <code>type</code> and <code>district</code>. <code>name_nsi</code> is the name of the apartment, <code>condition</code> is whether it is in its original condition or has gone through some sort of renovation, <code>certificate</code> is what energy certificate the building has, and <code>construction_type</code> is the material the apartment is made out of, like brick or paneling. <code>orientation</code> is what geographical direction it faces, <code>type</code> is what type of apartment it is in terms of the number of bedrooms (ex: 3-bedroom) and <code>district</code> is the name of the district in Slovakia it is in. The other 20 are numerical, and consist of <code>price</code>, <code>index</code>, <code>environment</code>, <code>quality_of_living</code>, <code>safety</code>, <code>transport</code>, <code>services</code>, <code>relax</code>, <code>area</code>, <code>energy_costs</code>, <code>provision</code>, <code>year_built</code>, <code>last_reconstruction</code>, <code>total_floors</code>, <code>floor</code>, <code>lift</code>, <code>balkonies</code>, <code>loggia</code>, <code>cellar</code>, and <code>rooms</code>. The <code>price</code> variable is the price of the listing in euros, <code>index</code> is a number on an Index of Living from 0-10, according to Kaggle this was “calculated by the Slovak startup City Performer” using the values of these 6 variables in the dataset: <code>environment</code>, <code>quality_of_living</code>, <code>safety</code>, <code>transport</code>, <code>services</code>, and <code>relax</code>. Each value of these 6 variables represents an index rating for just that variable. The <code>area</code> variable is the area in square meters of the apartment, <code>energy_costs</code> is the energy costs in euros for that apartment, <code>provision</code> is a binary variable with a value of 1 if the provision of the agency is included in the price, and if not is 0. The <code>year_built</code> is the year it was built, <code>last_reconstruction</code> is the most recent year any sort of construction work was done on it, <code>floor</code> is the floor of the building the apartment is on, <code>lift</code> and <code>cellar</code> are both binary indicator variables like <code>provision</code> is to show whether or not the building has a lift or a cellar. The rest of the variables are features, and the value of each is the number of features each individual apartment or building has.</p>
@@ -3180,27 +3176,33 @@ Figure 1: Count of apartments with who are satisfied with it versus unsatisfied
 </section>
 <section id="model-types" class="level4">
 <h4 class="anchored" data-anchor-id="model-types">Model Types</h4>
-<p>Since this is a classification problem, the models I will be creating will be: null, baseline, logistic, elastic net, nearest neighbors, random forest, and boosted tree. I have already created the first three models and will eventually tune the others. The null and the baseline models are currently using the basic recipe and the logistic model is currently using the main recipe for non-tree models, to make sure that recipe is in fact working. For the final project, I believe every model needs to be fit on both the basic recipe and the main recipe, which I will do. Each model type will have its own R script that will include the model specifications, workflows, and fits for all models under that type category.</p>
+<p>Since this is a classification problem, the models I will be creating will be: null, logistic, elastic net, nearest neighbors, random forest, and boosted tree. I have already created the first three models and will eventually tune the others. The null model is currently using the basic recipe and then there are two logistic models currently using the basic recipe and the main recipe for non-tree models. For the final project, I believe every model needs to be fit on both the basic recipe and the main recipe, which I will do for the future models as well. Each model type has its own R script that will include the model specifications, workflows, and fits for all models under that type category.</p>
 </section>
 </section>
 <section id="model-analysis" class="level2">
 <h2 class="anchored" data-anchor-id="model-analysis">Model Analysis</h2>
-<div id="tbl-metrics" class="cell anchored">
+<div class="cell">
+<div id="tbl-metrics-basic" class="cell anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-metrics-basic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 1: Assessment metrics for null and logistic models
+</figcaption>
+<div aria-describedby="tbl-metrics-basic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div id="yqylvaowcw" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#yqylvaowcw table {
+<div id="anrwdokycn" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#anrwdokycn table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#yqylvaowcw thead, #yqylvaowcw tbody, #yqylvaowcw tfoot, #yqylvaowcw tr, #yqylvaowcw td, #yqylvaowcw th {
+#anrwdokycn thead, #anrwdokycn tbody, #anrwdokycn tfoot, #anrwdokycn tr, #anrwdokycn td, #anrwdokycn th {
 border-style: none;
 }
-#yqylvaowcw p {
+#anrwdokycn p {
 margin: 0;
 padding: 0;
 }
-#yqylvaowcw .gt_table {
+#anrwdokycn .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -3225,11 +3227,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#yqylvaowcw .gt_caption {
+#anrwdokycn .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#yqylvaowcw .gt_title {
+#anrwdokycn .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -3240,7 +3242,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#yqylvaowcw .gt_subtitle {
+#anrwdokycn .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -3251,7 +3253,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#yqylvaowcw .gt_heading {
+#anrwdokycn .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -3262,12 +3264,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#yqylvaowcw .gt_bottom_border {
+#anrwdokycn .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#yqylvaowcw .gt_col_headings {
+#anrwdokycn .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -3281,7 +3283,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#yqylvaowcw .gt_col_heading {
+#anrwdokycn .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3300,7 +3302,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#yqylvaowcw .gt_column_spanner_outer {
+#anrwdokycn .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3311,13 +3313,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#yqylvaowcw .gt_column_spanner_outer:first-child {
+#anrwdokycn .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#yqylvaowcw .gt_column_spanner_outer:last-child {
+#anrwdokycn .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#yqylvaowcw .gt_column_spanner {
+#anrwdokycn .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -3328,10 +3330,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#yqylvaowcw .gt_spanner_row {
+#anrwdokycn .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#yqylvaowcw .gt_group_heading {
+#anrwdokycn .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3356,7 +3358,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#yqylvaowcw .gt_empty_group_heading {
+#anrwdokycn .gt_empty_group_heading {
 padding: 0.5px;
 color: #FFFFFF;
 background-color: #7F7F7F;
@@ -3370,13 +3372,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#yqylvaowcw .gt_from_md > :first-child {
+#anrwdokycn .gt_from_md > :first-child {
 margin-top: 0;
 }
-#yqylvaowcw .gt_from_md > :last-child {
+#anrwdokycn .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#yqylvaowcw .gt_row {
+#anrwdokycn .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3394,7 +3396,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#yqylvaowcw .gt_stub {
+#anrwdokycn .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3406,7 +3408,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#yqylvaowcw .gt_stub_row_group {
+#anrwdokycn .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3419,13 +3421,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#yqylvaowcw .gt_row_group_first td {
+#anrwdokycn .gt_row_group_first td {
 border-top-width: 2px;
 }
-#yqylvaowcw .gt_row_group_first th {
+#anrwdokycn .gt_row_group_first th {
 border-top-width: 2px;
 }
-#yqylvaowcw .gt_summary_row {
+#anrwdokycn .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -3434,14 +3436,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#yqylvaowcw .gt_first_summary_row {
+#anrwdokycn .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#yqylvaowcw .gt_first_summary_row.thick {
+#anrwdokycn .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#yqylvaowcw .gt_last_summary_row {
+#anrwdokycn .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3450,7 +3452,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#yqylvaowcw .gt_grand_summary_row {
+#anrwdokycn .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -3459,7 +3461,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#yqylvaowcw .gt_first_grand_summary_row {
+#anrwdokycn .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3468,7 +3470,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#yqylvaowcw .gt_last_grand_summary_row_top {
+#anrwdokycn .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3477,10 +3479,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#yqylvaowcw .gt_striped {
+#anrwdokycn .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#yqylvaowcw .gt_table_body {
+#anrwdokycn .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -3488,7 +3490,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#yqylvaowcw .gt_footnotes {
+#anrwdokycn .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -3501,7 +3503,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#yqylvaowcw .gt_footnote {
+#anrwdokycn .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -3509,7 +3511,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#yqylvaowcw .gt_sourcenotes {
+#anrwdokycn .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -3522,67 +3524,70 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#yqylvaowcw .gt_sourcenote {
+#anrwdokycn .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#yqylvaowcw .gt_left {
+#anrwdokycn .gt_left {
 text-align: left;
 }
-#yqylvaowcw .gt_center {
+#anrwdokycn .gt_center {
 text-align: center;
 }
-#yqylvaowcw .gt_right {
+#anrwdokycn .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#yqylvaowcw .gt_font_normal {
+#anrwdokycn .gt_font_normal {
 font-weight: normal;
 }
-#yqylvaowcw .gt_font_bold {
+#anrwdokycn .gt_font_bold {
 font-weight: bold;
 }
-#yqylvaowcw .gt_font_italic {
+#anrwdokycn .gt_font_italic {
 font-style: italic;
 }
-#yqylvaowcw .gt_super {
+#anrwdokycn .gt_super {
 font-size: 65%;
 }
-#yqylvaowcw .gt_footnote_marks {
+#anrwdokycn .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#yqylvaowcw .gt_asterisk {
+#anrwdokycn .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#yqylvaowcw .gt_indent_1 {
+#anrwdokycn .gt_indent_1 {
 text-indent: 5px;
 }
-#yqylvaowcw .gt_indent_2 {
+#anrwdokycn .gt_indent_2 {
 text-indent: 10px;
 }
-#yqylvaowcw .gt_indent_3 {
+#anrwdokycn .gt_indent_3 {
 text-indent: 15px;
 }
-#yqylvaowcw .gt_indent_4 {
+#anrwdokycn .gt_indent_4 {
 text-indent: 20px;
 }
-#yqylvaowcw .gt_indent_5 {
+#anrwdokycn .gt_indent_5 {
 text-indent: 25px;
 }
 </style>
 
-<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<table class="gt_table cell table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
 <thead>
 <tr class="header gt_heading">
-<th colspan="6" class="gt_heading gt_title gt_font_normal gt_bottom_border"><strong>Assessment Metrics</strong></th>
+<th colspan="6" class="gt_heading gt_title gt_font_normal"><strong>Assessment Metrics</strong></th>
 </tr>
-<tr class="odd gt_col_headings">
+<tr class="odd gt_heading">
+<th colspan="6" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border">Null and Logistic Models - Basic Recipe</th>
+</tr>
+<tr class="header gt_col_headings">
 <th id=".metric" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">.metric</th>
 <th id=".estimator" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">.estimator</th>
 <th id="mean" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">mean</th>
@@ -3612,54 +3617,481 @@ text-indent: 25px;
 <td class="gt_row gt_left" headers="null  .config">Preprocessor1_Model1</td>
 </tr>
 <tr class="even gt_group_heading_row">
-<td colspan="6" id="baseline" class="gt_group_heading" data-quarto-table-cell-role="th" scope="colgroup">baseline</td>
-</tr>
-<tr class="odd gt_row_group_first">
-<td class="gt_row gt_left" headers="baseline  .metric">accuracy</td>
-<td class="gt_row gt_left" headers="baseline  .estimator">binary</td>
-<td class="gt_row gt_right" headers="baseline  mean">0.669</td>
-<td class="gt_row gt_right" headers="baseline  n">50</td>
-<td class="gt_row gt_right" headers="baseline  std_err">0.0034982</td>
-<td class="gt_row gt_left" headers="baseline  .config">Preprocessor1_Model1</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_left" headers="baseline  .metric">roc_auc</td>
-<td class="gt_row gt_left" headers="baseline  .estimator">binary</td>
-<td class="gt_row gt_right" headers="baseline  mean">0.732</td>
-<td class="gt_row gt_right" headers="baseline  n">50</td>
-<td class="gt_row gt_right" headers="baseline  std_err">0.0040941</td>
-<td class="gt_row gt_left" headers="baseline  .config">Preprocessor1_Model1</td>
-</tr>
-<tr class="odd gt_group_heading_row">
 <td colspan="6" id="logistic" class="gt_group_heading" data-quarto-table-cell-role="th" scope="colgroup">logistic</td>
 </tr>
-<tr class="even gt_row_group_first">
+<tr class="odd gt_row_group_first">
 <td class="gt_row gt_left" headers="logistic  .metric">accuracy</td>
 <td class="gt_row gt_left" headers="logistic  .estimator">binary</td>
-<td class="gt_row gt_right" headers="logistic  mean">0.673</td>
+<td class="gt_row gt_right" headers="logistic  mean">0.669</td>
 <td class="gt_row gt_right" headers="logistic  n">50</td>
-<td class="gt_row gt_right" headers="logistic  std_err">0.0035543</td>
+<td class="gt_row gt_right" headers="logistic  std_err">0.0034982</td>
 <td class="gt_row gt_left" headers="logistic  .config">Preprocessor1_Model1</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td class="gt_row gt_left" headers="logistic  .metric">roc_auc</td>
 <td class="gt_row gt_left" headers="logistic  .estimator">binary</td>
-<td class="gt_row gt_right" headers="logistic  mean">0.734</td>
+<td class="gt_row gt_right" headers="logistic  mean">0.732</td>
 <td class="gt_row gt_right" headers="logistic  n">50</td>
-<td class="gt_row gt_right" headers="logistic  std_err">0.0042687</td>
+<td class="gt_row gt_right" headers="logistic  std_err">0.0040941</td>
 <td class="gt_row gt_left" headers="logistic  .config">Preprocessor1_Model1</td>
 </tr>
 </tbody>
 </table>
 
 </div>
-<p>Assessment metrics for null, baseline, and logistic models</p>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<div class="cell">
+<div id="tbl-metrics-main" class="cell anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-metrics-main-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 2: Assessment metrics logistic model on main recipe
+</figcaption>
+<div aria-describedby="tbl-metrics-main-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<div id="yjvitihrwc" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#yjvitihrwc table {
+font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+}
+#yjvitihrwc thead, #yjvitihrwc tbody, #yjvitihrwc tfoot, #yjvitihrwc tr, #yjvitihrwc td, #yjvitihrwc th {
+border-style: none;
+}
+#yjvitihrwc p {
+margin: 0;
+padding: 0;
+}
+#yjvitihrwc .gt_table {
+display: table;
+border-collapse: collapse;
+line-height: normal;
+margin-left: auto;
+margin-right: auto;
+color: #333333;
+font-size: 16px;
+font-weight: normal;
+font-style: normal;
+background-color: #FFFFFF;
+width: auto;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #A8A8A8;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #A8A8A8;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+}
+#yjvitihrwc .gt_caption {
+padding-top: 4px;
+padding-bottom: 4px;
+}
+#yjvitihrwc .gt_title {
+color: #333333;
+font-size: 125%;
+font-weight: initial;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-color: #FFFFFF;
+border-bottom-width: 0;
+}
+#yjvitihrwc .gt_subtitle {
+color: #333333;
+font-size: 85%;
+font-weight: initial;
+padding-top: 3px;
+padding-bottom: 5px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-color: #FFFFFF;
+border-top-width: 0;
+}
+#yjvitihrwc .gt_heading {
+background-color: #FFFFFF;
+text-align: center;
+border-bottom-color: #FFFFFF;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#yjvitihrwc .gt_bottom_border {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#yjvitihrwc .gt_col_headings {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#yjvitihrwc .gt_col_heading {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 5px;
+padding-bottom: 6px;
+padding-left: 5px;
+padding-right: 5px;
+overflow-x: hidden;
+}
+#yjvitihrwc .gt_column_spanner_outer {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+padding-top: 0;
+padding-bottom: 0;
+padding-left: 4px;
+padding-right: 4px;
+}
+#yjvitihrwc .gt_column_spanner_outer:first-child {
+padding-left: 0;
+}
+#yjvitihrwc .gt_column_spanner_outer:last-child {
+padding-right: 0;
+}
+#yjvitihrwc .gt_column_spanner {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 5px;
+padding-bottom: 5px;
+overflow-x: hidden;
+display: inline-block;
+width: 100%;
+}
+#yjvitihrwc .gt_spanner_row {
+border-bottom-style: hidden;
+}
+#yjvitihrwc .gt_group_heading {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+color: #FFFFFF;
+background-color: #7F7F7F;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+text-align: left;
+}
+#yjvitihrwc .gt_empty_group_heading {
+padding: 0.5px;
+color: #FFFFFF;
+background-color: #7F7F7F;
+font-size: 100%;
+font-weight: initial;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: middle;
+}
+#yjvitihrwc .gt_from_md > :first-child {
+margin-top: 0;
+}
+#yjvitihrwc .gt_from_md > :last-child {
+margin-bottom: 0;
+}
+#yjvitihrwc .gt_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+margin: 10px;
+border-top-style: solid;
+border-top-width: 1px;
+border-top-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+overflow-x: hidden;
+}
+#yjvitihrwc .gt_stub {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+}
+#yjvitihrwc .gt_stub_row_group {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+vertical-align: top;
+}
+#yjvitihrwc .gt_row_group_first td {
+border-top-width: 2px;
+}
+#yjvitihrwc .gt_row_group_first th {
+border-top-width: 2px;
+}
+#yjvitihrwc .gt_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#yjvitihrwc .gt_first_summary_row {
+border-top-style: solid;
+border-top-color: #D3D3D3;
+}
+#yjvitihrwc .gt_first_summary_row.thick {
+border-top-width: 2px;
+}
+#yjvitihrwc .gt_last_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#yjvitihrwc .gt_grand_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#yjvitihrwc .gt_first_grand_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-style: double;
+border-top-width: 6px;
+border-top-color: #D3D3D3;
+}
+#yjvitihrwc .gt_last_grand_summary_row_top {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: double;
+border-bottom-width: 6px;
+border-bottom-color: #D3D3D3;
+}
+#yjvitihrwc .gt_striped {
+background-color: rgba(128, 128, 128, 0.05);
+}
+#yjvitihrwc .gt_table_body {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#yjvitihrwc .gt_footnotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#yjvitihrwc .gt_footnote {
+margin: 0px;
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#yjvitihrwc .gt_sourcenotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#yjvitihrwc .gt_sourcenote {
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#yjvitihrwc .gt_left {
+text-align: left;
+}
+#yjvitihrwc .gt_center {
+text-align: center;
+}
+#yjvitihrwc .gt_right {
+text-align: right;
+font-variant-numeric: tabular-nums;
+}
+#yjvitihrwc .gt_font_normal {
+font-weight: normal;
+}
+#yjvitihrwc .gt_font_bold {
+font-weight: bold;
+}
+#yjvitihrwc .gt_font_italic {
+font-style: italic;
+}
+#yjvitihrwc .gt_super {
+font-size: 65%;
+}
+#yjvitihrwc .gt_footnote_marks {
+font-size: 75%;
+vertical-align: 0.4em;
+position: initial;
+}
+#yjvitihrwc .gt_asterisk {
+font-size: 100%;
+vertical-align: 0;
+}
+#yjvitihrwc .gt_indent_1 {
+text-indent: 5px;
+}
+#yjvitihrwc .gt_indent_2 {
+text-indent: 10px;
+}
+#yjvitihrwc .gt_indent_3 {
+text-indent: 15px;
+}
+#yjvitihrwc .gt_indent_4 {
+text-indent: 20px;
+}
+#yjvitihrwc .gt_indent_5 {
+text-indent: 25px;
+}
+</style>
+
+<table class="gt_table cell table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="header gt_heading">
+<th colspan="6" class="gt_heading gt_title gt_font_normal"><strong>Assessment Metrics</strong></th>
+</tr>
+<tr class="odd gt_heading">
+<th colspan="6" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border">Logistic Model - Main Recipe</th>
+</tr>
+<tr class="header gt_col_headings">
+<th id=".metric" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">.metric</th>
+<th id=".estimator" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">.estimator</th>
+<th id="mean" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">mean</th>
+<th id="n" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">n</th>
+<th id="std_err" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">std_err</th>
+<th id=".config" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">.config</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd gt_group_heading_row">
+<td colspan="6" id="logistic" class="gt_group_heading" data-quarto-table-cell-role="th" scope="colgroup">logistic</td>
+</tr>
+<tr class="even gt_row_group_first">
+<td class="gt_row gt_left" headers="logistic  .metric">accuracy</td>
+<td class="gt_row gt_left" headers="logistic  .estimator">binary</td>
+<td class="gt_row gt_right" headers="logistic  mean">0.669</td>
+<td class="gt_row gt_right" headers="logistic  n">50</td>
+<td class="gt_row gt_right" headers="logistic  std_err">0.0034982</td>
+<td class="gt_row gt_left" headers="logistic  .config">Preprocessor1_Model1</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="logistic  .metric">roc_auc</td>
+<td class="gt_row gt_left" headers="logistic  .estimator">binary</td>
+<td class="gt_row gt_right" headers="logistic  mean">0.732</td>
+<td class="gt_row gt_right" headers="logistic  n">50</td>
+<td class="gt_row gt_right" headers="logistic  std_err">0.0040941</td>
+<td class="gt_row gt_left" headers="logistic  .config">Preprocessor1_Model1</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</figure>
 </div>
 </div>
 </section>
 <section id="summary-of-progresspotential-issues" class="level2">
 <h2 class="anchored" data-anchor-id="summary-of-progresspotential-issues">Summary of Progress/Potential Issues</h2>
-<p>Since progress memo 1 I have decided to do things differently to work with the bimodal distribution of my original target variable and the amount of missingness in my data. The main difference is that I have decided to create a new target variable that measures the satisfaction of apartment owners, and I will then use the other variables to predict overall satisfaction. Another issue I had to deal with was missingness. Unfortunately multiple of my predictor variables had many missing values. I suspect they were added as variables because a few apartments had data for them, but if most apartments don’t have data points for those variables, they can’t be useful predictors, which is why I removed most of them from my recipes. As an example, one variable is about the type of energy certificate the apartment has but the most frequent value was “none” meaning that apartment didn’t have an energy certificate. This means having an energy certificate can’t be that useful of a predictor if the majority of apartments either don’t have a certificate or have a missing value for it.</p>
+<p>Overall I have two recipes done and three model fits created. I have a null model and two logistic models that are being assessed using accuracy and <code>roc_auc</code>. Since progress memo 1 I have decided to do things differently to work with the bimodal distribution of my original target variable and the amount of missingness in my data. The main difference is that I have decided to create a new target variable that measures the satisfaction of apartment owners, and I will then use the other variables to predict overall satisfaction. Another issue I had to deal with was missingness. Unfortunately multiple of my predictor variables had many missing values. I suspect they were added as variables because a few apartments had data for them, but if most apartments don’t have data points for those variables, they can’t be useful predictors, which is why I removed most of them from my recipes. As an example, one variable is about the type of energy certificate the apartment has but the most frequent value was “none” meaning that apartment didn’t have an energy certificate. This means having an energy certificate can’t be that useful of a predictor if the majority of apartments either don’t have a certificate or have a missing value for it. I am interested to see how recoding two variables to have levels that say “unknown” will allow me to make conclusions about the data. I’m not sure how location of the apartment in the building, which is what these two variables correspond to, will affect apartment-owner satisfaction but I’m interested to see if missingness can actually help prediction. A otential issue going forward could be creating another recipe that takes a different approach to addressing missingness, since I’m not sure what those steps would result in as of now. Otherwise I have a solid plan of what I want to do: create the tree recipes, create the other models, tuning the models I said I was going to tune, and assess everything as per the instructions. I might do more of an EDA other than just a bargraph for my target variable and I also might make separate results folders to better organize all the fits because eventually I will have a lot.</p>
 </section>
 
 

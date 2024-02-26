@@ -32,12 +32,11 @@ citation-location: margin
 
 My prediction problem was going to be to use various types of data on apartments in Slovakia, ranging from data on the actual construction of the building to the environment around it, to predict the overall quality of living of the people living in those properties. At first, quality of living was a numerical variable corresponding to an index but because of this I could change it to a factor variable with different ordered levels to make it a classification problem. However, since there were still many levels I decided to calculate a new target variable: `satisfaction`. It has two levels, "satisfied" and "unsatisfied". I will explain how I calculated it further on. I think it's very useful to uncover relationships between the satisfaction and every available aspect of a building because in order for a building to be marketable people have to gain some benefit from living there. A model to predict something as useful as satisfaction would be helpful to understand the value of a building based on its various metrics and categorical data.
 
-
 ## Data source
 
-"Real Estate Dataset"^[Kakas, Arnold. (2023, Nov.). *Real Estate Dataset*. Kaggle. --- [https://www.kaggle.com/datasets/arnoldkakas/real-estate-dataset/data](https://www.kaggle.com/datasets/arnoldkakas/real-estate-dataset/data)] The data comes from scraping advertising data from the [nehnutelnosti.sk](nehnutelnosti.sk) website as of November 2023
+My dataset is called "Real Estate Dataset"^[Kakas, Arnold. (2023, Nov.). *Real Estate Dataset*. Kaggle. --- [https://www.kaggle.com/datasets/arnoldkakas/real-estate-dataset/data](https://www.kaggle.com/datasets/arnoldkakas/real-estate-dataset/data)] and was downloaded from Kaggle. The data comes from scraping advertising data from the [nehnutelnosti.sk](nehnutelnosti.sk) website as of November 2023.
 
-## Data quality & complexity check
+## Data Overview
 
 ```{r}
 #| echo: false
@@ -54,8 +53,6 @@ library(gt)
 load(here("data/clean_qol.rda"))
 load(here("results/estate_split.rda"))
 ```
-
-## Data Overview & Quality Check
 
 ### Original Data
 This dataset has 27 variables and 15,403 observations. Out of the 27 variables, 7 are character variables: `name_nsi`, `condition`, `certificate`, `construction_type`, `orientation`, `type` and `district`. `name_nsi` is the name of the apartment, `condition` is whether it is in its original condition or has gone through some sort of renovation, `certificate` is what energy certificate the building has, and `construction_type` is the material the apartment is made out of, like brick or paneling. `orientation` is what geographical direction it faces, `type` is what type of apartment it is in terms of the number of bedrooms (ex: 3-bedroom) and `district` is the name of the district in Slovakia it is in. The other 20 are numerical, and consist of `price`, `index`, `environment`, `quality_of_living`, `safety`, `transport`, `services`, `relax`, `area`, `energy_costs`, `provision`, `year_built`, `last_reconstruction`, `total_floors`, `floor`, `lift`, `balkonies`, `loggia`, `cellar`, and `rooms`. The `price` variable is the price of the listing in euros, `index` is a number on an Index of Living from 0-10, according to Kaggle this was “calculated by the Slovak startup City Performer” using the values of these 6 variables in the dataset: `environment`, `quality_of_living`, `safety`, `transport`, `services`, and `relax`. Each value of these 6 variables represents an index rating for just that variable. The `area` variable is the area in square meters of the apartment, `energy_costs` is the energy costs in euros for that apartment, `provision` is a binary variable with a value of 1 if the provision of the agency is included in the price, and if not is 0. The `year_built` is the year it was built, `last_reconstruction` is the most recent year any sort of construction work was done on it, `floor` is the floor of the building the apartment is on, `lift` and `cellar` are both binary indicator variables like `provision` is to show whether or not the building has a lift or a cellar. The rest of the variables are features, and the value of each is the number of features each individual apartment or building has. 
@@ -119,12 +116,12 @@ The basic recipe for the forest models is planned to do the same things as the e
 I might experiment in the future with another recipe that perhaps mutates more variables or adds interaction terms so I don't need to remove as many of them as I currently have, but for this progress memo the goal was to stay a bit on the safer side with recipes. It also might be interesting to do what I did for `total_floors` and `floors` for some of the other variables with missingness. Maybe it could help create better models?
 
 #### Model Types
-Since this is a classification problem, the models I will be creating will be: null, baseline, logistic, elastic net, nearest neighbors, random forest, and boosted tree. I have already created the first three models and will eventually tune the others. The null and the baseline models are currently using the basic recipe and the logistic model is currently using the main recipe for non-tree models, to make sure that recipe is in fact working. For the final project, I believe every model needs to be fit on both the basic recipe and the main recipe, which I will do. Each model type will have its own R script that will include the model specifications, workflows, and fits for all models under that type category.
+Since this is a classification problem, the models I will be creating will be: null, logistic, elastic net, nearest neighbors, random forest, and boosted tree. I have already created the first three models and will eventually tune the others. The null model is currently using the basic recipe and then there are two logistic models currently using the basic recipe and the main recipe for non-tree models. For the final project, I believe every model needs to be fit on both the basic recipe and the main recipe, which I will do for the future models as well. Each model type has its own R script that will include the model specifications, workflows, and fits for all models under that type category.
 
 ## Model Analysis
 ```{r}
-#| label: tbl-metrics
-#| fig.cap: Assessment metrics for null, baseline, and logistic models
+#| label: tbl-metrics-basic
+#| tbl-cap: Assessment metrics for null and logistic models
 #| message: false
 #| echo: false
 
@@ -134,20 +131,46 @@ metrics |>
   relocate(model) |>
   group_by(model) |> 
   gt() |> 
-  tab_header(title = md("**Assessment Metrics**")) |> 
+  tab_header(title = md("**Assessment Metrics**"), 
+             subtitle = "Null and Logistic Models - Basic Recipe") |> 
   fmt_number(
     columns = mean, 
     decimals = 3) |> 
   fmt_number(
     columns = std_err, 
     decimals = 7) |> 
-  row_group_order(groups = c("null", "baseline", "logistic")) |> 
+  row_group_order(groups = c("null", "logistic")) |> 
   tab_options(row_group.background.color = "gray50")
-
 ```
+
+```{r}
+#| label: tbl-metrics-main
+#| tbl-cap: Assessment metrics logistic model on main recipe
+#| message: false
+#| echo: false
+
+
+log_metrics2 <- read_csv(here("results/log_metrics2.csv"))
+
+log_metrics2 |> 
+  relocate(model) |>
+  group_by(model) |> 
+  gt() |> 
+  tab_header(title = md("**Assessment Metrics**"), 
+             subtitle = "Logistic Model - Main Recipe") |> 
+  fmt_number(
+    columns = mean, 
+    decimals = 3) |> 
+  fmt_number(
+    columns = std_err, 
+    decimals = 7) |> 
+  row_group_order(groups = c("logistic")) |> 
+  tab_options(row_group.background.color = "gray50")
+```
+
 
 ## Summary of Progress/Potential Issues
 
-Since progress memo 1 I have decided to do things differently to work with the bimodal distribution of my original target variable and the amount of missingness in my data. The main difference is that I have decided to create a new target variable that measures the satisfaction of apartment owners, and I will then use the other variables to predict overall satisfaction. Another issue I had to deal with was missingness. Unfortunately multiple of my predictor variables had many missing values. I suspect they were added as variables because a few apartments had data for them, but if most apartments don’t have data points for those variables, they can’t be useful predictors, which is why I removed most of them from my recipes. As an example, one variable is about the type of energy certificate the apartment has but the most frequent value was “none” meaning that apartment didn’t have an energy certificate. This means having an energy certificate can’t be that useful of a predictor if the majority of apartments either don’t have a certificate or have a missing value for it. 
+Overall I have two recipes done and three model fits created. I have a null model and two logistic models that are being assessed using accuracy and `roc_auc`. Since progress memo 1 I have decided to do things differently to work with the bimodal distribution of my original target variable and the amount of missingness in my data. The main difference is that I have decided to create a new target variable that measures the satisfaction of apartment owners, and I will then use the other variables to predict overall satisfaction. Another issue I had to deal with was missingness. Unfortunately multiple of my predictor variables had many missing values. I suspect they were added as variables because a few apartments had data for them, but if most apartments don’t have data points for those variables, they can’t be useful predictors, which is why I removed most of them from my recipes. As an example, one variable is about the type of energy certificate the apartment has but the most frequent value was “none” meaning that apartment didn’t have an energy certificate. This means having an energy certificate can’t be that useful of a predictor if the majority of apartments either don’t have a certificate or have a missing value for it. I am interested to see how recoding two variables to have levels that say "unknown" will allow me to make conclusions about the data. I'm not sure how location of the apartment in the building, which is what these two variables correspond to, will affect apartment-owner satisfaction but I'm interested to see if missingness can actually help prediction. A otential issue going forward could be creating another recipe that takes a different approach to addressing missingness, since I'm not sure what those steps would result in as of now. Otherwise I have a solid plan of what I want to do: create the tree recipes, create the other models, tuning the models I said I was going to tune, and assess everything as per the instructions. I might do more of an EDA other than just a bargraph for my target variable and I also might make separate results folders to better organize all the fits because eventually I will have a lot. 
 
 
