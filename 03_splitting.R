@@ -16,8 +16,6 @@ realestate <- read_delim("data/Real_Estate_Dataset.csv",
 
 load(here("data/clean_qol.rda"))
 
-#transform data
-
 #set.seed
 set.seed(1234)
 
