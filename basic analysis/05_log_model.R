@@ -37,20 +37,3 @@ log_fit1 <- log_wflw |>
     control = control_resamples(save_workflow = TRUE))
 
 save(log_fit1, file = here("results/log_fit1.rda"))
-
-
-#logistic model - main recipe
-logistic_mod2 <- logistic_reg() |> 
-  set_engine("glm") |> 
-  set_mode("classification")
-
-log_wflw2 <- workflow() |> 
-  add_model(logistic_mod) |> 
-  add_recipe(main_recipe)
-
-log_fit2 <- log_wflw |> 
-  fit_resamples(
-    resamples = estate_folds, 
-    control = control_resamples(save_workflow = TRUE))
-
-save(log_fit2, file = here("results/log_fit2.rda"))
