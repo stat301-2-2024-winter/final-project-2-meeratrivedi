@@ -17,8 +17,7 @@ registerDoMC(cores = parallel::detectCores(logical = TRUE))
 load(here("results/estate_split.rda"))
 
 # load pre-processing/feature engineering/recipe
-load(here("results/basic_recipe.rda"))
-load(here("results/main_recipe.rda"))
+load(here("basic analysis/basic recipes/basic_recipe.rda"))
 
 set.seed(1234)
 
@@ -28,12 +27,12 @@ logistic_mod1 <- logistic_reg() |>
   set_mode("classification")
 
 log_wflw1 <- workflow() |> 
-  add_model(logistic_mod) |> 
+  add_model(logistic_mod1) |> 
   add_recipe(basic_recipe)
 
-log_fit1 <- log_wflw |> 
+log_fit1 <- log_wflw1 |> 
   fit_resamples(
     resamples = estate_folds, 
     control = control_resamples(save_workflow = TRUE))
 
-save(log_fit1, file = here("results/log_fit1.rda"))
+save(log_fit1, file = here("basic analysis/basic results/log_fit1.rda"))

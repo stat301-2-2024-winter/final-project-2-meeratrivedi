@@ -32,9 +32,24 @@ prep_basic <- prep(basic_recipe) |>
   bake(new_data = NULL) |> 
   view()
 
-save(basic_recipe, file = here("results/basic_recipe.rda"))
+save(basic_recipe, file = here("basic analysis/basic recipes/basic_recipe.rda"))
 
 #basic tree recipe - knn en rf btree
 
+basic_tree_recipe <- recipe(satisfaction ~ ., data = estate_train) |> 
+  step_rm(name_nsi, last_reconstruction, energy_costs, 
+          orientation, loggia, balkonies, construction_type, 
+          year_built, certificate, total_floors, floor, 
+          quality_of_living, index, condition, type, district) |>
+  step_impute_median(area) |> 
+  step_dummy(all_nominal_predictors(), one_hot = TRUE) |> 
+  step_zv(all_predictors()) |> 
+  step_center(all_predictors()) |> 
+  step_scale(all_predictors())
 
-#save(basic_tree_recipe, file = here("results/basic_tree_recipe.rda"))
+prep_basic_tree <- prep(basic_tree_recipe) |> 
+  bake(new_data = NULL) |> 
+  view()
+
+save(basic_tree_recipe, 
+     file = here("basic analysis/basic recipes/basic_tree_recipe.rda"))
