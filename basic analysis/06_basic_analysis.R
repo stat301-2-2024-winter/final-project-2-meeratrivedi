@@ -21,26 +21,36 @@ load(here("results/basic_recipe.rda"))
 load(here("results/main_recipe.rda"))
 
 #load fits
-load(here("results/null_fit.rda"))
-load(here("results/log_fit1.rda"))
-load(here("results/log_fit2.rda"))
+load(here("basic analysis/basic results/null_fit.rda"))
+load(here("basic analysis/basic results/log_fit1.rda"))
+load(here("basic analysis/basic results/tuned_rf1.rda"))
 
+rf_metrics1 <- tuned_rf |> 
+  show_best(metric = "roc_auc") |> 
+  arrange(.metric) |> 
+  slice_head(n = 1) |> 
+  mutate(model = "rf")
+#more area under the curve, closer to 1 the better
 
 null_metrics <- null_fit |> 
   collect_metrics() |> 
-  mutate(model = "null")
+  mutate(model = "null") |> 
+  filter(.metric == "roc_auc")
 
 log_metrics1 <- log_fit1 |> 
   collect_metrics() |> 
-  mutate(model = "logistic")
+  mutate(model = "logistic") |> 
+  filter(.metric == "roc_auc")
 
 metrics <- null_metrics |> 
-  bind_rows(log_metrics1)
+  bind_rows(log_metrics1) |> 
+  bind_rows(rf_metrics1)
 
-write_csv(metrics, here("results/metrics.csv"))
+write_csv(metrics, here("basic analysis/basic results/metrics.csv"))
 
 #basic recipe assessment
 metrics |> 
+  select(.metric, .estimator, mean, n, std_err, model) |> 
   relocate(model) |>
   group_by(model) |> 
   gt() |> 
@@ -49,8 +59,5 @@ metrics |>
   fmt_number(
     columns = mean, 
     decimals = 3) |> 
-  fmt_number(
-    columns = std_err, 
-    decimals = 7) |> 
-  row_group_order(groups = c("null", "logistic")) |> 
+  row_group_order(groups = c("null", "logistic", "rf")) |> 
   tab_options(row_group.background.color = "gray50")

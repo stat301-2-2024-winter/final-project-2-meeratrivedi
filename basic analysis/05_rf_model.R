@@ -49,6 +49,3 @@ tuned_rf <- tune_grid(rf_wflw1,
 
 save(tuned_rf, file = here("basic analysis/basic results/tuned_rf1.rda"))
 
-tuned_rf
-
-show_best(tuned_rf, metric = "accuracy")
