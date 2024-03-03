@@ -1,4 +1,5 @@
-.metric,.estimator,mean,n,std_err,.config,model,mtry,min_n
-roc_auc,binary,0.5,15,0,Preprocessor1_Model1,null,NA,NA
-roc_auc,binary,0.7323936599752249,50,0.004094139542094436,Preprocessor1_Model1,logistic,NA,NA
-roc_auc,binary,0.958401395605383,50,0.0014717477567888744,Preprocessor1_Model03,rf,6,2
+.metric,.estimator,mean,n,std_err,model
+roc_auc,binary,0.5,50,0,null
+roc_auc,binary,0.7323936599752249,50,0.004094139542094436,logistic
+roc_auc,binary,0.958401395605383,50,0.0014717477567888744,rf
+roc_auc,binary,0.814328488603125,50,0.0032959668857985153,knn

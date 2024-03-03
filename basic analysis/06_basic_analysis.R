@@ -18,19 +18,13 @@ load(here("results/estate_split.rda"))
 
 # load pre-processing/feature engineering/recipe
 load(here("results/basic_recipe.rda"))
-load(here("results/main_recipe.rda"))
 
 #load fits
 load(here("basic analysis/basic results/null_fit.rda"))
 load(here("basic analysis/basic results/log_fit1.rda"))
 load(here("basic analysis/basic results/tuned_rf1.rda"))
+load(here("basic analysis/basic results/tuned_knn1.rda"))
 
-rf_metrics1 <- tuned_rf |> 
-  show_best(metric = "roc_auc") |> 
-  arrange(.metric) |> 
-  slice_head(n = 1) |> 
-  mutate(model = "rf")
-#more area under the curve, closer to 1 the better
 
 null_metrics <- null_fit |> 
   collect_metrics() |> 
@@ -42,9 +36,25 @@ log_metrics1 <- log_fit1 |>
   mutate(model = "logistic") |> 
   filter(.metric == "roc_auc")
 
+rf_metrics1 <- tuned_rf |> 
+  show_best(metric = "roc_auc") |> 
+  arrange(.metric) |> 
+  slice_head(n = 1) |> 
+  mutate(model = "rf")
+#more area under the curve, closer to 1 the better
+
+knn_metrics1 <- tuned_knn |> 
+  show_best(metric = "roc_auc") |> 
+  arrange(.metric) |> 
+  slice_head(n = 1) |> 
+  mutate(model = "knn")
+
 metrics <- null_metrics |> 
   bind_rows(log_metrics1) |> 
-  bind_rows(rf_metrics1)
+  bind_rows(rf_metrics1) |> 
+  bind_rows(knn_metrics1) |> 
+  select(.metric, .estimator, mean, n, std_err, model) 
+
 
 write_csv(metrics, here("basic analysis/basic results/metrics.csv"))
 
@@ -53,11 +63,20 @@ metrics |>
   select(.metric, .estimator, mean, n, std_err, model) |> 
   relocate(model) |>
   group_by(model) |> 
+  mutate(.metric = "ROC AUC") |> 
   gt() |> 
   tab_header(title = md("**Assessment Metrics**"), 
-             subtitle = "Null and Logistic Models - Basic Recipe") |> 
+             subtitle = "All Models - Basic Recipe") |>
+  cols_label(.metric = md("Assessment Metric"), 
+             .estimator = md("Estimator"), 
+             std_err = md("Standard Error"), 
+             mean = md("Mean"), 
+             n = md("Number of Models")) |> 
   fmt_number(
     columns = mean, 
     decimals = 3) |> 
-  row_group_order(groups = c("null", "logistic", "rf")) |> 
-  tab_options(row_group.background.color = "gray50")
+  fmt_number(
+    columns = std_err, 
+    decimals = 5) |> 
+  row_group_order(groups = c("null", "logistic", "rf", "knn")) |> 
+  tab_options(row_group.background.color = "grey50")
