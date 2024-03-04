@@ -37,11 +37,14 @@ btree_wflw1 <- workflow() |>
 #hyperparameter tuning values ----
 btree_params1 <- extract_parameter_set_dials(btree_mod1) |> 
   update(mtry = mtry(range = c(1, 11)), 
-         learn_rate = learn_rate(range = c()))
+         learn_rate = learn_rate(range = c(-5,-0.2)))
 
-btree_grid <- grid_regular(btree_params, levels = 5)
+btree_grid1 <- grid_regular(btree_params1, levels = 5)
 
 #btree fit
+tuned_bt1 <- tune_grid(btree_wflw1, 
+                        resamples = estate_folds,
+                        grid = btree_grid1, 
+                        control = control_grid(save_workflow = TRUE))
 
-
-#save(btree_fit, file = here("results/btree_fit.rda"))
+save(tuned_bt1, file = here("basic analysis/basic results/tuned_bt1.rda"))

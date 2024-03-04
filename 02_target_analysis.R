@@ -91,4 +91,20 @@ estate_train |>
         axis.title.x = element_text(hjust = 0.5, size = 11, face = "bold"), 
         axis.title.y = element_text(hjust = 0.5, size = 11, face = "bold"))
 
+#80% of Training Dataset
+training_sample <- estate_train |> 
+  slice_sample(prop = 0.8)
+
+training_sample |> 
+  ggplot(aes(x = satisfaction, fill = satisfaction))+
+  geom_bar(show.legend = FALSE)+
+  scale_fill_brewer(palette = "Pastel2")+
+  theme_minimal()+
+  labs(x = "Quality of Living", y = "Number of Apartments", 
+       title = "Satisfaction with Apartments in Slovakia") +
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"), 
+        axis.text.x = element_text(hjust = 0.5, size = 10), 
+        axis.title.x = element_text(hjust = 0.5, size = 11, face = "bold"), 
+        axis.title.y = element_text(hjust = 0.5, size = 11, face = "bold"))
+
 
