@@ -107,4 +107,3 @@ training_sample |>
         axis.title.x = element_text(hjust = 0.5, size = 11, face = "bold"), 
         axis.title.y = element_text(hjust = 0.5, size = 11, face = "bold"))
 
-

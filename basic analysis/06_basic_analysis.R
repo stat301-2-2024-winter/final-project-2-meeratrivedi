@@ -45,7 +45,7 @@ rf_metrics1 <- tuned_rf |>
   mutate(model = "rf")
 #more area under the curve, closer to 1 the better
 
-knn_metrics1 <- tuned_knn |> 
+knn_metrics1 <- tuned_knn1 |> 
   show_best(metric = "roc_auc") |> 
   arrange(.metric) |> 
   slice_head(n = 1) |> 
