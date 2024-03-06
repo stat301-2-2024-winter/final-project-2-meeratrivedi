@@ -28,6 +28,8 @@ load(here("main analysis/main results/tuned_bt2.rda"))
 load(here("main analysis/main results/tuned_en2.rda"))
 
 load(here("basic analysis/basic results/metrics.rda"))
+load(here("interact analysis/interact results/metrics3.rda"))
+
 
 #main recipe assessment
 log_metrics2 <- log_fit2 |> 
@@ -92,14 +94,15 @@ metrics2 |>
 #comparison table
 metrics |> 
   mutate(recipe = "basic") |> 
-  bind_rows(metrics2 |> mutate(recipe = "main")) |> 
+  bind_rows(metrics2 |> mutate(recipe = "main")) |>
+  bind_rows(metrics3 |> mutate(recipe = "interactions")) |> 
   select(mean, n, std_err, model, recipe) |> 
   relocate(recipe, model) |>
   group_by(model) |> 
   arrange(desc(mean)) |> 
   gt() |> 
   tab_header(title = md("**Assessment Metrics**"), 
-             subtitle = "All Models - Basic Recipe") |>
+             subtitle = "All Models - All Recipes") |>
   cols_label(recipe = md("Recipe"), 
     std_err = md("Standard Error"), 
     mean = md("Mean ROC AUC"), 
@@ -117,6 +120,9 @@ metrics |>
                    cell_fill(color = "turquoise", alpha = 0.5)) |> 
   tab_style_by_grp(column = recipe, 
                    fn = min, 
-                   cell_fill(color = "lightseagreen", alpha = 0.5))
+                   cell_fill(color = "lightseagreen", alpha = 0.5)) |> 
+  tab_style_by_grp(column = recipe, 
+                   fn = min, 
+                   cell_fill(color = "cyan3", alpha = 0.5))
 
   
