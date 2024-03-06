@@ -68,11 +68,9 @@ metrics <- null_metrics |>
   bind_rows(rf_metrics1) |> 
   bind_rows(knn_metrics1) |> 
   bind_rows(bt_metrics1) |> 
-  bind_rows(en_metrics1) |> 
-  select(.metric, .estimator, mean, n, std_err, model) 
+  bind_rows(en_metrics1)
 
-
-write_csv(metrics, here("basic analysis/basic results/metrics.csv"))
+save(metrics, file = here("basic analysis/basic results/metrics.rda"))
 
 #basic recipe assessment
 metrics |> 
