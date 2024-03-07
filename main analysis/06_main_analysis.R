@@ -114,15 +114,4 @@ metrics |>
     columns = std_err, 
     decimals = 5) |> 
   row_group_order(groups = c("rf", "bt", "knn", "en", "logistic")) |> 
-  tab_options(row_group.background.color = "grey50") |> 
-  tab_style_by_grp(column = recipe, 
-                   fn = max, 
-                   cell_fill(color = "turquoise", alpha = 0.5)) |> 
-  tab_style_by_grp(column = recipe, 
-                   fn = min, 
-                   cell_fill(color = "lightseagreen", alpha = 0.5)) |> 
-  tab_style_by_grp(column = recipe, 
-                   fn = min, 
-                   cell_fill(color = "cyan3", alpha = 0.5))
-
-  
+  tab_options(row_group.background.color = "grey50")
