@@ -19,12 +19,11 @@ load(here("results/estate_split.rda"))
 load(here("main analysis/main recipes/main_recipe.rda"))
 load(here("main analysis/main recipes/main_tree_recipe.rda"))
 
-
-
 interact_recipe <- main_recipe |> 
   step_interact(~price:environment) |> 
   step_interact(~price:relax) |> 
   step_interact(~price:services) |> 
+  step_interact(~services:transport) |> 
   step_interact(~environment:safety)
 
 prep_interact <- prep(interact_recipe) |> 
@@ -37,6 +36,7 @@ interact_tree_recipe <- main_tree_recipe |>
   step_interact(~price:environment) |> 
   step_interact(~price:relax) |> 
   step_interact(~price:services) |> 
+  step_interact(~services:transport) |> 
   step_interact(~environment:safety)
 
 prep_interact_tree <- prep(interact_tree_recipe) |> 

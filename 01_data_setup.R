@@ -64,7 +64,8 @@ clean_qol|>
     ), 
     floor = factor(floor))|> 
   count(floor) |> 
-  janitor::adorn_percentages(denominator = "col")
+  janitor::adorn_percentages(denominator = "col") |> 
+  view()
 
 #quality of living w ordered levels - not relevant anymore
 clean_qol_lvls <- clean_qol |> 
@@ -78,4 +79,12 @@ clean_qol_lvls <- clean_qol |>
                                           "91-99" = c("91", "92", "93", "94", "95", "96", '97', '98', "99")))
 
 qol_levels = c("4-10", "27-51", "53-61", "62-69", "71-79", "81-89", "91-99")
+
+#80% of Training Dataset
+training_sample <- estate_train |> 
+  slice_sample(prop = 0.8)
+
+save(training_sample, file = "results/training_sample.rda")
+
+
 

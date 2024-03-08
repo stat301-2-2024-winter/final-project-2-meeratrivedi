@@ -91,9 +91,8 @@ estate_train |>
         axis.title.x = element_text(hjust = 0.5, size = 11, face = "bold"), 
         axis.title.y = element_text(hjust = 0.5, size = 11, face = "bold"))
 
-#80% of Training Dataset
-training_sample <- estate_train |> 
-  slice_sample(prop = 0.8)
+load(here("results/training_sample.rda"))
+
 
 training_sample |> 
   ggplot(aes(x = satisfaction, fill = satisfaction))+
@@ -106,33 +105,3 @@ training_sample |>
         axis.text.x = element_text(hjust = 0.5, size = 10), 
         axis.title.x = element_text(hjust = 0.5, size = 11, face = "bold"), 
         axis.title.y = element_text(hjust = 0.5, size = 11, face = "bold"))
-
-#interaction between price and environment
-training_sample |> 
-  ggplot(aes(x = satisfaction, y = price))+
-  geom_col(show.legend = FALSE)+
-  facet_wrap(~environment)
-
-
-#interaction between price and relax
-training_sample |> 
-  ggplot(aes(x = satisfaction, y = price))+
-  geom_col(show.legend = FALSE)+
-  facet_wrap(~relax)
-
-#interaction between price and services
-training_sample |> 
-  ggplot(aes(x = satisfaction, y = price))+
-  geom_col(show.legend = FALSE)+
-  facet_wrap(~services)
-
-#interaction between price and area
-training_sample |> 
-  ggplot(aes(x = log10(price), y = log10(area)))+
-  geom_point()
-
-
-training_sample |> 
-  ggplot(aes(x = factor(environment), y = safety))+
-  geom_boxplot()
-
