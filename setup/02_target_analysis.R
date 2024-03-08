@@ -91,7 +91,7 @@ estate_train |>
         axis.title.x = element_text(hjust = 0.5, size = 11, face = "bold"), 
         axis.title.y = element_text(hjust = 0.5, size = 11, face = "bold"))
 
-load(here("results/training_sample.rda"))
+load(here("data/training_sample.rda"))
 
 
 training_sample |> 
@@ -105,3 +105,4 @@ training_sample |>
         axis.text.x = element_text(hjust = 0.5, size = 10), 
         axis.title.x = element_text(hjust = 0.5, size = 11, face = "bold"), 
         axis.title.y = element_text(hjust = 0.5, size = 11, face = "bold"))
+

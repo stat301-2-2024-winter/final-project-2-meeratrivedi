@@ -84,7 +84,7 @@ qol_levels = c("4-10", "27-51", "53-61", "62-69", "71-79", "81-89", "91-99")
 training_sample <- estate_train |> 
   slice_sample(prop = 0.8)
 
-save(training_sample, file = "results/training_sample.rda")
+save(training_sample, file = "data/training_sample.rda")
 
 
 

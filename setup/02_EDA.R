@@ -39,6 +39,7 @@ training_sample |>
 
 
 
+
 #interaction between price and relax ------
 training_sample |> 
   mutate(
@@ -60,6 +61,7 @@ training_sample |>
         axis.text.x = element_text(hjust = 0.5, size = 8), 
         axis.title.x = element_text(hjust = 0.5, size = 10, face = "bold"), 
         axis.title.y = element_text(hjust = 0.5, size = 10, face = "bold"))
+
 
 
 #interaction between price and services ------
@@ -87,6 +89,7 @@ training_sample |>
 
 
 
+
 #interaction between services and transport ------
 training_sample |> 
   mutate(
@@ -108,6 +111,7 @@ training_sample |>
         axis.text.x = element_text(hjust = 0.5, size = 8), 
         axis.title.x = element_text(hjust = 0.5, size = 10, face = "bold"), 
         axis.title.y = element_text(hjust = 0.5, size = 10, face = "bold"))
+
 
 
 
@@ -142,6 +146,7 @@ training_sample |>
 
 
 
+
 #interaction between price and area ------
 training_sample |> 
   mutate(
@@ -163,4 +168,5 @@ training_sample |>
         axis.text.x = element_text(hjust = 0.5, size = 8), 
         axis.title.x = element_text(hjust = 0.5, size = 10, face = "bold"), 
         axis.title.y = element_text(hjust = 0.5, size = 10, face = "bold"))
+
 

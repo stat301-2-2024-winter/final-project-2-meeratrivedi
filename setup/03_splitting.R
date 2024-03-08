@@ -31,5 +31,5 @@ estate_test <- testing(estate_split)
 estate_folds <- vfold_cv(estate_train, v = 10, repeats = 5,
                      strata = satisfaction)
 
-save(estate_train, estate_test, estate_folds, file = here("results/estate_split.rda"))
+save(estate_train, estate_test, estate_folds, file = here("data/estate_split.rda"))
 
