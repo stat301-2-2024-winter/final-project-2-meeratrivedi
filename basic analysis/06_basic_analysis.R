@@ -14,10 +14,10 @@ library(doMC)
 registerDoMC(cores = parallel::detectCores(logical = TRUE))
 
 # load training data
-load(here("results/estate_split.rda"))
+load(here("data/estate_split.rda"))
 
 # load pre-processing/feature engineering/recipe
-load(here("results/basic_recipe.rda"))
+load(here("basic analysis/basic recipes/basic_recipe.rda"))
 
 #load fits
 load(here("basic analysis/basic results/null_fit.rda"))

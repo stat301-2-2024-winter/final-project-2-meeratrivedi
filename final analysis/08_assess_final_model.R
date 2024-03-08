@@ -6,21 +6,26 @@ library(tidyverse)
 library(tidymodels)
 library(here)
 library(doMC)
+library(gt)
 
 # handle common conflicts
 tidymodels_prefer()
 
 load(here("basic analysis/basic results/tuned_rf1.rda"))
-load(here("results/best_fit_rf.rda"))
-load(here("results/estate_split.rda"))
+load(here("final analysis/results/best_fit_rf.rda"))
+load(here("data/estate_split.rda"))
 
 pred_rf <- estate_test |> 
   select(satisfaction) |> 
   bind_cols(predict(best_fit_rf, estate_test)) |> 
   rename(rf_pred = .pred_class)
 
+save(pred_rf, file = "final analysis/results/pred_rf.rda")
+
 pred_rf |> 
-  accuracy(satisfaction, rf_pred) 
+  accuracy(satisfaction, rf_pred) |>
+  gt()
+  
 
 #roc_auc
 pred_class <- predict(best_fit_rf, estate_test, type = "class")

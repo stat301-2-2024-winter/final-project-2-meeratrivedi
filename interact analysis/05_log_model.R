@@ -14,7 +14,7 @@ library(doMC)
 registerDoMC(cores = parallel::detectCores(logical = TRUE))
 
 # load training data
-load(here("results/estate_split.rda"))
+load(here("data/estate_split.rda"))
 
 # load pre-processing/feature engineering/recipe
 load(here("interact analysis/interact recipes/interact_recipe.rda"))

@@ -11,7 +11,7 @@ library(doMC)
 tidymodels_prefer()
 
 load(here("basic analysis/basic results/tuned_rf1.rda"))
-load(here("results/estate_split.rda"))
+load(here("data/estate_split.rda"))
 
 rf_wflw4 <- tuned_rf |> 
   extract_workflow(tuned_rf) |> 
@@ -19,4 +19,4 @@ rf_wflw4 <- tuned_rf |>
 
 best_fit_rf <- fit(rf_wflw4, data = estate_train)
 
-save(best_fit_rf, file = here("results/best_fit_rf.rda"))
+save(best_fit_rf, file = here("final analysis/results/best_fit_rf.rda"))

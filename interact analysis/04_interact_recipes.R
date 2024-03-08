@@ -11,7 +11,7 @@ tidymodels_prefer()
 
 
 #load data
-load(here("results/estate_split.rda"))
+load(here("data/estate_split.rda"))
 
 #null: remove all the missing variables and impute area
 #use logistic reg w the basic recipe
