@@ -10,6 +10,9 @@ library(janitor)
 
 
 #load data
+realestate <- read_delim("data/raw/Real_Estate_Dataset.csv", 
+                         delim = ";", escape_double = FALSE, trim_ws = TRUE) |> 
+  clean_names()
 load(here("data/clean_qol.rda"))
 load(here("results/estate_split.rda"))
 
@@ -51,6 +54,9 @@ realestate |>
   theme_minimal()+
   labs(title = "Density Plot of Quality of Living", x = "Quality of Living", y = NULL)+
   theme(plot.title = element_text(hjust = 0.5, size = 15, face = "bold"))
+
+ggsave("setup/figures/quality_of_living.png")
+
 
 #barplot
 clean_qol |> 

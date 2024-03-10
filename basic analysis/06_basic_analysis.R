@@ -74,27 +74,22 @@ save(metrics, file = here("basic analysis/basic results/metrics.rda"))
 
 #basic recipe assessment
 metrics |> 
-  select(.estimator, mean, n, std_err, model) |> 
+  select(mean, n, std_err, model) |> 
   relocate(model) |>
   arrange(desc(mean)) |> 
-  #group_by(model) |> 
- # mutate(.metric = "ROC AUC") |> 
   gt() |> 
   tab_header(title = md("**Assessment Metrics**"), 
              subtitle = "All Models - Basic Recipe") |>
-  cols_label(#.metric = md("Assessment Metric"), 
-             .estimator = md("Estimator"), 
-             std_err = md("Standard Error"), 
-             mean = md("Mean ROC AUC"), 
-             n = md("Number of Models")) |> 
+  cols_label(std_err = md("Standard Error"), 
+      mean = md("Mean ROC AUC"), 
+      n = md("Number of Models"), 
+      model = md("Model Type")) |> 
   fmt_number(
     columns = mean, 
     decimals = 3) |> 
   fmt_number(
     columns = std_err, 
     decimals = 5) 
-  #row_group_order(groups = c("null", "logistic", "rf", "knn", "bt", "en")) |> 
-  #tab_options(row_group.background.color = "grey50")
 
 select_best(tuned_rf, metric = "roc_auc") |> 
   select(-.config) |> 

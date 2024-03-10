@@ -65,23 +65,22 @@ metrics3 <- log_metrics3 |>
 save(metrics3, file = here("interact analysis/interact results/metrics3.rda"))
 
 metrics3 |> 
-  select(.estimator, mean, n, std_err, model) |> 
+  select(mean, n, std_err, model) |> 
   arrange(desc(mean)) |> 
   relocate(model) |> 
   gt() |> 
   tab_header(title = md("**Assessment Metrics**"), 
              subtitle = "All Models - Interaction Recipe") |>
-  cols_label(.estimator = md("Estimator"), 
-             std_err = md("Standard Error"), 
+  cols_label(std_err = md("Standard Error"), 
              mean = md("Mean ROC AUC"), 
-             n = md("Number of Models")) |> 
+             n = md("Number of Models"), 
+             model = md("Model Type")) |> 
   fmt_number(
     columns = mean, 
     decimals = 3) |> 
   fmt_number(
     columns = std_err, 
     decimals = 7) 
-#row_group_order(groups = c("logistic")) |> 
-#tab_options(row_group.background.color = "gray50")
+
 
 

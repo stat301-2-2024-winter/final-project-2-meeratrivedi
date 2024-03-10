@@ -31,7 +31,7 @@ citation-location: margin
 ## Introduction
 
 #### Data Source
-My dataset is called "Real Estate Dataset"^[Kakas, Arnold. (2023, Nov.). *Real Estate Dataset*. Kaggle. --- [https://www.kaggle.com/datasets/arnoldkakas/real-estate-dataset/data](https://www.kaggle.com/datasets/arnoldkakas/real-estate-dataset/data)] and has been downloaded from Kaggle, on which it is described as a dataset that explores “spatial dynamics, price, and quality of apartments in Slovakia”. The data comes from scraping advertising data from the [nehnutelnosti.sk](nehnutelnosti.sk) website as of November 2023, so this is fairly recent data, and only pertains to apartment listings. The Nehnutelnosti website has real estate listings and provides services to help find available properties in Slovakia. Each observation refers to an apartment listing and the variables measured about each listing range from costs, to dimensions, to features, to the safety and environment around the apartment’s building. It was posted to Kaggle by Arnold Kakas, who notes that he has intentionally left the dataset completely raw for the purpose of people using it to learn data cleaning, data visualization, and training predictive models, which is the purpose of this project. 
+My dataset is called *Real Estate Dataset* and has been downloaded from Kaggle, on which it is described as a dataset that explores “spatial dynamics, price, and quality of apartments in Slovakia”. The data comes from scraping advertising data from the [nehnutelnosti.sk](nehnutelnosti.sk) website as of November 2023, so this is fairly recent data, and only pertains to apartment listings. The Nehnutelnosti website has real estate listings and provides services to help find available properties in Slovakia. Each observation refers to an apartment listing and the variables measured about each listing range from costs, to dimensions, to features, to the safety and environment around the apartment’s building. It was posted to Kaggle by Arnold Kakas, who notes that he has intentionally left the dataset completely raw for the purpose of people using it to learn data cleaning, data visualization, and training predictive models, which is the purpose of this project. 
 
 #### Prediction Problem
 My prediction problem was going to be to use various types of data on apartments in Slovakia, ranging from data on the actual construction of the building to the environment around it, to predict the overall quality of living of the people living in those properties. At first, quality of living was a numerical variable corresponding to an index but because of this I could change it to a factor variable with different ordered levels to make it a classification problem. However, since there were still many levels I decided to calculate a new target variable: satisfaction. It has two levels, “satisfied” and “unsatisfied”. I will explain how I calculated it further on. I think it’s very useful to uncover relationships between the satisfaction and every available aspect of a building because in order for a building to be marketable people have to gain some benefit from living there. The data I found happens to be from Slovakia which is interesting because I don't ever see that country represented in the media so it would be nice to learn a little more about it. The main reason I chose this data though is because I am a sophomore moving off campus next year so I have looked into apartments both by myself and with friends and finally signed my own lease. In the process I had to evaluate data on each building to decide what would be the best option for me. I also used to watch house flipping and renovating shows with my dad when I was younger all the time so I thought it might be fun to look into what would make a property successful, and a way to measure that is quality of living. A model to predict something as useful as satisfaction would be helpful to understand the value of a building based on its various metrics and categorical data.
@@ -60,9 +60,9 @@ This dataset has 27 variables and 15,403 observations. Out of the 27 variables, 
 The cleaned dataset has 28 variables and 4132 observations. All observations with missing values for the quality of living index variable were filtered out and the satisfaction variable was added. This is the dataset used for data splitting.
 
 #### Missingness
-Missingness is explored here using @fig-plot1. The variables that have missingness have missingness for almost all of their values so many of them will not be useful predictor variables.
+Missingness is explored here using @fig-plot1. The variables that have missingness have missingness for almost all of their values so many of them may not be useful predictor variables.
 
-![Slovakian Apartment Tenants Satisfaction](setup/figures/missingness.png){#fig-plot1}
+![Missingness](setup/figures/missingness_whole.png){#fig-plot1}
 
 
 #### Target Variable Analysis
@@ -79,10 +79,12 @@ The target variable was originally intended to be the quality of living as a fac
 The cleaned data was split using stratified splitting by the target variable, satisfaction, and using an 80%/20% split because the dataset is fairly large. This is a common split to use with large datasets.
 
 #### Resampling
-The data was resampling using V-fold cross validation with 10 folds and 5 repeats which will then result in 50 models per fit. 
+The data was resampling using V-fold cross validation with 10 folds and 5 repeats which will then result in 50 models per fit. I used this method of resampling instead of bootstrap resampling because that introduces the possibility of some observations in a bootstrap sample appearing multiple times with others not appearing at all. V-fold cross validation also has lower bias, and is more commonly used than bootstrap for big datasets. I used 10 fold and 5 repeats because they are common benchmark numbers and my computer could handle this much resampling. 
 
 #### Recipes
-Six recipes were used to create the models. Unfortunately multiple of my predictor variables had many missing values. They were added to the dataset as variables because a few apartments had data for them, but if most apartments don’t have data points for those variables, they can’t be useful predictors in a prediction model. As an example, one variable is about the type of energy certificate the apartment has but the most frequent value was “none” meaning that apartment didn’t have an energy certificate. This means having an energy certificate can’t be that useful of a predictor if the majority of apartments either don’t have a certificate or have a missing value for it. For simplicity, the basic recipes have all the variables with missing data removed, as well as the factor variables with many levels removed to avoid overfitting and overworking the computer. It imputes the area variable because there is only a small amount of missingness, so imputation would only be making up for a small percentage of the values. And it creates dummy variables for the nominal predictors, deals with zero variance, and centers and scales all predictors. 
+Six recipes were used to create the models. Unfortunately multiple of my predictor variables had many missing values. They were added to the dataset as variables because a few apartments had data for them, but if most apartments don’t have data points for those variables, they can’t be useful predictors in a prediction model. As an example, one variable is about the type of energy certificate the apartment has but the most frequent value was “none” meaning that apartment didn’t have an energy certificate. This means having an energy certificate can’t be that useful of a predictor if the majority of apartments either don’t have a certificate or have a missing value for it. 
+
+For simplicity, the basic recipes have all the variables with missing data removed, as well as the factor variables with many levels removed to avoid overfitting and overworking the computer. It imputes the area variable because there is only a small amount of missingness, so imputation would only be making up for a small percentage of the values. And it creates dummy variables for the nominal predictors, removes variables with zero variance, and centers and scales all predictors.
 
 The main recipe does all of this as well except it does not remove all the variables with missingness, instead for two variables: the total floors the building has and the floor number the apartment is on, it mutates them to be factors with three levels, one level replaces missing values with the word “unknown”, since seeing something is unknown could be interesting instead of removing those observations entirely. These differences will help evaluate if knowing something is unknown is actually useful in making predictions. These two variables were chosen specifically to be mutated because they have about half of their values missing so this unknown level would have a lot of values but not so much that the variables should be considered totally unusable in all recipes.
 
@@ -94,15 +96,16 @@ The basic, main, and interact recipes for the forest models do the same things a
 Since this is a classification problem, the models I will be creating will be: null, logistic, elastic net, nearest neighbors, random forest, and boosted tree. The null model only uses the basic recipe and the other models all use all three recipe types, so there are three different models of each type corresponding to each recipe type. The null, logistic, and elastic net models use parametric recipes and the nearest neighbors, random forest, and boosted tree use tree recipes. 
 
 #### Tuning Parameters
-The elastic net, nearest neighbors, random forest, and boosted tree models all use tuning. 
+The elastic net, nearest neighbors, random forest, and boosted tree models all use tuning.
 
-The elastic net model uses tuning for the mixture and penalty. The tuning ranges were updated so that the range of mixture is from 0 to 1 and the range of penalty is from -5 to 0.2. 
+The elastic net model uses tuning for the mixture and penalty. The tuning ranges were updated so that the range of mixture is from 0 to 1. The lower bound is 0 because that would indicate a fully ridge model and the upper bound is 1 because that would indicate a fully lasso model, so the range for a combination of the two model types should be in between. The range of penalty is from -5 to 0.2. These numbers are including on log10 transformation so the real bounds would be 10^-5 to 10^0.2. I updated these values to shift the range higher than the default to test values that would have more impact than if they were more centered around 0. 
 
-The nearest neighbor model uses tuning for the neighbors variable but it is my understanding that the default tuning range works well so there was no need to update it. 
+The nearest neighbor model uses tuning for the neighbors variable but it is my understanding that the default tuning range works well so there was no need to update it.
 
-The random forest model uses tuning for the min_n and mtry variables. Min_n is the minimum number of data points required for the node to be split further and mtry is a number of randomly drawn variables. Using tuning for these hyperparameters is helpful to improve the accuracy of these models. Since the default range of min_n works well there was no need to update it but the range of mtry was updated to 1 to 11 because we want the upper bound to be the maximum number of predictor variables that could be randomly drawn so the range includes all the predictor variables. Tuning was not used for the trees variable since we would want to use a fixed value: as high of a number as a computer could handle. Since 500 is the default and 1000 would be a lot, I used 750 since it is a benchmark value and the average between the two. 
+The random forest model uses tuning for the minimal node size and number of sample predictors. The minimal node size is the minimum number of data points required for the node to be split further. Using tuning for these hyperparameters is helpful to improve the accuracy of these models. Since the default range of minimal node size works well there was no need to update it but the range of number of sample predictors was updated to 1 to 11 because we want the upper bound to be the maximum number of predictor variables that could be randomly drawn so the range includes all the predictor variables. Tuning was not used for the trees variable since we would want to use a fixed value: as high of a number as a computer could handle. Since 500 is the default and 1000 would be a lot, I used 750 since it is a benchmark value and the average between the two. 
 
-The boosted tree model uses tuning for mtry, min_n, and learn_rate, which is a rate that the weak learners' predictions get scaled. The range of mtry was updated in the same way as for random forest and the range of min_n was not updated again. The range of learning rate was updated to (-5, -0.2) since the upper bound should be close to but less than 0 and lower ranges of learning rates are better when more trees are used to achieve the same level of fit. 
+The boosted tree model uses tuning for number of sample predictors, minimal node size, and learning rate, which is a rate that the weak learners' predictions get scaled. The range of mtry was updated in the same way as for random forest and the range of min_n was not updated again. The range of learning rate was updated to (-5, -0.2) since the upper bound should be close to but less than 0 and lower ranges of learning rates are better when more trees are used to achieve the same level of fit. These numbers are including on log10 transformation so the real bounds would be 10^-5 to 10^-0.2. 
+
 
 #### Assessment Metrics
 Since this is a classification problem, the assessment metric will be the area under the ROC curve. The ROC curve shows the relationship between the true positive rate, sensitivity, and false positive rate, 1 - specificity for different thresholds of classification. It is a good measure to use for binary classification, in this case between satisfied and unsatisfied. The area under the curve can be from 0 to 1, with a higher measure indicating better performance. This is a good metric to use when there is imbalance in a dataset between levels of the target variable and since there seem to be noticeably more people satisfied with their apartments than not, this could be considered an imbalance.  
@@ -118,27 +121,22 @@ First we can explore the 6 different model types fitted to the basic recipes. Th
 load(here("basic analysis/basic results/metrics.rda"))
 
 metrics |> 
-  select(.estimator, mean, n, std_err, model) |> 
+  select(mean, n, std_err, model) |> 
   relocate(model) |>
   arrange(desc(mean)) |> 
-  #group_by(model) |> 
- # mutate(.metric = "ROC AUC") |> 
   gt() |> 
   tab_header(title = md("**Assessment Metrics**"), 
              subtitle = "All Models - Basic Recipe") |>
-  cols_label(#.metric = md("Assessment Metric"), 
-             .estimator = md("Estimator"), 
-             std_err = md("Standard Error"), 
-             mean = md("Mean ROC AUC"), 
-             n = md("Number of Models")) |> 
+  cols_label(std_err = md("Standard Error"), 
+      mean = md("Mean ROC AUC"), 
+      n = md("Number of Models"), 
+      model = md("Model Type")) |> 
   fmt_number(
     columns = mean, 
     decimals = 3) |> 
   fmt_number(
     columns = std_err, 
     decimals = 5) 
-  #row_group_order(groups = c("null", "logistic", "rf", "knn", "bt", "en")) |> 
-  #tab_options(row_group.background.color = "grey50")
 
 ```
 
@@ -151,22 +149,22 @@ Next we can explore the 5 model types other than the null model on the main reci
 load(here("main analysis/main results/metrics2.rda"))
 
 metrics2 |> 
-  select(.estimator, mean, n, std_err, model) |> 
+  select(mean, n, std_err, model) |> 
   arrange(desc(mean)) |> 
   relocate(model) |> 
   gt() |> 
   tab_header(title = md("**Assessment Metrics**"), 
              subtitle = "All Models - Main Recipe") |>
-  cols_label(.estimator = md("Estimator"), 
-    std_err = md("Standard Error"), 
-    mean = md("Mean ROC AUC"), 
-    n = md("Number of Models")) |> 
+  cols_label(std_err = md("Standard Error"), 
+             mean = md("Mean ROC AUC"), 
+             n = md("Number of Models"), 
+             model = md("Model Type")) |> 
   fmt_number(
     columns = mean, 
     decimals = 3) |> 
   fmt_number(
     columns = std_err, 
-    decimals = 7) 
+    decimals = 7)
 ```
 
 #### Interaction Recipes
@@ -179,16 +177,16 @@ Finally we can explore the 5 models other than the null on the recipe that addit
 load(here("interact analysis/interact results/metrics3.rda"))
 
 metrics3 |> 
-  select(.estimator, mean, n, std_err, model) |> 
+  select(mean, n, std_err, model) |> 
   arrange(desc(mean)) |> 
   relocate(model) |> 
   gt() |> 
   tab_header(title = md("**Assessment Metrics**"), 
              subtitle = "All Models - Interaction Recipe") |>
-  cols_label(.estimator = md("Estimator"), 
-             std_err = md("Standard Error"), 
+  cols_label(std_err = md("Standard Error"), 
              mean = md("Mean ROC AUC"), 
-             n = md("Number of Models")) |> 
+             n = md("Number of Models"), 
+             model = md("Model Type")) |> 
   fmt_number(
     columns = mean, 
     decimals = 3) |> 
@@ -207,7 +205,7 @@ load(here("final analysis/best hyperparameters/bestparams_rf.rda"))
 load(here("final analysis/best hyperparameters/bestparams_knn.rda"))
 ```
 ##### Random Forest & Boosted Tree
-It was definitely a good choice to set the range of mtry to include the maximum number of predictor variables because that value ended up being the best hyperparameter for the feature engineered recipes for both the random forest and boosted tree models. A good learning rate with a high number of trees should be close to 0 so it makes sense that the best value is close to 0. 
+It was definitely a good choice to set the range of number of sample predictors to include the maximum number of predictor variables because that value ended up being the best hyperparameter for the feature engineered recipes for both the random forest and boosted tree models. A good learning rate with a high number of trees should be close to 0 so it makes sense that the best value is close to 0.
 ```{r}
 #| label: tbl-rf
 #| tbl-cap: Best hyperparameters for Random Forest models on all three tree recipes.
@@ -217,8 +215,8 @@ bestparams_rf |>
   tab_header(title = md("**Best Hyperparameters - Random Forest**"), 
              subtitle = "Random Forest - All Recipes") |>
   cols_label(recipe = md("Recipe"), 
-             mtry = md("mtry"), 
-             min_n = md("min_n")) 
+             mtry = md("Number of <br> Sample Predictors"), 
+             min_n = md("Minimal <br> Node Size")) 
 ```
 
 ```{r}
@@ -229,9 +227,9 @@ bestparams_bt |>
   tab_header(title = md("**Best Hyperparameters - Boosted Tree**"), 
              subtitle = "Boosted Tree - All Recipes") |>
   cols_label(recipe = md("Recipe"), 
-             mtry = md("mtry"), 
-             min_n = md("min_n"), 
-             learn_rate = md("Learning Rate")) |> 
+             mtry = md("Number of <br> Sample Predictors"), 
+             min_n = md("Minimal<br> Node Size"), 
+             learn_rate = md("Learning <br> Rate")) |> 
   fmt_number(
     columns = learn_rate, 
     decimals = 3)
@@ -239,7 +237,7 @@ bestparams_bt |>
 
 
 ##### Nearest Neighbors
-A higher number of neighbors leads to stronger predictions because more neighbors handle outliers better; however a very high number of neighbors computational efficiency can decrease so it makes sense that the best values of neighbors for making predictions are numbers much greater than 1 but not very high numbers. 
+A higher number of neighbors leads to stronger predictions because more neighbors handle outliers better; however a very high number of neighbors computational efficiency can decrease so it makes sense that the best values of neighbors for making predictions are numbers much greater than 1 but not very high numbers.
 ```{r}
 #| label: tbl-knn
 #| tbl-cap: Best hyperparameters for Nearest Neighbors models on all three tree recipes.
@@ -253,7 +251,8 @@ bestparams_knn |>
 ```
 ##### Elastic Net
 
-Explain
+It was really interesting that the best hyperparameter value for the mixture was consistently 0, meaning that a full ridge regression model indicated higher performance. The optimal value of penalty is on the higher end of the range from 10^-5 to 10^0.2. The optimal value being on the higher end of the range means that the model likely benefits from stronger regularization which controls overfitting and improves generalizability. 
+
 ```{r}
 #| label: tbl-en
 #| tbl-cap: Best hyperparameters for Elastic Net models on all three non-tree recipes.
@@ -308,7 +307,7 @@ metrics |>
 ## Final Model Analysis
 This section will assess the best model: the random forest on the basic recipe, in more detail. 
 
-#### ROC_AUC & Accuracy
+#### ROC AUC & Accuracy
 This table shows two performance measures for the winning model, the primary one: area under the ROC curve and something more intuitive, accuracy. Like the area under the curve we want the accuracy to be closer to 1 than 0 since 1 would mean 100% accuracy and we'd like to get as close to that as possible. The fact that the accuracy is 0.917 is quite impressive, and means that this model does not perform perfectly but performs very well. The same logic is used to assess the area under the curve and its high value of 0.969 is quite impressive as well. 
 
 ```{r}
@@ -319,10 +318,10 @@ load(here("final analysis/results/accuracy_roc_auc.rda"))
 
 #accuracy & roc_auc
 accuracy_roc_auc |> 
+  select(-.estimator) |> 
   gt() |> 
   tab_header(title = md("**ROC AUC & Accuracy**")) |>
   cols_label(.metric = md("Assessment Metric"), 
-             .estimator = md("Estimator"), 
              .estimate = md("Estimate")) |>
   fmt_number(
     columns = .estimate, 
@@ -336,16 +335,9 @@ Next, @fig-plot2 shows a visual representation of the ROC curve to better unders
 
 
 #### Confusion Matrix 
-To further explore this model we can use a confusion matrix to compare predictions to the accurate values. The top left is the number of correctly predicted satisfied apartment owners, 475, the bottom right is the number of correctly predicted unsatisfied apartment owners, 283. The bottom left is the number of wrongly predicted satisfied apartment owners as unsatisfied, only 12, and the top right is the number of wrongly predicted unsatisfied apartment owners as satisfied, 57. I am surprised that many more people who are unsatisfied with their apartment were incorrectly predicted than those who were really satisfied and wrongly predicted. 
+To further explore this model we can use a confusion matrix in @fig-bar2 to compare predictions to the accurate values. The top left is the number of correctly predicted satisfied apartment owners, 475, the bottom right is the number of correctly predicted unsatisfied apartment owners, 283. The bottom left is the number of wrongly predicted satisfied apartment owners as unsatisfied, only 12, and the top right is the number of wrongly predicted unsatisfied apartment owners as satisfied, 57. I am surprised that many more people who are unsatisfied with their apartment were incorrectly predicted than those who were really satisfied and wrongly predicted. 
 
-```{r}
-#| label: fig-confmat
-#| fig.cap: Confusion Matrix for the Winning Model
-load(here("final analysis/results/pred_rf.rda"))
-
-#confusion matrix
-conf_mat(pred_rf, satisfaction, rf_pred)
-```
+![Confusion Matrix for the Winning Model](final analysis/results/conf_mat.png){#fig-bar2}
 
 Overall, this model is clearly pretty successful in its predictions as primarily shown by our primary assessment metric of the area under the ROC curve. It is performing much better than any of the other models so it can be concluded that it is worth it to build a more complex predictive model. 
 
@@ -353,13 +345,13 @@ Overall, this model is clearly pretty successful in its predictions as primarily
 
 ## References
 
-Real Estate Dataset^[Kakas, Arnold. (2023, Nov.). *Real Estate Dataset*. Kaggle. --- [https://www.kaggle.com/datasets/arnoldkakas/real-estate-dataset/data](https://www.kaggle.com/datasets/arnoldkakas/real-estate-dataset/data)]
+[Kakas, Arnold. (2023, Nov.). *Real Estate Dataset*. Kaggle. --- [https://www.kaggle.com/datasets/arnoldkakas/real-estate-dataset/data](https://www.kaggle.com/datasets/arnoldkakas/real-estate-dataset/data)]
 
 ## Appendix - EDA 
 
 Shown here is the EDA used to justify the creation of interaction terms. Even though they did not end up being as useful as I initially believed, there were enough noticeable differences in relationships between certain variables that exploring these interaction terms was an interesting idea. 
 
-@fid-plot3 shows the relationship between price and satisfaction for three different ranges of environmental rankings, which represent tenants ranking their environment on a scale of 0-100 with higher numbers meaning higher happiness. As you can see, for the first third and last third of the rankings, more people are satisfied, but for the middle third more people are unsatisfied. This means the relationship between price and satisfaction differs by environment and that is why an interaction term was created. I used this same logic to evaluate @fig-plot4, @fig-plot5, and @fig-plot6. 
+@fig-plot3 shows the relationship between price and satisfaction for three different ranges of environmental rankings, which represent tenants ranking their environment on a scale of 0-100 with higher numbers meaning higher happiness. As you can see, for the first third and last third of the rankings, more people are satisfied, but for the middle third more people are unsatisfied. This means the relationship between price and satisfaction differs by environment and that is why an interaction term was created. I used this same logic to evaluate @fig-plot4, @fig-plot5, and @fig-plot6. 
 
 ![Price by Satisfaction by Environment](setup/figures/price_environment.png){#fig-plot3}
 
@@ -369,10 +361,14 @@ Shown here is the EDA used to justify the creation of interaction terms. Even th
 
 ![Services by Satisfaction by Transportation](setup/figures/services_transport.png){#fig-plot6}
 
-I used similar logic to evaluate this next bargraph since the distributions of safety by different ranges of environmental rankings are different for each level of satisfaction. (I used 5 equal ranges this time instead of three to see more specific smaller range levels).
+I used similar logic to evaluate @fig-plot7 since the distributions of safety by different ranges of environmental rankings are different for each level of satisfaction. (I used 5 equal ranges this time instead of three to see more specific smaller range levels).
 
 
-![Safety by Environment by Satisfaction](setup/figures/safety_environment.png){#fig-bar7}
+![Safety by Environment by Satisfaction](setup/figures/safety_environment.png){#fig-plot7}
+
 Finally I decided not to create an interaction term for price and area even though in theory the fact that they might interact made sense to me. When explored in @fig-plot8 the range of values of area went to over 4500 square meters but very few apartments were bigger than 1000 square meters so there may not have been enough really big apartments to see if that made a considerable difference in satisfaction, at least enough to create an interaction term. 
 
 ![Price by Satisfaction by Area Ranges](setup/figures/price_area.png){#fig-plot8}
+The density plot in @fig-plot9 shows the bimodal distribution of the quality of living variable in case one was curious and wanted to see what that looked like on the raw dataset. 
+
+![Quality of Living Distribution](setup/figures/quality_of_living.png){#fig-plot9}

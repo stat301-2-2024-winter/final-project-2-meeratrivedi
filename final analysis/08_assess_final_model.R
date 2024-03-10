@@ -49,10 +49,10 @@ accuracy_roc_auc <- roc_auc |>
 save(accuracy_roc_auc, file = here("final analysis/results/accuracy_roc_auc.rda"))
 
 accuracy_roc_auc |> 
+  select(-.estimator) |> 
   gt() |> 
   tab_header(title = md("**ROC AUC & Accuracy**")) |>
   cols_label(.metric = md("Assessment Metric"), 
-             .estimator = md("Estimator"), 
              .estimate = md("Estimate")) |>
   fmt_number(
     columns = .estimate, 
@@ -68,5 +68,13 @@ ggsave("final analysis/results/roc_curve.png")
 
 
 #confusion matrix
-conf_mat(pred_rf, satisfaction, rf_pred)
+conf_mat <- conf_mat(pred_rf, satisfaction, rf_pred)
 
+autoplot(conf_mat, type = "heatmap")+
+  labs(x = "Truth", y = "Prediction", 
+       title = "Confusion Matrix")+
+  theme(plot.title = element_text(hjust = 0.5, size = 10, face = "bold"), 
+        axis.title.x = element_text(hjust = 0.5, size = 10, face = "bold"), 
+        axis.title.y = element_text(hjust = 0.5, size = 10, face = "bold"))
+
+ggsave("final analysis/results/conf_mat.png") 

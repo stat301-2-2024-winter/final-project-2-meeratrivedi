@@ -79,24 +79,23 @@ save(metrics2, file = here("main analysis/main results/metrics2.rda"))
 
 
 metrics2 |> 
-  select(.estimator, mean, n, std_err, model) |> 
+  select(mean, n, std_err, model) |> 
   arrange(desc(mean)) |> 
   relocate(model) |> 
   gt() |> 
   tab_header(title = md("**Assessment Metrics**"), 
              subtitle = "All Models - Main Recipe") |>
-  cols_label(.estimator = md("Estimator"), 
-    std_err = md("Standard Error"), 
-    mean = md("Mean ROC AUC"), 
-    n = md("Number of Models")) |> 
+  cols_label(std_err = md("Standard Error"), 
+             mean = md("Mean ROC AUC"), 
+             n = md("Number of Models"), 
+             model = md("Model Type")) |> 
   fmt_number(
     columns = mean, 
     decimals = 3) |> 
   fmt_number(
     columns = std_err, 
     decimals = 7) 
-  #row_group_order(groups = c("logistic")) |> 
-  #tab_options(row_group.background.color = "gray50")
+ 
 
 #comparison table
 metrics |> 
@@ -141,8 +140,8 @@ bestparams_rf |>
   tab_header(title = md("**Best Hyperparameters - Random Forest**"), 
              subtitle = "Random Forest - All Recipes") |>
   cols_label(recipe = md("Recipe"), 
-             mtry = md("mtry"), 
-             min_n = md("min_n")) 
+             mtry = md("Number of <br> Sample Predictors"), 
+             min_n = md("Minimal <br> Node Size")) 
 
 #knn hyperparams
 bestparams_knn <- select_best(tuned_knn1, metric = "roc_auc") |>
@@ -180,9 +179,9 @@ bestparams_bt |>
   tab_header(title = md("**Best Hyperparameters - Boosted Tree**"), 
              subtitle = "Boosted Tree - All Recipes") |>
   cols_label(recipe = md("Recipe"), 
-             mtry = md("mtry"), 
-             min_n = md("min_n"), 
-             learn_rate = md("Learning Rate")) |> 
+             mtry = md("Number of <br> Sample Predictors"), 
+             min_n = md("Minimal<br> Node Size"), 
+             learn_rate = md("Learning <br> Rate")) |> 
   fmt_number(
     columns = learn_rate, 
     decimals = 3)
