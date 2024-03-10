@@ -2,9 +2,13 @@
 
 This is what can be found in the data folder:
 
-The dataset `clean_qol.rda` in the main section of the data folder is derived from this raw data and has been cleaned and stored as a new dataset in the form of an rda file. 
+- `clean_qol.rda`: clean dataset used for data splitting derived from raw data in the raw folder in the form of an RDA file
 
-- `raw/`: This folder contains the raw data used in this analysis in the form of csv files. It was downloaded from Kaggle, via this link: 
+- `estate_split`: the results of splitting the data into a training and testing dataset using an 80%/20% split as well as resampling using V-fold cross validation. 
+
+- `training_sample`: the dataset used to complete EDA for the interaction terms. It is an 80% sample of the training dataset. 
+
+- `raw`: This folder contains the raw data used in this analysis in the form of csv files. It was downloaded from Kaggle, via this link: 
 
 ### Data Source
 

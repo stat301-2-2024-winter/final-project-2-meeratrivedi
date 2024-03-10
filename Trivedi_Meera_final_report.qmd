@@ -76,7 +76,7 @@ The target variable was originally intended to be the quality of living as a fac
 ## Methods 
 
 #### Data Splitting
-The cleaned data was split using stratified splitting by the target variable, satisfaction, and using an 80%/20% split because the dataset is fairly large. This is a common split to use with large datasets.
+The cleaned data was split using stratified splitting by the target variable, satisfaction, and using an 80%/20% split because the dataset is fairly large. This is a common split to use with large datasets. This means 80% of the data goes into the training set and the other 20% goes into the testing set. 
 
 #### Resampling
 The data was resampling using V-fold cross validation with 10 folds and 5 repeats which will then result in 50 models per fit. I used this method of resampling instead of bootstrap resampling because that introduces the possibility of some observations in a bootstrap sample appearing multiple times with others not appearing at all. V-fold cross validation also has lower bias, and is more commonly used than bootstrap for big datasets. I used 10 fold and 5 repeats because they are common benchmark numbers and my computer could handle this much resampling. 

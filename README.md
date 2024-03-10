@@ -10,35 +10,18 @@ This repo contains all the work for my final project about apartment listings in
 
 - `memos`: In this folder you can find my progress memos.
 
-- `results`: In this folder you can find the split data, recipes, and model fits, and assessment metrics
+- `setup`: In this folder you can find the code and results of cleaning the data, performing all EDA, and splitting and resampling the data. 
 
+- `basic analysis`: In this folder you can find the code and results of creating the basic recipes, building all 6 model types on the basic recipes, fitting them on the resamples, and analysis using the primary assessment metric corresponding to each model fit. 
 
-## R Scripts
+- `main analysis`: In this folder you can find the code and results of creating the main recipes, building all 6 model types on the main recipes, fitting them on the resamples, and analysis using the primary assessment metric corresponding to each model fit. 
 
-- `01_data_setup`: reads in the data and has some data cleaning and subsetting
+- `interact analysis`: In this folder you can find the code and results of creating the interaction recipes, building all 6 model types on the interaction recipes, fitting them on the resamples, and analysis using the primary assessment metric corresponding to each model fit. 
 
-- `02_target_analysis`: explores the target variable: `satisfaction` and includes old code that explores the `quality_of_living` variable 
+- `final analysis`: In this folder you can find the code and results of fitting/training the best model to the entire training dataset and assessing it using the testing dataset. You can also find the saved out datasets of the best hyperparameters for each model that used tuning. 
 
-- `03_splitting`: splits data into training and testing data sets, and uses V-fold cross validation on the training data set
+## Reports
 
-- `04_recipes`: has the basic recipe for non-tree models and the main recipe for non-tree models. may eventually include another more complicated recipe for non-tree models
+- `Trivedi_Meera_final_report`: my final report
 
-- `04_tree_recipes` will contain all tree model recipes
-
-- `05_null_model`: code used for model specifications, workflow, and fit for the null model
-
-- `05_log_model`: code used for model specifications, workflows, and fits for the logistic models
-
-- `05_en_model`: code used for model specifications, workflows, and fits for the elastic net models
-
-- `05_knn_model`: code used for model specifications, workflows, and fits for the nearest neighbor models
-
-- `05_rf_model`: code used for model specifications, workflows, and fits for the random forest models
-
-- `05_btree_model`: code used for model specifications, workflows, and fits for the boosted tree models
-
-- `06_model_analysis`: code used to complete model analyses for the models that do not use tuning
-
-- `06_tuned_analysis`: code used to complete model analyses for the models that use tuning
-
-
+- `Trivedi_Meera_executive_summary`: my executive summary
