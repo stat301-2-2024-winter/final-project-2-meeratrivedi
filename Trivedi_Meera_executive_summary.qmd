@@ -1,0 +1,47 @@
+---
+title: "Predicting Tenant Satisfaction with Slovakian Apartments"
+subtitle: "Executive Summary"
+author: "Meera Trivedi"
+date: today
+
+format:
+  html:
+    toc: true
+    embed-resources: true
+    
+execute:
+  warning: false
+  echo: false
+
+from: markdown+emoji 
+reference-location: margin
+citation-location: margin
+---
+
+::: {.callout-tip icon=false}
+
+## Github Repo Link
+
+[My GitHub Repo](https://github.com/stat301-2-2024-winter/final-project-2-meeratrivedi.git)
+
+:::
+
+## Introduction
+
+Though feature engineering and including more predictor variables can often help improve the accuracy of a prediction, sometimes certain variables can actually be unhelpful in prediction, and in that case the best option is to simply remove them. The dataset had observations for different aspects of apartments in Slovakia, including information about the actual features of the apartments as well as rankings on an index from 0-100 that measured their satisfaction with that aspect of their apartment or surroundings. The target variable, satisfaction with the apartment, was calculated using the overall quality of living rankings provided by tenants since that would be a more holistic measure of happiness with their apartment. Since this variable was on a scale from 0-100, the US grading system was used to divide what would be average and what would be above average as the differentiation between satisfaction and dissatisfaction. The purpose of the models will then be to use features and aspects of the apartments and tenants opinions to predict their overall satisfaction with their apartment.
+
+## Recipes and Conclusions
+
+The purpose of this project was to create and evaluate different types of prediction models to learn more about feature engineering and so three different recipes were created to assess six different model types. One recipe included standard features of a recipe and removed all variables with many factored levels or missingness. The next recipe built upon this but dealt with missing variables by mutation. The third recipe builds upon this by additionally including interaction terms. The purpose of creating these features in separate recipes that built upon each other was to analyze the impact of handling missingness and interactions separately. Interestingly, the results showed that the mutation and interaction terms did not significantly improve performance in some models, and actively harmed performance in others. The models built on the basic recipe performed better than their counterparts on the other recipes more often than not and the model that performed the best out of all models was the random forest model built on the basic recipe. This led to the conclusion that sometimes removing unhelpful predictor variables helps performance. It also made sense that the random forest model had higher measures of accuracy than the rest of the model types consistently because using a high number of trees is intended to improve accuracy and so is tuning hyperparameters, so using both of those methods to improve accuracy should result in a relatively high performance. 
+
+## Assessment Metrics on Final Model
+	
+The random forest model on the basic recipe was then explored further beyond just the area under the ROC curve. This area was found to be 0.917 which is desirably close to 1, and the measure of accuracy was found to be 0.969 which is also desirably close to 1. A measure of 1 would indicate perfect accuracy while a measure of 0 would indicate complete inaccuracy, and so the measures of accuracy for this final model are very close to being fully accurate. The visualization of the area under the ROC curve shows that the ROC curve itself is close to outlining the top left border of the graph, which indicates that its border outlines almost all of the possible area that could be accumulated underneath it, which is consistent with the large measure of area found. Another measure of successful prediction: a confusion matrix was also used to show that high numbers of predictions were consistent with the corresponding accurate values and few predictions were inconsistent with the corresponding accurate values, which is a further indication of this model mostly making successful predictions.
+
+## Conclusion 
+
+Overall the main takeaways from this analysis were that some predictors are helpful and others are not, and removing predictors with issues such as missingness or too many factor levels can help make more successful predictions. Additionally, random forest models often perform better than other model types. And finally, in some cases, interaction terms may not be helpful. The point of experimenting with recipes is to discover what works for each specific dataset and prediction problem, and the process of feature engineering will be different per case. In this case, it is good that there are more people satisfied with their apartment than not, and in the future it would be interesting to do more EDA to understand the relationships between more variables and satisfaction. 
+
+	
+
+

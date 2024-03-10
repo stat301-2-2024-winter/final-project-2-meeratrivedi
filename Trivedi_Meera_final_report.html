@@ -9,7 +9,7 @@
 <meta name="author" content="Meera Trivedi">
 <meta name="dcterms.date" content="2024-03-10">
 
-<title>Progress Memo 2</title>
+<title>Predicting Tenant Satisfaction with Slovakian Apartments</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -3058,9 +3058,8 @@ vertical-align: -.125em;
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Progress Memo 2</h1>
-<p class="subtitle lead"></p><div class="line-block">Final Project<br>
-Data Science 2 with R (STAT 301-2)</div><p></p>
+<h1 class="title">Predicting Tenant Satisfaction with Slovakian Apartments</h1>
+<p class="subtitle lead">Final Report</p>
 </div>
 
 
@@ -3161,13 +3160,13 @@ Figure 2: Slovakian Apartment Tenants Satisfaction
 </section>
 <section id="resampling" class="level4">
 <h4 class="anchored" data-anchor-id="resampling">Resampling</h4>
-<p>The data was resampling using V-fold cross validation with 10 folds and 5 repeats which will then result in 50 models per fit. I used this method of resampling instead of bootstrap resampling because that introduces the possibility of some observations in a bootstrap sample appearing multiple times with others not appearing at all. V-fold cross validation also has lower bias, and is more commonly used than bootstrap for big datasets. I used 10 fold and 5 repeats because they are common benchmark numbers and my computer could handle this much resampling.</p>
+<p>The data was resampled using V-fold cross validation with 10 folds and 5 repeats which will then result in 50 models per fit. I used this method of resampling instead of bootstrap resampling because that would introduce the possibility of some observations in a bootstrap sample appearing multiple times with others not appearing at all. V-fold cross validation also has lower bias, and is more commonly used than bootstrap for big datasets. I used 10 fold and 5 repeats because they are common benchmark numbers and my computer could handle this much resampling.</p>
 </section>
 <section id="recipes" class="level4">
 <h4 class="anchored" data-anchor-id="recipes">Recipes</h4>
-<p>Six recipes were used to create the models. Unfortunately multiple of my predictor variables had many missing values. They were added to the dataset as variables because a few apartments had data for them, but if most apartments don’t have data points for those variables, they can’t be useful predictors in a prediction model. As an example, one variable is about the type of energy certificate the apartment has but the most frequent value was “none” meaning that apartment didn’t have an energy certificate. This means having an energy certificate can’t be that useful of a predictor if the majority of apartments either don’t have a certificate or have a missing value for it.</p>
-<p>For simplicity, the basic recipes have all the variables with missing data removed, as well as the factor variables with many levels removed to avoid overfitting and overworking the computer. It imputes the area variable because there is only a small amount of missingness, so imputation would only be making up for a small percentage of the values. And it creates dummy variables for the nominal predictors, removes variables with zero variance, and centers and scales all predictors.</p>
-<p>The main recipe does all of this as well except it does not remove all the variables with missingness, instead for two variables: the total floors the building has and the floor number the apartment is on, it mutates them to be factors with three levels, one level replaces missing values with the word “unknown”, since seeing something is unknown could be interesting instead of removing those observations entirely. These differences will help evaluate if knowing something is unknown is actually useful in making predictions. These two variables were chosen specifically to be mutated because they have about half of their values missing so this unknown level would have a lot of values but not so much that the variables should be considered totally unusable in all recipes.</p>
+<p>Six recipes were used to create the models. Unfortunately multiple of my predictor variables had many missing values. They must have been added to the dataset as variables because a few apartments had data for them, but if most apartments don’t have data points for those variables, they can’t be useful predictors in a prediction model. As an example, one variable is about the type of energy certificate the apartment has but the most frequent value was “none” other than a missing value meaning that apartment didn’t have an energy certificate anyway. This means having an energy certificate can’t be that useful of a predictor if the majority of apartments either don’t have a certificate or have a missing value for it.</p>
+<p>For simplicity, the basic recipes have all the variables with missing data removed, as well as the factor variables with many levels removed to avoid overfitting and overworking the computer. It imputes the area variable because there is only a small amount of missingness, so imputation would only be making up for a small percentage of the values. And it creates dummy variables for the nominal predictors, removes variables with zero variance, and centers and scales all predictors. These are standard steps to take for a basic recipe.</p>
+<p>The main recipe does all of this as well except it does not remove all of the variables with missingness, instead for two variables: the total floors the building has and the floor number the apartment is on, it mutates them to be factors with three levels, one level replaces missing values with the word “unknown”, since seeing something is unknown could be interesting instead of removing those observations entirely. These differences will help evaluate if knowing something is unknown is actually useful in making predictions. These two variables were chosen specifically to be mutated because they have about half of their values missing so this unknown level would have a lot of values but not so much that the variables should be considered totally unusable in all recipes.</p>
 <p>The “interact” recipe builds on this recipe and additionally uses interaction terms to analyze the impact of them separately. EDA was conducted to understand the relationships between predictor variables to determine interaction terms. First I explored price (on a log 10 scale for visual purposes) by satisfaction by different levels of variables that represented rankings on different aspects of the apartment to see if there were differences in the satisfaction for each range. Every variable that represented ranking was factored and split into 3 equal levels (so if available values were from 4-99 each level was ⅓ of that range). There were considered to be clear differences in satisfaction if the level that had the most density for each range was different for the different ranges. This would mean that the different ranges could help contribute to determining satisfaction and so it would make sense to create an interaction term. This process was used to justify creating interaction terms for price and environment, price and relaxation ability, price and available services, and price and transportation services. Next, since I thought safety and environment could be related I explored their relationship by the two levels of satisfaction in the form of a faceted boxplot with environment factored with 5 equal levels and found that the distributions were quite different for the two levels of satisfaction especially between the middle two ranges of environment so it made sense to create an interaction term between safety and environment as well. Finally I explored the relationship between price and area since typically the bigger an apartment is the more expensive it is but found that the relationship did not differ much by satisfaction so I decided not to create an interaction term for this. So to conclude, I created 5 interaction terms based on this EDA, and the graphs can be found in the appendix.</p>
 <p>The basic, main, and interact recipes for the forest models do the same things as the aforementioned basic, main, and interact recipes respectively; however they use one-hot encoding.</p>
 </section>
@@ -3178,21 +3177,21 @@ Figure 2: Slovakian Apartment Tenants Satisfaction
 <section id="tuning-parameters" class="level4">
 <h4 class="anchored" data-anchor-id="tuning-parameters">Tuning Parameters</h4>
 <p>The elastic net, nearest neighbors, random forest, and boosted tree models all use tuning.</p>
-<p>The elastic net model uses tuning for the mixture and penalty. The tuning ranges were updated so that the range of mixture is from 0 to 1. The lower bound is 0 because that would indicate a fully ridge model and the upper bound is 1 because that would indicate a fully lasso model, so the range for a combination of the two model types should be in between. The range of penalty is from -5 to 0.2. These numbers are including on log10 transformation so the real bounds would be 10^-5 to 10^0.2. I updated these values to shift the range higher than the default to test values that would have more impact than if they were more centered around 0.</p>
+<p>The elastic net model uses tuning for the mixture and penalty. The tuning ranges were updated so that the range of mixture is from 0 to 1. The lower bound is 0 because that would indicate a fully ridge model and the upper bound is 1 because that would indicate a fully lasso model, so the range for a combination of the two model types should be in between. The range of penalty is from -5 to 0.2. These numbers are on log10 transformation so the real bounds would be 10^-5 to 10^0.2. This becomes important when looking at the optimal values of the hyperparameters later on. I updated these values to shift the range higher than the default to test values that would have more impact than if they were more centered around 0.</p>
 <p>The nearest neighbor model uses tuning for the neighbors variable but it is my understanding that the default tuning range works well so there was no need to update it.</p>
-<p>The random forest model uses tuning for the minimal node size and number of sample predictors. The minimal node size is the minimum number of data points required for the node to be split further. Using tuning for these hyperparameters is helpful to improve the accuracy of these models. Since the default range of minimal node size works well there was no need to update it but the range of number of sample predictors was updated to 1 to 11 because we want the upper bound to be the maximum number of predictor variables that could be randomly drawn so the range includes all the predictor variables. Tuning was not used for the trees variable since we would want to use a fixed value: as high of a number as a computer could handle. Since 500 is the default and 1000 would be a lot, I used 750 since it is a benchmark value and the average between the two.</p>
-<p>The boosted tree model uses tuning for number of sample predictors, minimal node size, and learning rate, which is a rate that the weak learners’ predictions get scaled. The range of mtry was updated in the same way as for random forest and the range of min_n was not updated again. The range of learning rate was updated to (-5, -0.2) since the upper bound should be close to but less than 0 and lower ranges of learning rates are better when more trees are used to achieve the same level of fit. These numbers are including on log10 transformation so the real bounds would be 10^-5 to 10^-0.2.</p>
+<p>The random forest model uses tuning for the minimal node size and number of sample predictors. The minimal node size is the minimum number of data points required for the node to be split further. Using tuning for these hyperparameters is helpful to improve the accuracy of these models. Since the default range of minimal node size works well there was no need to update it but the range of the number of sample predictors was updated to be from 1 to 11 because we want the upper bound to be the maximum number of predictor variables that could be randomly drawn so the range includes all the predictor variables. Tuning was not used for the trees variable since we would want to use a fixed value: as high of a number as a computer could handle. Since 500 is the default and 1000 would be a lot, I used 750 since it is a benchmark value and the average between the two.</p>
+<p>The boosted tree model uses tuning for number of sample predictors, minimal node size, and learning rate, which is a rate that the weak learners’ predictions get scaled. The range of number of sample predictors was updated in the same way as it was for the random forest model and the range of the minimal node size was not updated again. The range of learning rate was updated to (-5, -0.2) since the upper bound should be close to but less than 0 and lower ranges of learning rates are better when more trees are used to achieve the same level of fit. These numbers are including on log10 transformation so the real bounds would be 10^-5 to 10^-0.2 which again becomes important when looking at optimal values of hyperparameters later on.</p>
 </section>
 <section id="assessment-metrics" class="level4">
 <h4 class="anchored" data-anchor-id="assessment-metrics">Assessment Metrics</h4>
-<p>Since this is a classification problem, the assessment metric will be the area under the ROC curve. The ROC curve shows the relationship between the true positive rate, sensitivity, and false positive rate, 1 - specificity for different thresholds of classification. It is a good measure to use for binary classification, in this case between satisfied and unsatisfied. The area under the curve can be from 0 to 1, with a higher measure indicating better performance. This is a good metric to use when there is imbalance in a dataset between levels of the target variable and since there seem to be noticeably more people satisfied with their apartments than not, this could be considered an imbalance.</p>
+<p>Since this is a classification problem, the assessment metric will be the area under the ROC curve. The ROC curve shows the relationship between the true positive rate, sensitivity, and false positive rate, 1 - specificity, for different thresholds of classification. It is a good measure to use for binary classification, in this case between satisfied and unsatisfied. The area under the curve can be from 0 to 1, with a higher measure indicating better performance. This is a good metric to use when there is imbalance in a dataset between levels of the target variable and since there seem to be noticeably more people satisfied with their apartments than not, this could be considered an imbalance.</p>
 </section>
 </section>
 <section id="models" class="level2">
 <h2 class="anchored" data-anchor-id="models">Models</h2>
 <section id="basic-recipes" class="level4">
 <h4 class="anchored" data-anchor-id="basic-recipes">Basic Recipes</h4>
-<p>First we can explore the 6 different model types fitted to the basic recipes. This table shows that in comparison to the null model all models have a higher measure of performance, meaning making complex models is useful in making more accurate predictions. In this case, the random forest model performs the best with a performance measure of 0.958, which is very close to 1. It also has the lowest standard error out of all the models except the null. Standard error is not the primary assessment metric here but this information is still interesting nonetheless.</p>
+<p>First we can explore the 6 different model types fitted to the basic recipes. <a href="#tbl-basic" class="quarto-xref">Table 1</a> shows the best hyperparameter values for the elastic net model. shows that in comparison to the null model all models have a higher measure of performance, meaning making complex models is useful in making more accurate predictions. In this case, the random forest model performs the best with a performance measure of 0.958, which is very close to 1. It also has the lowest standard error out of all the models except the null. Standard error is not the primary assessment metric here but this information is still interesting nonetheless.</p>
 <div class="cell">
 <div id="tbl-basic" class="cell anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -3201,20 +3200,20 @@ Table 1: Evaluation of six models on the basic recipes.
 </figcaption>
 <div aria-describedby="tbl-basic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div id="piikzzzgla" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#piikzzzgla table {
+<div id="zsujgutqjv" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#zsujgutqjv table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#piikzzzgla thead, #piikzzzgla tbody, #piikzzzgla tfoot, #piikzzzgla tr, #piikzzzgla td, #piikzzzgla th {
+#zsujgutqjv thead, #zsujgutqjv tbody, #zsujgutqjv tfoot, #zsujgutqjv tr, #zsujgutqjv td, #zsujgutqjv th {
 border-style: none;
 }
-#piikzzzgla p {
+#zsujgutqjv p {
 margin: 0;
 padding: 0;
 }
-#piikzzzgla .gt_table {
+#zsujgutqjv .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -3239,11 +3238,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#piikzzzgla .gt_caption {
+#zsujgutqjv .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#piikzzzgla .gt_title {
+#zsujgutqjv .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -3254,7 +3253,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#piikzzzgla .gt_subtitle {
+#zsujgutqjv .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -3265,7 +3264,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#piikzzzgla .gt_heading {
+#zsujgutqjv .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -3276,12 +3275,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#piikzzzgla .gt_bottom_border {
+#zsujgutqjv .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#piikzzzgla .gt_col_headings {
+#zsujgutqjv .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -3295,7 +3294,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#piikzzzgla .gt_col_heading {
+#zsujgutqjv .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3314,7 +3313,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#piikzzzgla .gt_column_spanner_outer {
+#zsujgutqjv .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3325,13 +3324,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#piikzzzgla .gt_column_spanner_outer:first-child {
+#zsujgutqjv .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#piikzzzgla .gt_column_spanner_outer:last-child {
+#zsujgutqjv .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#piikzzzgla .gt_column_spanner {
+#zsujgutqjv .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -3342,10 +3341,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#piikzzzgla .gt_spanner_row {
+#zsujgutqjv .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#piikzzzgla .gt_group_heading {
+#zsujgutqjv .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3370,7 +3369,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#piikzzzgla .gt_empty_group_heading {
+#zsujgutqjv .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -3384,13 +3383,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#piikzzzgla .gt_from_md > :first-child {
+#zsujgutqjv .gt_from_md > :first-child {
 margin-top: 0;
 }
-#piikzzzgla .gt_from_md > :last-child {
+#zsujgutqjv .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#piikzzzgla .gt_row {
+#zsujgutqjv .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3408,7 +3407,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#piikzzzgla .gt_stub {
+#zsujgutqjv .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3420,7 +3419,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#piikzzzgla .gt_stub_row_group {
+#zsujgutqjv .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3433,13 +3432,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#piikzzzgla .gt_row_group_first td {
+#zsujgutqjv .gt_row_group_first td {
 border-top-width: 2px;
 }
-#piikzzzgla .gt_row_group_first th {
+#zsujgutqjv .gt_row_group_first th {
 border-top-width: 2px;
 }
-#piikzzzgla .gt_summary_row {
+#zsujgutqjv .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -3448,14 +3447,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#piikzzzgla .gt_first_summary_row {
+#zsujgutqjv .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#piikzzzgla .gt_first_summary_row.thick {
+#zsujgutqjv .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#piikzzzgla .gt_last_summary_row {
+#zsujgutqjv .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3464,7 +3463,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#piikzzzgla .gt_grand_summary_row {
+#zsujgutqjv .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -3473,7 +3472,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#piikzzzgla .gt_first_grand_summary_row {
+#zsujgutqjv .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3482,7 +3481,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#piikzzzgla .gt_last_grand_summary_row_top {
+#zsujgutqjv .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3491,10 +3490,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#piikzzzgla .gt_striped {
+#zsujgutqjv .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#piikzzzgla .gt_table_body {
+#zsujgutqjv .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -3502,7 +3501,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#piikzzzgla .gt_footnotes {
+#zsujgutqjv .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -3515,7 +3514,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#piikzzzgla .gt_footnote {
+#zsujgutqjv .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -3523,7 +3522,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#piikzzzgla .gt_sourcenotes {
+#zsujgutqjv .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -3536,57 +3535,57 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#piikzzzgla .gt_sourcenote {
+#zsujgutqjv .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#piikzzzgla .gt_left {
+#zsujgutqjv .gt_left {
 text-align: left;
 }
-#piikzzzgla .gt_center {
+#zsujgutqjv .gt_center {
 text-align: center;
 }
-#piikzzzgla .gt_right {
+#zsujgutqjv .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#piikzzzgla .gt_font_normal {
+#zsujgutqjv .gt_font_normal {
 font-weight: normal;
 }
-#piikzzzgla .gt_font_bold {
+#zsujgutqjv .gt_font_bold {
 font-weight: bold;
 }
-#piikzzzgla .gt_font_italic {
+#zsujgutqjv .gt_font_italic {
 font-style: italic;
 }
-#piikzzzgla .gt_super {
+#zsujgutqjv .gt_super {
 font-size: 65%;
 }
-#piikzzzgla .gt_footnote_marks {
+#zsujgutqjv .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#piikzzzgla .gt_asterisk {
+#zsujgutqjv .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#piikzzzgla .gt_indent_1 {
+#zsujgutqjv .gt_indent_1 {
 text-indent: 5px;
 }
-#piikzzzgla .gt_indent_2 {
+#zsujgutqjv .gt_indent_2 {
 text-indent: 10px;
 }
-#piikzzzgla .gt_indent_3 {
+#zsujgutqjv .gt_indent_3 {
 text-indent: 15px;
 }
-#piikzzzgla .gt_indent_4 {
+#zsujgutqjv .gt_indent_4 {
 text-indent: 20px;
 }
-#piikzzzgla .gt_indent_5 {
+#zsujgutqjv .gt_indent_5 {
 text-indent: 25px;
 }
 </style>
@@ -3655,7 +3654,7 @@ text-indent: 25px;
 </section>
 <section id="main-recipes" class="level4">
 <h4 class="anchored" data-anchor-id="main-recipes">Main Recipes</h4>
-<p>Next we can explore the 5 model types other than the null model on the main recipe. This table shows that the random forest model still performs better than the other models by having a much higher measure of performance of 0.956, which is very close to 1. It still has the lowest standard error out of all the models.</p>
+<p>Next we can explore the 5 model types other than the null model on the main recipe. <a href="#tbl-main" class="quarto-xref">Table 2</a> shows the best hyperparameter values for the elastic net model. shows that the random forest model still performs better than the other models by having a much higher measure of performance of 0.956, which is very close to 1. It still has the lowest standard error out of all the models. The order of the models by best performance is the same as on the basic recipes.</p>
 <div class="cell">
 <div id="tbl-main" class="cell anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -3664,20 +3663,20 @@ Table 2: Evaluation of six models on the main recipes.
 </figcaption>
 <div aria-describedby="tbl-main-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div id="grfjlewxij" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#grfjlewxij table {
+<div id="jhscbmjnec" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#jhscbmjnec table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#grfjlewxij thead, #grfjlewxij tbody, #grfjlewxij tfoot, #grfjlewxij tr, #grfjlewxij td, #grfjlewxij th {
+#jhscbmjnec thead, #jhscbmjnec tbody, #jhscbmjnec tfoot, #jhscbmjnec tr, #jhscbmjnec td, #jhscbmjnec th {
 border-style: none;
 }
-#grfjlewxij p {
+#jhscbmjnec p {
 margin: 0;
 padding: 0;
 }
-#grfjlewxij .gt_table {
+#jhscbmjnec .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -3702,11 +3701,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#grfjlewxij .gt_caption {
+#jhscbmjnec .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#grfjlewxij .gt_title {
+#jhscbmjnec .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -3717,7 +3716,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#grfjlewxij .gt_subtitle {
+#jhscbmjnec .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -3728,7 +3727,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#grfjlewxij .gt_heading {
+#jhscbmjnec .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -3739,12 +3738,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#grfjlewxij .gt_bottom_border {
+#jhscbmjnec .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#grfjlewxij .gt_col_headings {
+#jhscbmjnec .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -3758,7 +3757,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#grfjlewxij .gt_col_heading {
+#jhscbmjnec .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3777,7 +3776,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#grfjlewxij .gt_column_spanner_outer {
+#jhscbmjnec .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3788,13 +3787,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#grfjlewxij .gt_column_spanner_outer:first-child {
+#jhscbmjnec .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#grfjlewxij .gt_column_spanner_outer:last-child {
+#jhscbmjnec .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#grfjlewxij .gt_column_spanner {
+#jhscbmjnec .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -3805,10 +3804,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#grfjlewxij .gt_spanner_row {
+#jhscbmjnec .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#grfjlewxij .gt_group_heading {
+#jhscbmjnec .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3833,7 +3832,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#grfjlewxij .gt_empty_group_heading {
+#jhscbmjnec .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -3847,13 +3846,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#grfjlewxij .gt_from_md > :first-child {
+#jhscbmjnec .gt_from_md > :first-child {
 margin-top: 0;
 }
-#grfjlewxij .gt_from_md > :last-child {
+#jhscbmjnec .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#grfjlewxij .gt_row {
+#jhscbmjnec .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3871,7 +3870,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#grfjlewxij .gt_stub {
+#jhscbmjnec .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3883,7 +3882,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#grfjlewxij .gt_stub_row_group {
+#jhscbmjnec .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3896,13 +3895,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#grfjlewxij .gt_row_group_first td {
+#jhscbmjnec .gt_row_group_first td {
 border-top-width: 2px;
 }
-#grfjlewxij .gt_row_group_first th {
+#jhscbmjnec .gt_row_group_first th {
 border-top-width: 2px;
 }
-#grfjlewxij .gt_summary_row {
+#jhscbmjnec .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -3911,14 +3910,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#grfjlewxij .gt_first_summary_row {
+#jhscbmjnec .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#grfjlewxij .gt_first_summary_row.thick {
+#jhscbmjnec .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#grfjlewxij .gt_last_summary_row {
+#jhscbmjnec .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3927,7 +3926,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#grfjlewxij .gt_grand_summary_row {
+#jhscbmjnec .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -3936,7 +3935,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#grfjlewxij .gt_first_grand_summary_row {
+#jhscbmjnec .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3945,7 +3944,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#grfjlewxij .gt_last_grand_summary_row_top {
+#jhscbmjnec .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3954,10 +3953,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#grfjlewxij .gt_striped {
+#jhscbmjnec .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#grfjlewxij .gt_table_body {
+#jhscbmjnec .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -3965,7 +3964,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#grfjlewxij .gt_footnotes {
+#jhscbmjnec .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -3978,7 +3977,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#grfjlewxij .gt_footnote {
+#jhscbmjnec .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -3986,7 +3985,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#grfjlewxij .gt_sourcenotes {
+#jhscbmjnec .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -3999,57 +3998,57 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#grfjlewxij .gt_sourcenote {
+#jhscbmjnec .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#grfjlewxij .gt_left {
+#jhscbmjnec .gt_left {
 text-align: left;
 }
-#grfjlewxij .gt_center {
+#jhscbmjnec .gt_center {
 text-align: center;
 }
-#grfjlewxij .gt_right {
+#jhscbmjnec .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#grfjlewxij .gt_font_normal {
+#jhscbmjnec .gt_font_normal {
 font-weight: normal;
 }
-#grfjlewxij .gt_font_bold {
+#jhscbmjnec .gt_font_bold {
 font-weight: bold;
 }
-#grfjlewxij .gt_font_italic {
+#jhscbmjnec .gt_font_italic {
 font-style: italic;
 }
-#grfjlewxij .gt_super {
+#jhscbmjnec .gt_super {
 font-size: 65%;
 }
-#grfjlewxij .gt_footnote_marks {
+#jhscbmjnec .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#grfjlewxij .gt_asterisk {
+#jhscbmjnec .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#grfjlewxij .gt_indent_1 {
+#jhscbmjnec .gt_indent_1 {
 text-indent: 5px;
 }
-#grfjlewxij .gt_indent_2 {
+#jhscbmjnec .gt_indent_2 {
 text-indent: 10px;
 }
-#grfjlewxij .gt_indent_3 {
+#jhscbmjnec .gt_indent_3 {
 text-indent: 15px;
 }
-#grfjlewxij .gt_indent_4 {
+#jhscbmjnec .gt_indent_4 {
 text-indent: 20px;
 }
-#grfjlewxij .gt_indent_5 {
+#jhscbmjnec .gt_indent_5 {
 text-indent: 25px;
 }
 </style>
@@ -4112,7 +4111,7 @@ text-indent: 25px;
 </section>
 <section id="interaction-recipes" class="level4">
 <h4 class="anchored" data-anchor-id="interaction-recipes">Interaction Recipes</h4>
-<p>Finally we can explore the 5 models other than the null on the recipe that additionally includes interaction terms. This table shows that the random forest model still performs better than the other models by having a much higher measure of performance of 0.954, which is very close to 1. It still has the lowest standard error out of all the models.</p>
+<p>Finally we can explore the 5 models other than the null on the recipe that additionally includes interaction terms. <a href="#tbl-interact" class="quarto-xref">Table 3</a> shows the best hyperparameter values for the elastic net model. shows that the random forest model still performs better than the other models by having a much higher measure of performance of 0.954, which is very close to 1. It still has the lowest standard error out of all the models. The order of the models by best performance is the same as on the basic and main recipes.</p>
 <div class="cell">
 <div id="tbl-interact" class="cell anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -4121,20 +4120,20 @@ Table 3: Evaluation of six models on the interaction recipes.
 </figcaption>
 <div aria-describedby="tbl-interact-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div id="sioehokssx" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#sioehokssx table {
+<div id="aahnnfzbhb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#aahnnfzbhb table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#sioehokssx thead, #sioehokssx tbody, #sioehokssx tfoot, #sioehokssx tr, #sioehokssx td, #sioehokssx th {
+#aahnnfzbhb thead, #aahnnfzbhb tbody, #aahnnfzbhb tfoot, #aahnnfzbhb tr, #aahnnfzbhb td, #aahnnfzbhb th {
 border-style: none;
 }
-#sioehokssx p {
+#aahnnfzbhb p {
 margin: 0;
 padding: 0;
 }
-#sioehokssx .gt_table {
+#aahnnfzbhb .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -4159,11 +4158,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#sioehokssx .gt_caption {
+#aahnnfzbhb .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#sioehokssx .gt_title {
+#aahnnfzbhb .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -4174,7 +4173,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#sioehokssx .gt_subtitle {
+#aahnnfzbhb .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -4185,7 +4184,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#sioehokssx .gt_heading {
+#aahnnfzbhb .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -4196,12 +4195,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#sioehokssx .gt_bottom_border {
+#aahnnfzbhb .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#sioehokssx .gt_col_headings {
+#aahnnfzbhb .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -4215,7 +4214,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#sioehokssx .gt_col_heading {
+#aahnnfzbhb .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -4234,7 +4233,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#sioehokssx .gt_column_spanner_outer {
+#aahnnfzbhb .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -4245,13 +4244,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#sioehokssx .gt_column_spanner_outer:first-child {
+#aahnnfzbhb .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#sioehokssx .gt_column_spanner_outer:last-child {
+#aahnnfzbhb .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#sioehokssx .gt_column_spanner {
+#aahnnfzbhb .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -4262,10 +4261,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#sioehokssx .gt_spanner_row {
+#aahnnfzbhb .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#sioehokssx .gt_group_heading {
+#aahnnfzbhb .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4290,7 +4289,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#sioehokssx .gt_empty_group_heading {
+#aahnnfzbhb .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -4304,13 +4303,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#sioehokssx .gt_from_md > :first-child {
+#aahnnfzbhb .gt_from_md > :first-child {
 margin-top: 0;
 }
-#sioehokssx .gt_from_md > :last-child {
+#aahnnfzbhb .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#sioehokssx .gt_row {
+#aahnnfzbhb .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4328,7 +4327,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#sioehokssx .gt_stub {
+#aahnnfzbhb .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -4340,7 +4339,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#sioehokssx .gt_stub_row_group {
+#aahnnfzbhb .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -4353,13 +4352,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#sioehokssx .gt_row_group_first td {
+#aahnnfzbhb .gt_row_group_first td {
 border-top-width: 2px;
 }
-#sioehokssx .gt_row_group_first th {
+#aahnnfzbhb .gt_row_group_first th {
 border-top-width: 2px;
 }
-#sioehokssx .gt_summary_row {
+#aahnnfzbhb .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -4368,14 +4367,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#sioehokssx .gt_first_summary_row {
+#aahnnfzbhb .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#sioehokssx .gt_first_summary_row.thick {
+#aahnnfzbhb .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#sioehokssx .gt_last_summary_row {
+#aahnnfzbhb .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4384,7 +4383,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#sioehokssx .gt_grand_summary_row {
+#aahnnfzbhb .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -4393,7 +4392,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#sioehokssx .gt_first_grand_summary_row {
+#aahnnfzbhb .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4402,7 +4401,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#sioehokssx .gt_last_grand_summary_row_top {
+#aahnnfzbhb .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4411,10 +4410,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#sioehokssx .gt_striped {
+#aahnnfzbhb .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#sioehokssx .gt_table_body {
+#aahnnfzbhb .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -4422,7 +4421,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#sioehokssx .gt_footnotes {
+#aahnnfzbhb .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -4435,7 +4434,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#sioehokssx .gt_footnote {
+#aahnnfzbhb .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -4443,7 +4442,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#sioehokssx .gt_sourcenotes {
+#aahnnfzbhb .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -4456,57 +4455,57 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#sioehokssx .gt_sourcenote {
+#aahnnfzbhb .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#sioehokssx .gt_left {
+#aahnnfzbhb .gt_left {
 text-align: left;
 }
-#sioehokssx .gt_center {
+#aahnnfzbhb .gt_center {
 text-align: center;
 }
-#sioehokssx .gt_right {
+#aahnnfzbhb .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#sioehokssx .gt_font_normal {
+#aahnnfzbhb .gt_font_normal {
 font-weight: normal;
 }
-#sioehokssx .gt_font_bold {
+#aahnnfzbhb .gt_font_bold {
 font-weight: bold;
 }
-#sioehokssx .gt_font_italic {
+#aahnnfzbhb .gt_font_italic {
 font-style: italic;
 }
-#sioehokssx .gt_super {
+#aahnnfzbhb .gt_super {
 font-size: 65%;
 }
-#sioehokssx .gt_footnote_marks {
+#aahnnfzbhb .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#sioehokssx .gt_asterisk {
+#aahnnfzbhb .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#sioehokssx .gt_indent_1 {
+#aahnnfzbhb .gt_indent_1 {
 text-indent: 5px;
 }
-#sioehokssx .gt_indent_2 {
+#aahnnfzbhb .gt_indent_2 {
 text-indent: 10px;
 }
-#sioehokssx .gt_indent_3 {
+#aahnnfzbhb .gt_indent_3 {
 text-indent: 15px;
 }
-#sioehokssx .gt_indent_4 {
+#aahnnfzbhb .gt_indent_4 {
 text-indent: 20px;
 }
-#sioehokssx .gt_indent_5 {
+#aahnnfzbhb .gt_indent_5 {
 text-indent: 25px;
 }
 </style>
@@ -4572,7 +4571,7 @@ text-indent: 25px;
 <p>This section will explore the best hyperparameters for each model type on each recipe to understand what values of the tuned parameters were the most beneficial to predicting.</p>
 <section id="random-forest-boosted-tree" class="level5">
 <h5 class="anchored" data-anchor-id="random-forest-boosted-tree">Random Forest &amp; Boosted Tree</h5>
-<p>It was definitely a good choice to set the range of number of sample predictors to include the maximum number of predictor variables because that value ended up being the best hyperparameter for the feature engineered recipes for both the random forest and boosted tree models. A good learning rate with a high number of trees should be close to 0 so it makes sense that the best value is close to 0.</p>
+<p><a href="#tbl-rf" class="quarto-xref">Table 4</a> and <a href="#tbl-bt" class="quarto-xref">Table 5</a> show the best hyperparameter values for the random forest and boosted tree models respectively. It was definitely a good choice to set the range of number of sample predictors to include the maximum number of predictor variables because that value ended up being the best hyperparameter for the feature engineered recipes for both the random forest and boosted tree models. A good learning rate with a high number of trees should be close to 0 so it makes sense that the best value is close to 0. It would be interesting to test an even lower range to see if that would be more helpful.</p>
 <div class="cell">
 <div id="tbl-rf" class="cell anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -4581,20 +4580,20 @@ Table 4: Best hyperparameters for Random Forest models on all three tree recipe
 </figcaption>
 <div aria-describedby="tbl-rf-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div id="jkmqrmqsvo" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#jkmqrmqsvo table {
+<div id="qprnvucths" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#qprnvucths table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#jkmqrmqsvo thead, #jkmqrmqsvo tbody, #jkmqrmqsvo tfoot, #jkmqrmqsvo tr, #jkmqrmqsvo td, #jkmqrmqsvo th {
+#qprnvucths thead, #qprnvucths tbody, #qprnvucths tfoot, #qprnvucths tr, #qprnvucths td, #qprnvucths th {
 border-style: none;
 }
-#jkmqrmqsvo p {
+#qprnvucths p {
 margin: 0;
 padding: 0;
 }
-#jkmqrmqsvo .gt_table {
+#qprnvucths .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -4619,11 +4618,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#jkmqrmqsvo .gt_caption {
+#qprnvucths .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#jkmqrmqsvo .gt_title {
+#qprnvucths .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -4634,7 +4633,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#jkmqrmqsvo .gt_subtitle {
+#qprnvucths .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -4645,7 +4644,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#jkmqrmqsvo .gt_heading {
+#qprnvucths .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -4656,12 +4655,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#jkmqrmqsvo .gt_bottom_border {
+#qprnvucths .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#jkmqrmqsvo .gt_col_headings {
+#qprnvucths .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -4675,7 +4674,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#jkmqrmqsvo .gt_col_heading {
+#qprnvucths .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -4694,7 +4693,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#jkmqrmqsvo .gt_column_spanner_outer {
+#qprnvucths .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -4705,13 +4704,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#jkmqrmqsvo .gt_column_spanner_outer:first-child {
+#qprnvucths .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#jkmqrmqsvo .gt_column_spanner_outer:last-child {
+#qprnvucths .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#jkmqrmqsvo .gt_column_spanner {
+#qprnvucths .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -4722,10 +4721,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#jkmqrmqsvo .gt_spanner_row {
+#qprnvucths .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#jkmqrmqsvo .gt_group_heading {
+#qprnvucths .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4750,7 +4749,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#jkmqrmqsvo .gt_empty_group_heading {
+#qprnvucths .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -4764,13 +4763,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#jkmqrmqsvo .gt_from_md > :first-child {
+#qprnvucths .gt_from_md > :first-child {
 margin-top: 0;
 }
-#jkmqrmqsvo .gt_from_md > :last-child {
+#qprnvucths .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#jkmqrmqsvo .gt_row {
+#qprnvucths .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4788,7 +4787,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#jkmqrmqsvo .gt_stub {
+#qprnvucths .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -4800,7 +4799,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#jkmqrmqsvo .gt_stub_row_group {
+#qprnvucths .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -4813,13 +4812,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#jkmqrmqsvo .gt_row_group_first td {
+#qprnvucths .gt_row_group_first td {
 border-top-width: 2px;
 }
-#jkmqrmqsvo .gt_row_group_first th {
+#qprnvucths .gt_row_group_first th {
 border-top-width: 2px;
 }
-#jkmqrmqsvo .gt_summary_row {
+#qprnvucths .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -4828,14 +4827,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#jkmqrmqsvo .gt_first_summary_row {
+#qprnvucths .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#jkmqrmqsvo .gt_first_summary_row.thick {
+#qprnvucths .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#jkmqrmqsvo .gt_last_summary_row {
+#qprnvucths .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4844,7 +4843,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#jkmqrmqsvo .gt_grand_summary_row {
+#qprnvucths .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -4853,7 +4852,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#jkmqrmqsvo .gt_first_grand_summary_row {
+#qprnvucths .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4862,7 +4861,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#jkmqrmqsvo .gt_last_grand_summary_row_top {
+#qprnvucths .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4871,10 +4870,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#jkmqrmqsvo .gt_striped {
+#qprnvucths .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#jkmqrmqsvo .gt_table_body {
+#qprnvucths .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -4882,7 +4881,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#jkmqrmqsvo .gt_footnotes {
+#qprnvucths .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -4895,7 +4894,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#jkmqrmqsvo .gt_footnote {
+#qprnvucths .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -4903,7 +4902,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#jkmqrmqsvo .gt_sourcenotes {
+#qprnvucths .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -4916,57 +4915,57 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#jkmqrmqsvo .gt_sourcenote {
+#qprnvucths .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#jkmqrmqsvo .gt_left {
+#qprnvucths .gt_left {
 text-align: left;
 }
-#jkmqrmqsvo .gt_center {
+#qprnvucths .gt_center {
 text-align: center;
 }
-#jkmqrmqsvo .gt_right {
+#qprnvucths .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#jkmqrmqsvo .gt_font_normal {
+#qprnvucths .gt_font_normal {
 font-weight: normal;
 }
-#jkmqrmqsvo .gt_font_bold {
+#qprnvucths .gt_font_bold {
 font-weight: bold;
 }
-#jkmqrmqsvo .gt_font_italic {
+#qprnvucths .gt_font_italic {
 font-style: italic;
 }
-#jkmqrmqsvo .gt_super {
+#qprnvucths .gt_super {
 font-size: 65%;
 }
-#jkmqrmqsvo .gt_footnote_marks {
+#qprnvucths .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#jkmqrmqsvo .gt_asterisk {
+#qprnvucths .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#jkmqrmqsvo .gt_indent_1 {
+#qprnvucths .gt_indent_1 {
 text-indent: 5px;
 }
-#jkmqrmqsvo .gt_indent_2 {
+#qprnvucths .gt_indent_2 {
 text-indent: 10px;
 }
-#jkmqrmqsvo .gt_indent_3 {
+#qprnvucths .gt_indent_3 {
 text-indent: 15px;
 }
-#jkmqrmqsvo .gt_indent_4 {
+#qprnvucths .gt_indent_4 {
 text-indent: 20px;
 }
-#jkmqrmqsvo .gt_indent_5 {
+#qprnvucths .gt_indent_5 {
 text-indent: 25px;
 }
 </style>
@@ -5025,20 +5024,20 @@ Table 5: Best hyperparameters for Boosted Tree models on all three tree recipes
 </figcaption>
 <div aria-describedby="tbl-bt-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div id="itgoxdbpvv" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#itgoxdbpvv table {
+<div id="ahihcjadht" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#ahihcjadht table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#itgoxdbpvv thead, #itgoxdbpvv tbody, #itgoxdbpvv tfoot, #itgoxdbpvv tr, #itgoxdbpvv td, #itgoxdbpvv th {
+#ahihcjadht thead, #ahihcjadht tbody, #ahihcjadht tfoot, #ahihcjadht tr, #ahihcjadht td, #ahihcjadht th {
 border-style: none;
 }
-#itgoxdbpvv p {
+#ahihcjadht p {
 margin: 0;
 padding: 0;
 }
-#itgoxdbpvv .gt_table {
+#ahihcjadht .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -5063,11 +5062,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#itgoxdbpvv .gt_caption {
+#ahihcjadht .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#itgoxdbpvv .gt_title {
+#ahihcjadht .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -5078,7 +5077,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#itgoxdbpvv .gt_subtitle {
+#ahihcjadht .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -5089,7 +5088,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#itgoxdbpvv .gt_heading {
+#ahihcjadht .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -5100,12 +5099,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#itgoxdbpvv .gt_bottom_border {
+#ahihcjadht .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#itgoxdbpvv .gt_col_headings {
+#ahihcjadht .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -5119,7 +5118,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#itgoxdbpvv .gt_col_heading {
+#ahihcjadht .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -5138,7 +5137,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#itgoxdbpvv .gt_column_spanner_outer {
+#ahihcjadht .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -5149,13 +5148,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#itgoxdbpvv .gt_column_spanner_outer:first-child {
+#ahihcjadht .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#itgoxdbpvv .gt_column_spanner_outer:last-child {
+#ahihcjadht .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#itgoxdbpvv .gt_column_spanner {
+#ahihcjadht .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -5166,10 +5165,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#itgoxdbpvv .gt_spanner_row {
+#ahihcjadht .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#itgoxdbpvv .gt_group_heading {
+#ahihcjadht .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -5194,7 +5193,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#itgoxdbpvv .gt_empty_group_heading {
+#ahihcjadht .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -5208,13 +5207,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#itgoxdbpvv .gt_from_md > :first-child {
+#ahihcjadht .gt_from_md > :first-child {
 margin-top: 0;
 }
-#itgoxdbpvv .gt_from_md > :last-child {
+#ahihcjadht .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#itgoxdbpvv .gt_row {
+#ahihcjadht .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -5232,7 +5231,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#itgoxdbpvv .gt_stub {
+#ahihcjadht .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -5244,7 +5243,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#itgoxdbpvv .gt_stub_row_group {
+#ahihcjadht .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -5257,13 +5256,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#itgoxdbpvv .gt_row_group_first td {
+#ahihcjadht .gt_row_group_first td {
 border-top-width: 2px;
 }
-#itgoxdbpvv .gt_row_group_first th {
+#ahihcjadht .gt_row_group_first th {
 border-top-width: 2px;
 }
-#itgoxdbpvv .gt_summary_row {
+#ahihcjadht .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -5272,14 +5271,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#itgoxdbpvv .gt_first_summary_row {
+#ahihcjadht .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#itgoxdbpvv .gt_first_summary_row.thick {
+#ahihcjadht .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#itgoxdbpvv .gt_last_summary_row {
+#ahihcjadht .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -5288,7 +5287,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#itgoxdbpvv .gt_grand_summary_row {
+#ahihcjadht .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -5297,7 +5296,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#itgoxdbpvv .gt_first_grand_summary_row {
+#ahihcjadht .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -5306,7 +5305,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#itgoxdbpvv .gt_last_grand_summary_row_top {
+#ahihcjadht .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -5315,10 +5314,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#itgoxdbpvv .gt_striped {
+#ahihcjadht .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#itgoxdbpvv .gt_table_body {
+#ahihcjadht .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -5326,7 +5325,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#itgoxdbpvv .gt_footnotes {
+#ahihcjadht .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -5339,7 +5338,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#itgoxdbpvv .gt_footnote {
+#ahihcjadht .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -5347,7 +5346,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#itgoxdbpvv .gt_sourcenotes {
+#ahihcjadht .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -5360,57 +5359,57 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#itgoxdbpvv .gt_sourcenote {
+#ahihcjadht .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#itgoxdbpvv .gt_left {
+#ahihcjadht .gt_left {
 text-align: left;
 }
-#itgoxdbpvv .gt_center {
+#ahihcjadht .gt_center {
 text-align: center;
 }
-#itgoxdbpvv .gt_right {
+#ahihcjadht .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#itgoxdbpvv .gt_font_normal {
+#ahihcjadht .gt_font_normal {
 font-weight: normal;
 }
-#itgoxdbpvv .gt_font_bold {
+#ahihcjadht .gt_font_bold {
 font-weight: bold;
 }
-#itgoxdbpvv .gt_font_italic {
+#ahihcjadht .gt_font_italic {
 font-style: italic;
 }
-#itgoxdbpvv .gt_super {
+#ahihcjadht .gt_super {
 font-size: 65%;
 }
-#itgoxdbpvv .gt_footnote_marks {
+#ahihcjadht .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#itgoxdbpvv .gt_asterisk {
+#ahihcjadht .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#itgoxdbpvv .gt_indent_1 {
+#ahihcjadht .gt_indent_1 {
 text-indent: 5px;
 }
-#itgoxdbpvv .gt_indent_2 {
+#ahihcjadht .gt_indent_2 {
 text-indent: 10px;
 }
-#itgoxdbpvv .gt_indent_3 {
+#ahihcjadht .gt_indent_3 {
 text-indent: 15px;
 }
-#itgoxdbpvv .gt_indent_4 {
+#ahihcjadht .gt_indent_4 {
 text-indent: 20px;
 }
-#itgoxdbpvv .gt_indent_5 {
+#ahihcjadht .gt_indent_5 {
 text-indent: 25px;
 }
 </style>
@@ -5470,7 +5469,7 @@ Rate</th>
 </section>
 <section id="nearest-neighbors" class="level5">
 <h5 class="anchored" data-anchor-id="nearest-neighbors">Nearest Neighbors</h5>
-<p>A higher number of neighbors leads to stronger predictions because more neighbors handle outliers better; however a very high number of neighbors computational efficiency can decrease so it makes sense that the best values of neighbors for making predictions are numbers much greater than 1 but not very high numbers.</p>
+<p><a href="#tbl-knn" class="quarto-xref">Table 6</a> shows the best hyperparameter values for the nearest neighbors model. A higher number of neighbors leads to stronger predictions because more neighbors handle outliers better; however a very high number of neighbors computational efficiency can decrease so it makes sense that the best values of neighbors for making predictions are numbers much greater than 1 but not very high numbers.</p>
 <div class="cell">
 <div id="tbl-knn" class="cell anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -5479,20 +5478,20 @@ Table 6: Best hyperparameters for Nearest Neighbors models on all three tree re
 </figcaption>
 <div aria-describedby="tbl-knn-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div id="wmoismljon" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#wmoismljon table {
+<div id="htuyronmmz" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#htuyronmmz table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#wmoismljon thead, #wmoismljon tbody, #wmoismljon tfoot, #wmoismljon tr, #wmoismljon td, #wmoismljon th {
+#htuyronmmz thead, #htuyronmmz tbody, #htuyronmmz tfoot, #htuyronmmz tr, #htuyronmmz td, #htuyronmmz th {
 border-style: none;
 }
-#wmoismljon p {
+#htuyronmmz p {
 margin: 0;
 padding: 0;
 }
-#wmoismljon .gt_table {
+#htuyronmmz .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -5517,11 +5516,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#wmoismljon .gt_caption {
+#htuyronmmz .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#wmoismljon .gt_title {
+#htuyronmmz .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -5532,7 +5531,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#wmoismljon .gt_subtitle {
+#htuyronmmz .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -5543,7 +5542,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#wmoismljon .gt_heading {
+#htuyronmmz .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -5554,12 +5553,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#wmoismljon .gt_bottom_border {
+#htuyronmmz .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#wmoismljon .gt_col_headings {
+#htuyronmmz .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -5573,7 +5572,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#wmoismljon .gt_col_heading {
+#htuyronmmz .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -5592,7 +5591,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#wmoismljon .gt_column_spanner_outer {
+#htuyronmmz .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -5603,13 +5602,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#wmoismljon .gt_column_spanner_outer:first-child {
+#htuyronmmz .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#wmoismljon .gt_column_spanner_outer:last-child {
+#htuyronmmz .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#wmoismljon .gt_column_spanner {
+#htuyronmmz .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -5620,10 +5619,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#wmoismljon .gt_spanner_row {
+#htuyronmmz .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#wmoismljon .gt_group_heading {
+#htuyronmmz .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -5648,7 +5647,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#wmoismljon .gt_empty_group_heading {
+#htuyronmmz .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -5662,13 +5661,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#wmoismljon .gt_from_md > :first-child {
+#htuyronmmz .gt_from_md > :first-child {
 margin-top: 0;
 }
-#wmoismljon .gt_from_md > :last-child {
+#htuyronmmz .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#wmoismljon .gt_row {
+#htuyronmmz .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -5686,7 +5685,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#wmoismljon .gt_stub {
+#htuyronmmz .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -5698,7 +5697,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#wmoismljon .gt_stub_row_group {
+#htuyronmmz .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -5711,13 +5710,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#wmoismljon .gt_row_group_first td {
+#htuyronmmz .gt_row_group_first td {
 border-top-width: 2px;
 }
-#wmoismljon .gt_row_group_first th {
+#htuyronmmz .gt_row_group_first th {
 border-top-width: 2px;
 }
-#wmoismljon .gt_summary_row {
+#htuyronmmz .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -5726,14 +5725,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#wmoismljon .gt_first_summary_row {
+#htuyronmmz .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#wmoismljon .gt_first_summary_row.thick {
+#htuyronmmz .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#wmoismljon .gt_last_summary_row {
+#htuyronmmz .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -5742,7 +5741,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#wmoismljon .gt_grand_summary_row {
+#htuyronmmz .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -5751,7 +5750,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#wmoismljon .gt_first_grand_summary_row {
+#htuyronmmz .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -5760,7 +5759,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#wmoismljon .gt_last_grand_summary_row_top {
+#htuyronmmz .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -5769,10 +5768,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#wmoismljon .gt_striped {
+#htuyronmmz .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#wmoismljon .gt_table_body {
+#htuyronmmz .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -5780,7 +5779,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#wmoismljon .gt_footnotes {
+#htuyronmmz .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -5793,7 +5792,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#wmoismljon .gt_footnote {
+#htuyronmmz .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -5801,7 +5800,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#wmoismljon .gt_sourcenotes {
+#htuyronmmz .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -5814,57 +5813,57 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#wmoismljon .gt_sourcenote {
+#htuyronmmz .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#wmoismljon .gt_left {
+#htuyronmmz .gt_left {
 text-align: left;
 }
-#wmoismljon .gt_center {
+#htuyronmmz .gt_center {
 text-align: center;
 }
-#wmoismljon .gt_right {
+#htuyronmmz .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#wmoismljon .gt_font_normal {
+#htuyronmmz .gt_font_normal {
 font-weight: normal;
 }
-#wmoismljon .gt_font_bold {
+#htuyronmmz .gt_font_bold {
 font-weight: bold;
 }
-#wmoismljon .gt_font_italic {
+#htuyronmmz .gt_font_italic {
 font-style: italic;
 }
-#wmoismljon .gt_super {
+#htuyronmmz .gt_super {
 font-size: 65%;
 }
-#wmoismljon .gt_footnote_marks {
+#htuyronmmz .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#wmoismljon .gt_asterisk {
+#htuyronmmz .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#wmoismljon .gt_indent_1 {
+#htuyronmmz .gt_indent_1 {
 text-indent: 5px;
 }
-#wmoismljon .gt_indent_2 {
+#htuyronmmz .gt_indent_2 {
 text-indent: 10px;
 }
-#wmoismljon .gt_indent_3 {
+#htuyronmmz .gt_indent_3 {
 text-indent: 15px;
 }
-#wmoismljon .gt_indent_4 {
+#htuyronmmz .gt_indent_4 {
 text-indent: 20px;
 }
-#wmoismljon .gt_indent_5 {
+#htuyronmmz .gt_indent_5 {
 text-indent: 25px;
 }
 </style>
@@ -5907,7 +5906,7 @@ text-indent: 25px;
 </section>
 <section id="elastic-net" class="level5">
 <h5 class="anchored" data-anchor-id="elastic-net">Elastic Net</h5>
-<p>It was really interesting that the best hyperparameter value for the mixture was consistently 0, meaning that a full ridge regression model indicated higher performance. The optimal value of penalty is on the higher end of the range from 10^-5 to 10^0.2. The optimal value being on the higher end of the range means that the model likely benefits from stronger regularization which controls overfitting and improves generalizability.</p>
+<p><a href="#tbl-en" class="quarto-xref">Table 7</a> shows the best hyperparameter values for the elastic net model. It was really interesting that the best hyperparameter value for the mixture was consistently 0, meaning that a full ridge regression model indicated higher performance. It could be interesting in the future to split this up and explore ridge and lasso regression separately to see if this makes differences in performance. The optimal value of penalty is on the higher end of the range from 10^-5 to 10^0.2. The optimal value being on the higher end of the range means that the model likely benefits from stronger regularization which controls overfitting and improves generalizability. It might be interesting to test a range shifted a bit higher than this one in the future to see if that increases performance.</p>
 <div class="cell">
 <div id="tbl-en" class="cell anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -5916,20 +5915,20 @@ Table 7: Best hyperparameters for Elastic Net models on all three non-tree reci
 </figcaption>
 <div aria-describedby="tbl-en-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div id="cgttkguwke" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#cgttkguwke table {
+<div id="xbzeoqkjpm" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#xbzeoqkjpm table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#cgttkguwke thead, #cgttkguwke tbody, #cgttkguwke tfoot, #cgttkguwke tr, #cgttkguwke td, #cgttkguwke th {
+#xbzeoqkjpm thead, #xbzeoqkjpm tbody, #xbzeoqkjpm tfoot, #xbzeoqkjpm tr, #xbzeoqkjpm td, #xbzeoqkjpm th {
 border-style: none;
 }
-#cgttkguwke p {
+#xbzeoqkjpm p {
 margin: 0;
 padding: 0;
 }
-#cgttkguwke .gt_table {
+#xbzeoqkjpm .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -5954,11 +5953,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#cgttkguwke .gt_caption {
+#xbzeoqkjpm .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#cgttkguwke .gt_title {
+#xbzeoqkjpm .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -5969,7 +5968,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#cgttkguwke .gt_subtitle {
+#xbzeoqkjpm .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -5980,7 +5979,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#cgttkguwke .gt_heading {
+#xbzeoqkjpm .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -5991,12 +5990,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#cgttkguwke .gt_bottom_border {
+#xbzeoqkjpm .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#cgttkguwke .gt_col_headings {
+#xbzeoqkjpm .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -6010,7 +6009,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#cgttkguwke .gt_col_heading {
+#xbzeoqkjpm .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -6029,7 +6028,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#cgttkguwke .gt_column_spanner_outer {
+#xbzeoqkjpm .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -6040,13 +6039,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#cgttkguwke .gt_column_spanner_outer:first-child {
+#xbzeoqkjpm .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#cgttkguwke .gt_column_spanner_outer:last-child {
+#xbzeoqkjpm .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#cgttkguwke .gt_column_spanner {
+#xbzeoqkjpm .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -6057,10 +6056,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#cgttkguwke .gt_spanner_row {
+#xbzeoqkjpm .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#cgttkguwke .gt_group_heading {
+#xbzeoqkjpm .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -6085,7 +6084,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#cgttkguwke .gt_empty_group_heading {
+#xbzeoqkjpm .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -6099,13 +6098,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#cgttkguwke .gt_from_md > :first-child {
+#xbzeoqkjpm .gt_from_md > :first-child {
 margin-top: 0;
 }
-#cgttkguwke .gt_from_md > :last-child {
+#xbzeoqkjpm .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#cgttkguwke .gt_row {
+#xbzeoqkjpm .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -6123,7 +6122,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#cgttkguwke .gt_stub {
+#xbzeoqkjpm .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -6135,7 +6134,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#cgttkguwke .gt_stub_row_group {
+#xbzeoqkjpm .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -6148,13 +6147,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#cgttkguwke .gt_row_group_first td {
+#xbzeoqkjpm .gt_row_group_first td {
 border-top-width: 2px;
 }
-#cgttkguwke .gt_row_group_first th {
+#xbzeoqkjpm .gt_row_group_first th {
 border-top-width: 2px;
 }
-#cgttkguwke .gt_summary_row {
+#xbzeoqkjpm .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -6163,14 +6162,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#cgttkguwke .gt_first_summary_row {
+#xbzeoqkjpm .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#cgttkguwke .gt_first_summary_row.thick {
+#xbzeoqkjpm .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#cgttkguwke .gt_last_summary_row {
+#xbzeoqkjpm .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -6179,7 +6178,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#cgttkguwke .gt_grand_summary_row {
+#xbzeoqkjpm .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -6188,7 +6187,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#cgttkguwke .gt_first_grand_summary_row {
+#xbzeoqkjpm .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -6197,7 +6196,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#cgttkguwke .gt_last_grand_summary_row_top {
+#xbzeoqkjpm .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -6206,10 +6205,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#cgttkguwke .gt_striped {
+#xbzeoqkjpm .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#cgttkguwke .gt_table_body {
+#xbzeoqkjpm .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -6217,7 +6216,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#cgttkguwke .gt_footnotes {
+#xbzeoqkjpm .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -6230,7 +6229,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#cgttkguwke .gt_footnote {
+#xbzeoqkjpm .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -6238,7 +6237,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#cgttkguwke .gt_sourcenotes {
+#xbzeoqkjpm .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -6251,57 +6250,57 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#cgttkguwke .gt_sourcenote {
+#xbzeoqkjpm .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#cgttkguwke .gt_left {
+#xbzeoqkjpm .gt_left {
 text-align: left;
 }
-#cgttkguwke .gt_center {
+#xbzeoqkjpm .gt_center {
 text-align: center;
 }
-#cgttkguwke .gt_right {
+#xbzeoqkjpm .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#cgttkguwke .gt_font_normal {
+#xbzeoqkjpm .gt_font_normal {
 font-weight: normal;
 }
-#cgttkguwke .gt_font_bold {
+#xbzeoqkjpm .gt_font_bold {
 font-weight: bold;
 }
-#cgttkguwke .gt_font_italic {
+#xbzeoqkjpm .gt_font_italic {
 font-style: italic;
 }
-#cgttkguwke .gt_super {
+#xbzeoqkjpm .gt_super {
 font-size: 65%;
 }
-#cgttkguwke .gt_footnote_marks {
+#xbzeoqkjpm .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#cgttkguwke .gt_asterisk {
+#xbzeoqkjpm .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#cgttkguwke .gt_indent_1 {
+#xbzeoqkjpm .gt_indent_1 {
 text-indent: 5px;
 }
-#cgttkguwke .gt_indent_2 {
+#xbzeoqkjpm .gt_indent_2 {
 text-indent: 10px;
 }
-#cgttkguwke .gt_indent_3 {
+#xbzeoqkjpm .gt_indent_3 {
 text-indent: 15px;
 }
-#cgttkguwke .gt_indent_4 {
+#xbzeoqkjpm .gt_indent_4 {
 text-indent: 20px;
 }
-#cgttkguwke .gt_indent_5 {
+#xbzeoqkjpm .gt_indent_5 {
 text-indent: 25px;
 }
 </style>
@@ -6349,7 +6348,7 @@ text-indent: 25px;
 </section>
 <section id="compare-contrast" class="level4">
 <h4 class="anchored" data-anchor-id="compare-contrast">Compare &amp; Contrast</h4>
-<p>Now that all the models have been built on various recipes we can compare their performances by recipe. This table shows that overall, the random forest model performs the best regardless of the recipe but that it performs better on the basic recipe than the ones that include more feature engineering. The same is true for the second-best performing model: the boosted tree. There is seemingly no difference that the interaction terms have made because the measure of performance is the same for both feature engineered recipes and the performance on the basic recipe is higher. On the next best performing model: nearest neighbors, the interaction terms do seem to have lead to a considerable increase in performance but the basic recipe still performs better. The only two lowest performing models other than the null: elastic net and logistic regression both had the more feature engineered recipe perform better than the basic recipe but by a very small difference and the recipe without interaction terms performs almost the same in both recipes. This has led me to conclude that overall, the interaction terms created did not help prediction and that handling missingness by keeping certain variables and using the fact that the value is unknown to help predict, was actually not useful in this case. We can mostly get a higher performing model by removing these variables with missingness instead of allowing that information to influence our predictions. It was an interesting idea to explore if missingness could be used to our advantage, but in this case it seems to be more useful to simply remove them. Overall, the model with the highest measure of the area under the ROC curve is the random forest model on the basic recipe and so that model performs the best and is selected as the final winning model. It is not surprising that this model performed the best since tuning and a fixed high number of trees was used to improve accuracy.</p>
+<p>Now that all the models have been built on various recipes we can compare their performances by recipe. <a href="#tbl-comparison" class="quarto-xref">Table 8</a> shows that overall, the random forest model performs the best regardless of the recipe but that it performs better on the basic recipe than the ones that include more feature engineering. The same is true for the second-best performing model: the boosted tree. There is seemingly no difference that the interaction terms have made because the measure of performance is the same for both feature engineered recipes and the performance on the basic recipe is higher. On the next best performing model: nearest neighbors, the interaction terms do seem to have lead to a considerable increase in performance but the basic recipe still performs better. The two lowest performing models other than the null: elastic net and logistic regression both had the more feature engineered recipe perform better than the basic recipe but by a very small difference and the recipe without interaction terms performs almost the same as the main for both model types This has led me to conclude that overall, the interaction terms created did not help prediction and that handling missingness by keeping certain variables and using the fact that the value is unknown to help predict, was actually not useful in this case. More of the time, we can get a higher performing model by removing these variables with missingness instead of allowing that information to influence our predictions. It was an interesting idea to explore if missingness could be used to our advantage, but in this case it seems to be more useful to simply remove them. Overall, the model with the highest measure of the area under the ROC curve is the random forest model on the basic recipe, and so that model performs the best and is selected as the final winning model. It is not surprising that this model performed the best since using tuning and a fixed high number of trees is designed to improve accuracy.</p>
 <div class="cell">
 <div id="tbl-comparison" class="cell anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -6358,20 +6357,20 @@ Table 8: Comparison of All Model Types
 </figcaption>
 <div aria-describedby="tbl-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div id="sgceyilear" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#sgceyilear table {
+<div id="cksdaqrphj" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#cksdaqrphj table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#sgceyilear thead, #sgceyilear tbody, #sgceyilear tfoot, #sgceyilear tr, #sgceyilear td, #sgceyilear th {
+#cksdaqrphj thead, #cksdaqrphj tbody, #cksdaqrphj tfoot, #cksdaqrphj tr, #cksdaqrphj td, #cksdaqrphj th {
 border-style: none;
 }
-#sgceyilear p {
+#cksdaqrphj p {
 margin: 0;
 padding: 0;
 }
-#sgceyilear .gt_table {
+#cksdaqrphj .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -6396,11 +6395,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#sgceyilear .gt_caption {
+#cksdaqrphj .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#sgceyilear .gt_title {
+#cksdaqrphj .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -6411,7 +6410,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#sgceyilear .gt_subtitle {
+#cksdaqrphj .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -6422,7 +6421,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#sgceyilear .gt_heading {
+#cksdaqrphj .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -6433,12 +6432,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#sgceyilear .gt_bottom_border {
+#cksdaqrphj .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#sgceyilear .gt_col_headings {
+#cksdaqrphj .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -6452,7 +6451,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#sgceyilear .gt_col_heading {
+#cksdaqrphj .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -6471,7 +6470,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#sgceyilear .gt_column_spanner_outer {
+#cksdaqrphj .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -6482,13 +6481,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#sgceyilear .gt_column_spanner_outer:first-child {
+#cksdaqrphj .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#sgceyilear .gt_column_spanner_outer:last-child {
+#cksdaqrphj .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#sgceyilear .gt_column_spanner {
+#cksdaqrphj .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -6499,10 +6498,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#sgceyilear .gt_spanner_row {
+#cksdaqrphj .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#sgceyilear .gt_group_heading {
+#cksdaqrphj .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -6527,7 +6526,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#sgceyilear .gt_empty_group_heading {
+#cksdaqrphj .gt_empty_group_heading {
 padding: 0.5px;
 color: #FFFFFF;
 background-color: #7F7F7F;
@@ -6541,13 +6540,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#sgceyilear .gt_from_md > :first-child {
+#cksdaqrphj .gt_from_md > :first-child {
 margin-top: 0;
 }
-#sgceyilear .gt_from_md > :last-child {
+#cksdaqrphj .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#sgceyilear .gt_row {
+#cksdaqrphj .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -6565,7 +6564,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#sgceyilear .gt_stub {
+#cksdaqrphj .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -6577,7 +6576,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#sgceyilear .gt_stub_row_group {
+#cksdaqrphj .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -6590,13 +6589,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#sgceyilear .gt_row_group_first td {
+#cksdaqrphj .gt_row_group_first td {
 border-top-width: 2px;
 }
-#sgceyilear .gt_row_group_first th {
+#cksdaqrphj .gt_row_group_first th {
 border-top-width: 2px;
 }
-#sgceyilear .gt_summary_row {
+#cksdaqrphj .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -6605,14 +6604,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#sgceyilear .gt_first_summary_row {
+#cksdaqrphj .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#sgceyilear .gt_first_summary_row.thick {
+#cksdaqrphj .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#sgceyilear .gt_last_summary_row {
+#cksdaqrphj .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -6621,7 +6620,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#sgceyilear .gt_grand_summary_row {
+#cksdaqrphj .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -6630,7 +6629,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#sgceyilear .gt_first_grand_summary_row {
+#cksdaqrphj .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -6639,7 +6638,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#sgceyilear .gt_last_grand_summary_row_top {
+#cksdaqrphj .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -6648,10 +6647,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#sgceyilear .gt_striped {
+#cksdaqrphj .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#sgceyilear .gt_table_body {
+#cksdaqrphj .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -6659,7 +6658,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#sgceyilear .gt_footnotes {
+#cksdaqrphj .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -6672,7 +6671,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#sgceyilear .gt_footnote {
+#cksdaqrphj .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -6680,7 +6679,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#sgceyilear .gt_sourcenotes {
+#cksdaqrphj .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -6693,57 +6692,57 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#sgceyilear .gt_sourcenote {
+#cksdaqrphj .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#sgceyilear .gt_left {
+#cksdaqrphj .gt_left {
 text-align: left;
 }
-#sgceyilear .gt_center {
+#cksdaqrphj .gt_center {
 text-align: center;
 }
-#sgceyilear .gt_right {
+#cksdaqrphj .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#sgceyilear .gt_font_normal {
+#cksdaqrphj .gt_font_normal {
 font-weight: normal;
 }
-#sgceyilear .gt_font_bold {
+#cksdaqrphj .gt_font_bold {
 font-weight: bold;
 }
-#sgceyilear .gt_font_italic {
+#cksdaqrphj .gt_font_italic {
 font-style: italic;
 }
-#sgceyilear .gt_super {
+#cksdaqrphj .gt_super {
 font-size: 65%;
 }
-#sgceyilear .gt_footnote_marks {
+#cksdaqrphj .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#sgceyilear .gt_asterisk {
+#cksdaqrphj .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#sgceyilear .gt_indent_1 {
+#cksdaqrphj .gt_indent_1 {
 text-indent: 5px;
 }
-#sgceyilear .gt_indent_2 {
+#cksdaqrphj .gt_indent_2 {
 text-indent: 10px;
 }
-#sgceyilear .gt_indent_3 {
+#cksdaqrphj .gt_indent_3 {
 text-indent: 15px;
 }
-#sgceyilear .gt_indent_4 {
+#cksdaqrphj .gt_indent_4 {
 text-indent: 20px;
 }
-#sgceyilear .gt_indent_5 {
+#cksdaqrphj .gt_indent_5 {
 text-indent: 25px;
 }
 </style>
@@ -6894,7 +6893,7 @@ text-indent: 25px;
 <p>This section will assess the best model: the random forest on the basic recipe, in more detail.</p>
 <section id="roc-auc-accuracy" class="level4">
 <h4 class="anchored" data-anchor-id="roc-auc-accuracy">ROC AUC &amp; Accuracy</h4>
-<p>This table shows two performance measures for the winning model, the primary one: area under the ROC curve and something more intuitive, accuracy. Like the area under the curve we want the accuracy to be closer to 1 than 0 since 1 would mean 100% accuracy and we’d like to get as close to that as possible. The fact that the accuracy is 0.917 is quite impressive, and means that this model does not perform perfectly but performs very well. The same logic is used to assess the area under the curve and its high value of 0.969 is quite impressive as well.</p>
+<p><a href="#tbl-roc_accuracy" class="quarto-xref">Table 9</a> shows two performance measures for the winning model, the primary one: area under the ROC curve and something more intuitive, accuracy. Like the area under the ROC curve we want the accuracy to be closer to 1 than 0 since 1 would mean 100% accuracy and we’d like to get as close to that as possible. The fact that the accuracy is 0.917 is quite impressive, and means that this model performs very well. The same logic is used to assess the area under the curve and its high value of 0.969 is quite impressive as well.</p>
 <div class="cell">
 <div id="tbl-roc_accuracy" class="cell anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -6903,20 +6902,20 @@ Table 9: Assessment Metrics for the Winning Model
 </figcaption>
 <div aria-describedby="tbl-roc_accuracy-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div id="lieykhozwf" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#lieykhozwf table {
+<div id="mqghhuvrwd" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#mqghhuvrwd table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#lieykhozwf thead, #lieykhozwf tbody, #lieykhozwf tfoot, #lieykhozwf tr, #lieykhozwf td, #lieykhozwf th {
+#mqghhuvrwd thead, #mqghhuvrwd tbody, #mqghhuvrwd tfoot, #mqghhuvrwd tr, #mqghhuvrwd td, #mqghhuvrwd th {
 border-style: none;
 }
-#lieykhozwf p {
+#mqghhuvrwd p {
 margin: 0;
 padding: 0;
 }
-#lieykhozwf .gt_table {
+#mqghhuvrwd .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -6941,11 +6940,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#lieykhozwf .gt_caption {
+#mqghhuvrwd .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#lieykhozwf .gt_title {
+#mqghhuvrwd .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -6956,7 +6955,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#lieykhozwf .gt_subtitle {
+#mqghhuvrwd .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -6967,7 +6966,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#lieykhozwf .gt_heading {
+#mqghhuvrwd .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -6978,12 +6977,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#lieykhozwf .gt_bottom_border {
+#mqghhuvrwd .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#lieykhozwf .gt_col_headings {
+#mqghhuvrwd .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -6997,7 +6996,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#lieykhozwf .gt_col_heading {
+#mqghhuvrwd .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -7016,7 +7015,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#lieykhozwf .gt_column_spanner_outer {
+#mqghhuvrwd .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -7027,13 +7026,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#lieykhozwf .gt_column_spanner_outer:first-child {
+#mqghhuvrwd .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#lieykhozwf .gt_column_spanner_outer:last-child {
+#mqghhuvrwd .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#lieykhozwf .gt_column_spanner {
+#mqghhuvrwd .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -7044,10 +7043,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#lieykhozwf .gt_spanner_row {
+#mqghhuvrwd .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#lieykhozwf .gt_group_heading {
+#mqghhuvrwd .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -7072,7 +7071,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#lieykhozwf .gt_empty_group_heading {
+#mqghhuvrwd .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -7086,13 +7085,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#lieykhozwf .gt_from_md > :first-child {
+#mqghhuvrwd .gt_from_md > :first-child {
 margin-top: 0;
 }
-#lieykhozwf .gt_from_md > :last-child {
+#mqghhuvrwd .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#lieykhozwf .gt_row {
+#mqghhuvrwd .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -7110,7 +7109,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#lieykhozwf .gt_stub {
+#mqghhuvrwd .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -7122,7 +7121,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#lieykhozwf .gt_stub_row_group {
+#mqghhuvrwd .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -7135,13 +7134,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#lieykhozwf .gt_row_group_first td {
+#mqghhuvrwd .gt_row_group_first td {
 border-top-width: 2px;
 }
-#lieykhozwf .gt_row_group_first th {
+#mqghhuvrwd .gt_row_group_first th {
 border-top-width: 2px;
 }
-#lieykhozwf .gt_summary_row {
+#mqghhuvrwd .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -7150,14 +7149,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#lieykhozwf .gt_first_summary_row {
+#mqghhuvrwd .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#lieykhozwf .gt_first_summary_row.thick {
+#mqghhuvrwd .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#lieykhozwf .gt_last_summary_row {
+#mqghhuvrwd .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -7166,7 +7165,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#lieykhozwf .gt_grand_summary_row {
+#mqghhuvrwd .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -7175,7 +7174,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#lieykhozwf .gt_first_grand_summary_row {
+#mqghhuvrwd .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -7184,7 +7183,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#lieykhozwf .gt_last_grand_summary_row_top {
+#mqghhuvrwd .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -7193,10 +7192,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#lieykhozwf .gt_striped {
+#mqghhuvrwd .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#lieykhozwf .gt_table_body {
+#mqghhuvrwd .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -7204,7 +7203,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#lieykhozwf .gt_footnotes {
+#mqghhuvrwd .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -7217,7 +7216,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#lieykhozwf .gt_footnote {
+#mqghhuvrwd .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -7225,7 +7224,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#lieykhozwf .gt_sourcenotes {
+#mqghhuvrwd .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -7238,57 +7237,57 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#lieykhozwf .gt_sourcenote {
+#mqghhuvrwd .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#lieykhozwf .gt_left {
+#mqghhuvrwd .gt_left {
 text-align: left;
 }
-#lieykhozwf .gt_center {
+#mqghhuvrwd .gt_center {
 text-align: center;
 }
-#lieykhozwf .gt_right {
+#mqghhuvrwd .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#lieykhozwf .gt_font_normal {
+#mqghhuvrwd .gt_font_normal {
 font-weight: normal;
 }
-#lieykhozwf .gt_font_bold {
+#mqghhuvrwd .gt_font_bold {
 font-weight: bold;
 }
-#lieykhozwf .gt_font_italic {
+#mqghhuvrwd .gt_font_italic {
 font-style: italic;
 }
-#lieykhozwf .gt_super {
+#mqghhuvrwd .gt_super {
 font-size: 65%;
 }
-#lieykhozwf .gt_footnote_marks {
+#mqghhuvrwd .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#lieykhozwf .gt_asterisk {
+#mqghhuvrwd .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#lieykhozwf .gt_indent_1 {
+#mqghhuvrwd .gt_indent_1 {
 text-indent: 5px;
 }
-#lieykhozwf .gt_indent_2 {
+#mqghhuvrwd .gt_indent_2 {
 text-indent: 10px;
 }
-#lieykhozwf .gt_indent_3 {
+#mqghhuvrwd .gt_indent_3 {
 text-indent: 15px;
 }
-#lieykhozwf .gt_indent_4 {
+#mqghhuvrwd .gt_indent_4 {
 text-indent: 20px;
 }
-#lieykhozwf .gt_indent_5 {
+#mqghhuvrwd .gt_indent_5 {
 text-indent: 25px;
 }
 </style>
@@ -7324,7 +7323,7 @@ text-indent: 25px;
 </section>
 <section id="roc-curve" class="level4">
 <h4 class="anchored" data-anchor-id="roc-curve">ROC Curve</h4>
-<p>Next, <a href="#fig-plot2" class="quarto-xref">Figure 3</a> shows a visual representation of the ROC curve to better understand our assessment metric of the area under its curve. Since we want the area to be as big as it can be, we want the curve to be as close to almost outlining the top left corner of the graph as it can be. This is the case here, as it is clear that this ROC curve takes on that desired shape and has a very large area between it and the dotted line. This would mean a high true positive rate and a low false positive rate which means minimal error in prediction.</p>
+<p>Next, <a href="#fig-plot2" class="quarto-xref">Figure 3</a> shows a visual representation of the ROC curve to better understand our assessment metric of the area under its curve. Since we want the area to be as big as it can be, we want the curve to be as close to almost outlining the top left corner of the graph as it can be. This is the case here, as it is clear that this ROC curve takes on that desired shape and has a very large area between its border and the dotted line. This would mean a high true positive rate and a low false positive rate which means minimal error in prediction.</p>
 <div id="fig-plot2" class="quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-plot2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -7338,7 +7337,7 @@ Figure 3: ROC Curve for the Winning Model
 </section>
 <section id="confusion-matrix" class="level4">
 <h4 class="anchored" data-anchor-id="confusion-matrix">Confusion Matrix</h4>
-<p>To further explore this model we can use a confusion matrix in <a href="#fig-bar2" class="quarto-xref">Figure 4</a> to compare predictions to the accurate values. The top left is the number of correctly predicted satisfied apartment owners, 475, the bottom right is the number of correctly predicted unsatisfied apartment owners, 283. The bottom left is the number of wrongly predicted satisfied apartment owners as unsatisfied, only 12, and the top right is the number of wrongly predicted unsatisfied apartment owners as satisfied, 57. I am surprised that many more people who are unsatisfied with their apartment were incorrectly predicted than those who were really satisfied and wrongly predicted.</p>
+<p>To further explore this model we can use the confusion matrix in <a href="#fig-bar2" class="quarto-xref">Figure 4</a> to compare predictions to the accurate values. The top left is the number of correctly predicted satisfied apartment owners, 475, the bottom right is the number of correctly predicted unsatisfied apartment owners, 283. The bottom left is the number of wrongly predicted satisfied apartment owners as unsatisfied, only 12, and the top right is the number of wrongly predicted unsatisfied apartment owners as satisfied, 57. I am surprised that many more people who are unsatisfied with their apartment were incorrectly predicted than those who were really satisfied and wrongly predicted.</p>
 <div id="fig-bar2" class="quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-bar2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -7354,6 +7353,7 @@ Figure 4: Confusion Matrix for the Winning Model
 </section>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>In conclusion, there are a lot of different ways to build predictive models and a lot of different ways to go about feature engineering. On Kaggle, the author of this dataset posted a comment saying that this dataset is designed to be used to learn how to complete EDA and prediction models, which was the purpose of this project so it made sense that there was a lot of cleaning to be done. I began by using the quality of living as a target variable but the distribution was very bimodal with the highest density of values above 60 out of 100. So to combat this imbalance of data I used the values of this variable to calculate the satisfaction variable. It is now much easier to just classify someone as satisfied or unsatisfied and there is much less of an imbalance between the classes. Since I could only use observations that did not have missing values for my target variable, all observations with missing values for the quality of living variable needed to be filtered out, and unfortunately that cut down the dataset to only 4132 observations. Much of the raw dataset was not applicable to this prediction problem and even within this cleaned dataset, missingness was prevalent in a lot of variables. Many had over half of their values missing so it made sense to remove them, but for variables with around half or less than half I tried to combat it in a different way by utilizing missing values to our advantage and giving them their own unknown level. Perhaps keeping those variables and using the fact that values were unknown as another piece of information could have helped prediction, but in this case it didn’t make much of a difference. I was quite surprised because here in Evanston people tend to place importance in the size of their building and what floor they are on. I live on the top floor of my building and I would say that contributes to my satisfaction, but I guess in this case it was not as important in predicting satisfaction. I also have friends who live off campus and place importance in the height of their building as well, so I really thought these would be important predictors, but I guess including them to the best ability possible did not make much of a difference in performance. I am also surprised that creating interaction terms did not help performance much. I thought based on my EDA that some of the different correlations between variables could make a difference in performance but I guess not doing so helped prediction more in most cases. The main thing I learned from this is that part of feature engineering is learning when certain predictors are not helpful and that removing them sometimes is the best option to improve performance and model accuracy. I also learned that tuning models helps find the best values of hyperparameters to maximize model performance so it makes sense that those models performed better than the two models that were not tuned. Finally, I learned over the course of this quarter and through this project that random forest models often do well, even the relative best a lot of times! This is probably because setting a high number of trees improves accuracy in addition to tuning other hyperparameters. Something I would potentially want to explore in the future would be combining more of the factor variables into fewer levels that include ranges of factors. Including factor variables with too many levels can lead to overfitting which is partly why they were removed, a lot of them also had missingness, but throughout this project I learned how to combine levels into ranges so that might be an interesting thing to explore in a new recipe in the future. However since a lot of these factors had more missingness than the variables I mutated for this project that probably wouldn’t help too much but it would be worth a try! I am also curious to learn more about the different index variables. Exploring them for the EDA was really interesting and perhaps for a project more like last quarter’s I would be curious to explore all the relationships between variables. But that wouldn’t be relevant to the purpose of this project. I would also want to see some of the relationships between variables I had to remove from my recipe and my target variable out of curiosity.</p>
 </section>
 <section id="references" class="level2">
 <h2 class="anchored" data-anchor-id="references">References</h2>
