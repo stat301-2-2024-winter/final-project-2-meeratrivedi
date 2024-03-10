@@ -11,8 +11,8 @@ library(janitor)
 
 #load data
 load(here("data/clean_qol.rda"))
-load(here("results/estate_split.rda"))
-load(here("results/training_sample.rda"))
+load(here("data/estate_split.rda"))
+load(here("data/training_sample.rda"))
 
 #interaction between price and environment -------
 #shows difference in satisfaction by price levels for different environmental ranking ranges

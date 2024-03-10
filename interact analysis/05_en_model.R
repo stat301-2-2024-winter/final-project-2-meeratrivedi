@@ -16,7 +16,7 @@ registerDoMC(cores = parallel::detectCores(logical = TRUE))
 load(here("data/estate_split.rda"))
 
 # load pre-processing/feature engineering/recipe
-load(here("interact analysis/interact recipes/interact_tree_recipe.rda"))
+load(here("interact analysis/interact recipes/interact_recipe.rda"))
 
 set.seed(1234)
 
@@ -30,7 +30,7 @@ en_mod3 <- logistic_reg(
 #elastic net workflow
 en_wflw3 <- workflow() |> 
   add_model(en_mod3) |> 
-  add_recipe(interact_tree_recipe)
+  add_recipe(interact_recipe)
 
 #hyperparameter tuning values ----
 en_params3 <- extract_parameter_set_dials(en_mod3) |> 

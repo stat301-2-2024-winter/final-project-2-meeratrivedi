@@ -1,0 +1,131 @@
+---
+title: "Progress Memo 2"
+subtitle: |
+  | Final Project 
+  | Data Science 2 with R (STAT 301-2)
+author: "Meera Trivedi"
+date: today
+
+format:
+  html:
+    toc: true
+    embed-resources: true
+    
+execute:
+  warning: false
+  echo: false
+
+from: markdown+emoji 
+reference-location: margin
+citation-location: margin
+---
+
+::: {.callout-tip icon=false}
+
+## Github Repo Link
+
+[My GitHub Repo](https://github.com/stat301-2-2024-winter/final-project-2-meeratrivedi.git)
+
+:::
+
+## Introduction
+
+#### Data Source
+My dataset is called "Real Estate Dataset"^[Kakas, Arnold. (2023, Nov.). *Real Estate Dataset*. Kaggle. --- [https://www.kaggle.com/datasets/arnoldkakas/real-estate-dataset/data](https://www.kaggle.com/datasets/arnoldkakas/real-estate-dataset/data)] and has been downloaded from Kaggle, on which it is described as a dataset that explores “spatial dynamics, price, and quality of apartments in Slovakia”. The data comes from scraping advertising data from the [nehnutelnosti.sk](nehnutelnosti.sk) website as of November 2023, so this is fairly recent data, and only pertains to apartment listings. The Nehnutelnosti website has real estate listings and provides services to help find available properties in Slovakia. Each observation refers to an apartment listing and the variables measured about each listing range from costs, to dimensions, to features, to the safety and environment around the apartment’s building. It was posted to Kaggle by Arnold Kakas, who notes that he has intentionally left the dataset completely raw for the purpose of people using it to learn data cleaning, data visualization, and training predictive models, which is the purpose of this project. 
+
+#### Prediction Problem
+My prediction problem was going to be to use various types of data on apartments in Slovakia, ranging from data on the actual construction of the building to the environment around it, to predict the overall quality of living of the people living in those properties. At first, quality of living was a numerical variable corresponding to an index but because of this I could change it to a factor variable with different ordered levels to make it a classification problem. However, since there were still many levels I decided to calculate a new target variable: satisfaction. It has two levels, “satisfied” and “unsatisfied”. I will explain how I calculated it further on. I think it’s very useful to uncover relationships between the satisfaction and every available aspect of a building because in order for a building to be marketable people have to gain some benefit from living there. The data I found happens to be from Slovakia which is interesting because I don't ever see that country represented in the media so it would be nice to learn a little more about it. The main reason I chose this data though is because I am a sophomore moving off campus next year so I have looked into apartments both by myself and with friends and finally signed my own lease. In the process I had to evaluate data on each building to decide what would be the best option for me. I also used to watch house flipping and renovating shows with my dad when I was younger all the time so I thought it might be fun to look into what would make a property successful, and a way to measure that is quality of living. A model to predict something as useful as satisfaction would be helpful to understand the value of a building based on its various metrics and categorical data.
+
+## Data Overview
+```{r}
+#| message: false
+# load packages ----
+library(tidyverse)
+library(here)
+library(skimr)
+library(naniar)
+library(janitor)
+library(gt)
+
+#load data
+load(here("data/clean_qol.rda"))
+load(here("data/estate_split.rda"))
+```
+
+#### Original Data
+This dataset has 27 variables and 15,403 observations. Out of the 27 variables, 7 are character variables: the name of the apartment, whether it is in its original condition or has gone through some sort of renovation, what energy certificate the building has, the material the apartment is made out of, like brick or paneling, the geographical direction it faces, the type of apartment it is in terms of the number of bedrooms (ex: 3-bedroom) and the name of the district in Slovakia it is in. The other 20 are numerical, and consist of the price of the listing in euros, a number on an Index of Living from 0-10; according to Kaggle this was “calculated by the Slovak startup City Performer” using the values of these 6 variables in the dataset corresponding to environment, quality of living, safety, transportation, services, and relaxation. Each value of these 6 variables represents an index rating for just that variable. Other variables include the area in square meters of the apartment,the energy costs in euros for that apartment, a binary variable with a value of 1 if the provision of the agency is included in the price, and if not is 0, the year it was built, the most recent year any sort of construction work was done on it, the floor of the building the apartment is on, whether or not the building has a lift or a cellar and more features, where the value of each is the number of features each individual apartment or building has.
+
+#### Cleaned Data
+The cleaned dataset has 28 variables and 4132 observations. All observations with missing values for the quality of living index variable were filtered out and the satisfaction variable was added. This is the dataset used for data splitting.
+
+#### Missingness
+Missingness was then explored on the training dataset going forward to prevent data leakage. The variables that have missingness have missingness for almost all of their values so many of them will not be useful predictor variables. 
+```{r}
+miss_table2 <- miss_var_summary(estate_train) |> 
+  filter(n_miss > 0)
+
+miss_names2 <- miss_table2 |> 
+  pull(variable)
+
+estate_train |> 
+  select(miss_names2) |> 
+  gg_miss_var()
+```
+
+
+#### Target Variable Analysis
+This is a bar plot that shows the count of each level of satisfaction. This variable was calculated using the quality of living variable. The value of this variable is “unsatisfied” if the quality of living is below 85 (out of 100) and “satisfied” if the quality of living is from 85 to 100 (out of 100). Since the quality of living variable is on a scale out of 100 I decided to use the US grading system, which is also out of 100, to determine what would be a good cutoff for satisfaction. “C” range grades are typically considered average and “B” range grades are typically considered above average, and “A” is of course the highest achievable grade. So since 85 is the average of the “B” range grades I thought it made sense as a differentiator between above average and not. 
+```{r}
+#| label: fig-satisfaction-dist
+#| fig.cap: Count of apartments with who are satisfied with it versus unsatisfied.
+#| echo: false
+estate_train |> 
+  ggplot(aes(x = satisfaction, fill = satisfaction))+
+  geom_bar(show.legend = FALSE)+
+  scale_fill_brewer(palette = "Pastel2")+
+  theme_minimal()+
+  labs(x = "Quality of Living", y = "Number of Apartments", 
+       title = "Satisfaction with Apartments in Slovakia") +
+  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"), 
+        axis.text.x = element_text(hjust = 0.5, size = 10), 
+        axis.title.x = element_text(hjust = 0.5, size = 11, face = "bold"), 
+        axis.title.y = element_text(hjust = 0.5, size = 11, face = "bold"))
+
+```
+
+The target variable was originally intended to be the quality of living as a factor but since there was quite a bimodal distribution with a much higher density in values above 60 out of 100, it made more sense to use a factor with two levels to counteract what would have been a massive class imbalance. Using the US grading system helped to balance the distribution to an extent but there are still noticeably more values for satisfied than unsatisfied. However, considering the context of this data this makes sense, we would hope most people are happy with their living situation. 
+
+## Methods 
+
+#### Data Splitting
+The cleaned data was split using stratified splitting by the target variable, satisfaction, and using an 80%/20% split because the dataset is fairly large. This is a common split to use with large datasets.
+
+#### Resampling
+The data was resampling using V-fold cross validation with 10 folds and 5 repeats which will then result in 50 models per fit. 
+
+#### Recipes
+Six recipes were used to create the models. Unfortunately multiple of my predictor variables had many missing values. They were added to the dataset as variables because a few apartments had data for them, but if most apartments don’t have data points for those variables, they can’t be useful predictors in a prediction model. As an example, one variable is about the type of energy certificate the apartment has but the most frequent value was “none” meaning that apartment didn’t have an energy certificate. This means having an energy certificate can’t be that useful of a predictor if the majority of apartments either don’t have a certificate or have a missing value for it. For simplicity, the basic recipes have all the variables with missing data removed, as well as the factor variables with many levels removed to avoid overfitting and overworking the computer. It imputes the area variable because there is only a small amount of missingness, so imputation would only be making up for a small percentage of the values. And it creates dummy variables for the nominal predictors, deals with zero variance, and centers and scales all predictors. 
+
+The main recipe does all of this as well except it does not remove all the variables with missingness, instead for two variables: the total floors the building has and the floor number the apartment is on, it mutates them to be factors with three levels, one level replaces missing values with the word “unknown”, since seeing something is unknown could be interesting instead of removing those observations entirely. These differences will help evaluate if knowing something is unknown is actually useful in making predictions. These two variables were chosen specifically to be mutated because they have about half of their values missing so this unknown level would have a lot of values but not so much that the variables should be considered totally unusable in all recipes.
+
+The “interact” recipe builds on this recipe and additionally uses interaction terms to analyze the impact of them separately. EDA was conducted to understand the relationships between predictor variables to determine interaction terms. First I explored price by satisfaction by different levels of variables that represented rankings on different aspects of the apartment to see if there were differences in the satisfaction for each range. Every variable that represented ranking was factored and split into 3 equal levels (so if available values were from 4-99 each level was ⅓ of that range). There were considered to be clear differences in satisfaction if the level that had the most density for each range was different for the different ranges. This would mean that the different ranges could help contribute to determining satisfaction and so it would make sense to create an interaction term. This process was used to justify creating interaction terms for price and environment, price and relaxation ability, price and available services, and price and transportation services. Next, since I thought safety and environment could be related I explored their relationship by the two levels of satisfaction in the form of a faceted boxplot with environment factored with 5 equal levels and found that the distributions were quite different for the two levels of satisfaction especially between the middle two ranges of environment so it made sense to create an interaction term between safety and environment as well. Finally I explored the relationship between price and area since typically the bigger an apartment is the more expensive it is but found that the relationship did not differ much by satisfaction so I decided not to create an interaction term for this. So to conclude, I created 5 interaction terms based on this EDA, and the graphs can be found in the appendix. 
+
+The basic, main, and interact recipes for the forest models do the same things as the aforementioned basic, main, and interact recipes respectively; however they use one-hot encoding.
+
+#### Model Types
+Since this is a classification problem, the models I will be creating will be: null, logistic, elastic net, nearest neighbors, random forest, and boosted tree. The null model only uses the basic recipe and the other models all use all three recipe types, so there are three different models of each type corresponding to each recipe type. The null, logistic, and elastic net models use parametric recipes and the nearest neighbors, random forest, and boosted tree use tree recipes. 
+
+#### Tuning Parameters
+The elastic net, nearest neighbors, random forest, and boosted tree models all use tuning. 
+
+The elastic net model uses tuning for the mixture and penalty. The tuning ranges were updated so that the range of mixture is from 0 to 1 and the range of penalty is from -5 to 0.2. 
+
+The nearest neighbor model uses tuning for the neighbors variable but it is my understanding that the default tuning range works well so there was no need to update it. 
+
+The random forest model uses tuning for the min_n and mtry variables. Min_n is the minimum number of data points required for the node to be split further and mtry is a number of randomly drawn variables. Using tuning for these hyperparameters is helpful to improve the accuracy of these models. Since the default range of min_n works well there was no need to update it but the range of mtry was updated to 1 to 11 because we want the upper bound to be the maximum number of predictor variables that could be randomly drawn so the range includes all the predictor variables. Tuning was not used for the trees variable since we would want to use a fixed value: as high of a number as a computer could handle. Since 500 is the default and 1000 would be a lot, I used 750 since it is a benchmark value and the average between the two. 
+
+The boosted tree model uses tuning for mtry, min_n, and learn_rate, which is a rate that the weak learners' predictions get scaled. The range of mtry was updated in the same way as for random forest and the range of min_n was not updated again. The range of learning rate was updated to (-5, -0.2) since the upper bound should be close to but less than 0 and lower ranges of learning rates are better when more trees are used to achieve the same level of fit. 
+
+#### Assessment Metrics
+Since this is a classification problem, the assessment metric will be roc_auc which is the area under the ROC curve. This is a good metric to use when there is imbalance in a dataset between levels of the target variable and since there seem to be noticeably more people satisfied with their apartments than not, this could be considered an imbalance. It is most desirable for this value to be closer to 1 than 0. 
+

@@ -16,7 +16,7 @@ registerDoMC(cores = parallel::detectCores(logical = TRUE))
 load(here("data/estate_split.rda"))
 
 # load pre-processing/feature engineering/recipe
-load(here("main analysis/main recipes/main_tree_recipe.rda"))
+load(here("main analysis/main recipes/main_recipe.rda"))
 
 set.seed(1234)
 
@@ -30,7 +30,7 @@ en_mod2 <- logistic_reg(
 #elastic net workflow
 en_wflw2 <- workflow() |> 
   add_model(en_mod2) |> 
-  add_recipe(main_tree_recipe)
+  add_recipe(main_recipe)
 
 #hyperparameter tuning values ----
 en_params2 <- extract_parameter_set_dials(en_mod2) |> 

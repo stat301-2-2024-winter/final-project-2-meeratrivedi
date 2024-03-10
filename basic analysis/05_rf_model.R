@@ -23,7 +23,7 @@ set.seed(1234)
 
 #rf model specifications
 rf_mod1 <- rand_forest(mode = "classification", 
-                        trees = 500, 
+                        trees = 750, 
                         min_n = tune(), 
                         mtry = tune()) |> 
   set_engine('ranger')
