@@ -46,6 +46,7 @@ library(skimr)
 library(naniar)
 library(janitor)
 library(gt)
+library(tidymodels)
 
 #load data
 load(here("data/clean_qol.rda"))
@@ -59,39 +60,16 @@ This dataset has 27 variables and 15,403 observations. Out of the 27 variables, 
 The cleaned dataset has 28 variables and 4132 observations. All observations with missing values for the quality of living index variable were filtered out and the satisfaction variable was added. This is the dataset used for data splitting.
 
 #### Missingness
-Missingness was then explored on the training dataset going forward to prevent data leakage. The variables that have missingness have missingness for almost all of their values so many of them will not be useful predictor variables. 
-```{r}
-miss_table2 <- miss_var_summary(estate_train) |> 
-  filter(n_miss > 0)
+Missingness is explored here using @fig-plot1. The variables that have missingness have missingness for almost all of their values so many of them will not be useful predictor variables.
 
-miss_names2 <- miss_table2 |> 
-  pull(variable)
-
-estate_train |> 
-  select(miss_names2) |> 
-  gg_miss_var()
-```
+![Slovakian Apartment Tenants Satisfaction](setup/figures/missingness.png){#fig-plot1}
 
 
 #### Target Variable Analysis
-This is a bar plot that shows the count of each level of satisfaction. This variable was calculated using the quality of living variable. The value of this variable is “unsatisfied” if the quality of living is below 85 (out of 100) and “satisfied” if the quality of living is from 85 to 100 (out of 100). Since the quality of living variable is on a scale out of 100 I decided to use the US grading system, which is also out of 100, to determine what would be a good cutoff for satisfaction. “C” range grades are typically considered average and “B” range grades are typically considered above average, and “A” is of course the highest achievable grade. So since 85 is the average of the “B” range grades I thought it made sense as a differentiator between above average and not. 
-```{r}
-#| label: fig-satisfaction-dist
-#| fig.cap: Count of apartments with who are satisfied with it versus unsatisfied.
-#| echo: false
-estate_train |> 
-  ggplot(aes(x = satisfaction, fill = satisfaction))+
-  geom_bar(show.legend = FALSE)+
-  scale_fill_brewer(palette = "Pastel2")+
-  theme_minimal()+
-  labs(x = "Quality of Living", y = "Number of Apartments", 
-       title = "Satisfaction with Apartments in Slovakia") +
-  theme(plot.title = element_text(hjust = 0.5, size = 13, face = "bold"), 
-        axis.text.x = element_text(hjust = 0.5, size = 10), 
-        axis.title.x = element_text(hjust = 0.5, size = 11, face = "bold"), 
-        axis.title.y = element_text(hjust = 0.5, size = 11, face = "bold"))
 
-```
+@fig-bar1 is a bar plot that shows the count of each level of satisfaction. This variable was calculated using the quality of living variable. The value of this variable is “unsatisfied” if the quality of living is below 85 (out of 100) and “satisfied” if the quality of living is from 85 to 100 (out of 100). Since the quality of living variable is on a scale out of 100 I decided to use the US grading system, which is also out of 100, to determine what would be a good cutoff for satisfaction. “C” range grades are typically considered average and “B” range grades are typically considered above average, and “A” is of course the highest achievable grade. So since 85 is the average of the “B” range grades I thought it made sense as a differentiator between above average and not. 
+
+![Slovakian Apartment Tenants Satisfaction](setup/figures/target_analysis.png){#fig-bar1}
 
 The target variable was originally intended to be the quality of living as a factor but since there was quite a bimodal distribution with a much higher density in values above 60 out of 100, it made more sense to use a factor with two levels to counteract what would have been a massive class imbalance. Using the US grading system helped to balance the distribution to an extent but there are still noticeably more values for satisfied than unsatisfied. However, considering the context of this data this makes sense, we would hope most people are happy with their living situation. 
 
@@ -108,7 +86,7 @@ Six recipes were used to create the models. Unfortunately multiple of my predict
 
 The main recipe does all of this as well except it does not remove all the variables with missingness, instead for two variables: the total floors the building has and the floor number the apartment is on, it mutates them to be factors with three levels, one level replaces missing values with the word “unknown”, since seeing something is unknown could be interesting instead of removing those observations entirely. These differences will help evaluate if knowing something is unknown is actually useful in making predictions. These two variables were chosen specifically to be mutated because they have about half of their values missing so this unknown level would have a lot of values but not so much that the variables should be considered totally unusable in all recipes.
 
-The “interact” recipe builds on this recipe and additionally uses interaction terms to analyze the impact of them separately. EDA was conducted to understand the relationships between predictor variables to determine interaction terms. First I explored price by satisfaction by different levels of variables that represented rankings on different aspects of the apartment to see if there were differences in the satisfaction for each range. Every variable that represented ranking was factored and split into 3 equal levels (so if available values were from 4-99 each level was ⅓ of that range). There were considered to be clear differences in satisfaction if the level that had the most density for each range was different for the different ranges. This would mean that the different ranges could help contribute to determining satisfaction and so it would make sense to create an interaction term. This process was used to justify creating interaction terms for price and environment, price and relaxation ability, price and available services, and price and transportation services. Next, since I thought safety and environment could be related I explored their relationship by the two levels of satisfaction in the form of a faceted boxplot with environment factored with 5 equal levels and found that the distributions were quite different for the two levels of satisfaction especially between the middle two ranges of environment so it made sense to create an interaction term between safety and environment as well. Finally I explored the relationship between price and area since typically the bigger an apartment is the more expensive it is but found that the relationship did not differ much by satisfaction so I decided not to create an interaction term for this. So to conclude, I created 5 interaction terms based on this EDA, and the graphs can be found in the appendix. 
+The “interact” recipe builds on this recipe and additionally uses interaction terms to analyze the impact of them separately. EDA was conducted to understand the relationships between predictor variables to determine interaction terms. First I explored price (on a log 10 scale for visual purposes) by satisfaction by different levels of variables that represented rankings on different aspects of the apartment to see if there were differences in the satisfaction for each range. Every variable that represented ranking was factored and split into 3 equal levels (so if available values were from 4-99 each level was ⅓ of that range). There were considered to be clear differences in satisfaction if the level that had the most density for each range was different for the different ranges. This would mean that the different ranges could help contribute to determining satisfaction and so it would make sense to create an interaction term. This process was used to justify creating interaction terms for price and environment, price and relaxation ability, price and available services, and price and transportation services. Next, since I thought safety and environment could be related I explored their relationship by the two levels of satisfaction in the form of a faceted boxplot with environment factored with 5 equal levels and found that the distributions were quite different for the two levels of satisfaction especially between the middle two ranges of environment so it made sense to create an interaction term between safety and environment as well. Finally I explored the relationship between price and area since typically the bigger an apartment is the more expensive it is but found that the relationship did not differ much by satisfaction so I decided not to create an interaction term for this. So to conclude, I created 5 interaction terms based on this EDA, and the graphs can be found in the appendix. 
 
 The basic, main, and interact recipes for the forest models do the same things as the aforementioned basic, main, and interact recipes respectively; however they use one-hot encoding.
 
@@ -127,5 +105,274 @@ The random forest model uses tuning for the min_n and mtry variables. Min_n is t
 The boosted tree model uses tuning for mtry, min_n, and learn_rate, which is a rate that the weak learners' predictions get scaled. The range of mtry was updated in the same way as for random forest and the range of min_n was not updated again. The range of learning rate was updated to (-5, -0.2) since the upper bound should be close to but less than 0 and lower ranges of learning rates are better when more trees are used to achieve the same level of fit. 
 
 #### Assessment Metrics
-Since this is a classification problem, the assessment metric will be roc_auc which is the area under the ROC curve. This is a good metric to use when there is imbalance in a dataset between levels of the target variable and since there seem to be noticeably more people satisfied with their apartments than not, this could be considered an imbalance. It is most desirable for this value to be closer to 1 than 0. 
+Since this is a classification problem, the assessment metric will be the area under the ROC curve. The ROC curve shows the relationship between the true positive rate, sensitivity, and false positive rate, 1 - specificity for different thresholds of classification. It is a good measure to use for binary classification, in this case between satisfied and unsatisfied. The area under the curve can be from 0 to 1, with a higher measure indicating better performance. This is a good metric to use when there is imbalance in a dataset between levels of the target variable and since there seem to be noticeably more people satisfied with their apartments than not, this could be considered an imbalance.  
 
+## Models
+
+#### Basic Recipes
+First we can explore the 6 different model types fitted to the basic recipes. This table shows that in comparison to the null model all models have a higher measure of performance, meaning making complex models is useful in making more accurate predictions. In this case, the random forest model performs the best with a performance measure of 0.958, which is very close to 1. It also has the lowest standard error out of all the models except the null. Standard error is not the primary assessment metric here but this information is still interesting nonetheless. 
+```{r}
+#| label: tbl-basic
+#| tbl-cap: Evaluation of six models on the basic recipes. 
+
+load(here("basic analysis/basic results/metrics.rda"))
+
+metrics |> 
+  select(.estimator, mean, n, std_err, model) |> 
+  relocate(model) |>
+  arrange(desc(mean)) |> 
+  #group_by(model) |> 
+ # mutate(.metric = "ROC AUC") |> 
+  gt() |> 
+  tab_header(title = md("**Assessment Metrics**"), 
+             subtitle = "All Models - Basic Recipe") |>
+  cols_label(#.metric = md("Assessment Metric"), 
+             .estimator = md("Estimator"), 
+             std_err = md("Standard Error"), 
+             mean = md("Mean ROC AUC"), 
+             n = md("Number of Models")) |> 
+  fmt_number(
+    columns = mean, 
+    decimals = 3) |> 
+  fmt_number(
+    columns = std_err, 
+    decimals = 5) 
+  #row_group_order(groups = c("null", "logistic", "rf", "knn", "bt", "en")) |> 
+  #tab_options(row_group.background.color = "grey50")
+
+```
+
+#### Main Recipes
+
+Next we can explore the 5 model types other than the null model on the main recipe. This table shows that the random forest model still performs better than the other models by having a much higher measure of performance of 0.956, which is very close to 1. It still has the lowest standard error out of all the models.
+```{r}
+#| label: tbl-main
+#| tbl-cap: Evaluation of six models on the main recipes. 
+load(here("main analysis/main results/metrics2.rda"))
+
+metrics2 |> 
+  select(.estimator, mean, n, std_err, model) |> 
+  arrange(desc(mean)) |> 
+  relocate(model) |> 
+  gt() |> 
+  tab_header(title = md("**Assessment Metrics**"), 
+             subtitle = "All Models - Main Recipe") |>
+  cols_label(.estimator = md("Estimator"), 
+    std_err = md("Standard Error"), 
+    mean = md("Mean ROC AUC"), 
+    n = md("Number of Models")) |> 
+  fmt_number(
+    columns = mean, 
+    decimals = 3) |> 
+  fmt_number(
+    columns = std_err, 
+    decimals = 7) 
+```
+
+#### Interaction Recipes
+Finally we can explore the 5 models other than the null on the recipe that additionally includes interaction terms. This table shows that the random forest model still performs better than the other models by having a much higher measure of performance of 0.954, which is very close to 1. It still has the lowest standard error out of all the models.
+
+```{r}
+#| label: tbl-interact
+#| tbl-cap: Evaluation of six models on the interaction recipes. 
+
+load(here("interact analysis/interact results/metrics3.rda"))
+
+metrics3 |> 
+  select(.estimator, mean, n, std_err, model) |> 
+  arrange(desc(mean)) |> 
+  relocate(model) |> 
+  gt() |> 
+  tab_header(title = md("**Assessment Metrics**"), 
+             subtitle = "All Models - Interaction Recipe") |>
+  cols_label(.estimator = md("Estimator"), 
+             std_err = md("Standard Error"), 
+             mean = md("Mean ROC AUC"), 
+             n = md("Number of Models")) |> 
+  fmt_number(
+    columns = mean, 
+    decimals = 3) |> 
+  fmt_number(
+    columns = std_err, 
+    decimals = 7) 
+```
+
+#### Best Hyperparameters
+
+This section will explore the best hyperparameters for each model type on each recipe to understand what values of the tuned parameters were the most beneficial to predicting. 
+```{r}
+load(here("final analysis/best hyperparameters/bestparams_en.rda"))
+load(here("final analysis/best hyperparameters/bestparams_bt.rda"))
+load(here("final analysis/best hyperparameters/bestparams_rf.rda"))
+load(here("final analysis/best hyperparameters/bestparams_knn.rda"))
+```
+##### Random Forest & Boosted Tree
+It was definitely a good choice to set the range of mtry to include the maximum number of predictor variables because that value ended up being the best hyperparameter for the feature engineered recipes for both the random forest and boosted tree models. A good learning rate with a high number of trees should be close to 0 so it makes sense that the best value is close to 0. 
+```{r}
+#| label: tbl-rf
+#| tbl-cap: Best hyperparameters for Random Forest models on all three tree recipes.
+ 
+bestparams_rf |> 
+  gt()|> 
+  tab_header(title = md("**Best Hyperparameters - Random Forest**"), 
+             subtitle = "Random Forest - All Recipes") |>
+  cols_label(recipe = md("Recipe"), 
+             mtry = md("mtry"), 
+             min_n = md("min_n")) 
+```
+
+```{r}
+#| label: tbl-bt
+#| tbl-cap: Best hyperparameters for Boosted Tree models on all three tree recipes.
+bestparams_bt |> 
+  gt()|> 
+  tab_header(title = md("**Best Hyperparameters - Boosted Tree**"), 
+             subtitle = "Boosted Tree - All Recipes") |>
+  cols_label(recipe = md("Recipe"), 
+             mtry = md("mtry"), 
+             min_n = md("min_n"), 
+             learn_rate = md("Learning Rate")) |> 
+  fmt_number(
+    columns = learn_rate, 
+    decimals = 3)
+```
+
+
+##### Nearest Neighbors
+A higher number of neighbors leads to stronger predictions because more neighbors handle outliers better; however a very high number of neighbors computational efficiency can decrease so it makes sense that the best values of neighbors for making predictions are numbers much greater than 1 but not very high numbers. 
+```{r}
+#| label: tbl-knn
+#| tbl-cap: Best hyperparameters for Nearest Neighbors models on all three tree recipes.
+
+bestparams_knn |> 
+  gt()|> 
+  tab_header(title = md("**Best Hyperparameters - Nearest Neighbors**"), 
+             subtitle = "Nearest Neighbors - All Recipes") |>
+  cols_label(recipe = md("Recipe"), 
+             neighbors = md("Neighbors")) 
+```
+##### Elastic Net
+
+Explain
+```{r}
+#| label: tbl-en
+#| tbl-cap: Best hyperparameters for Elastic Net models on all three non-tree recipes.
+
+bestparams_en |> 
+  gt()|> 
+  tab_header(title = md("**Best Hyperparameters - Elastic Net**"), 
+             subtitle = "Elastic Net - All Recipes") |>
+  cols_label(recipe = md("Recipe"), 
+             penalty = md("Penalty"), 
+             mixture = md("Mixture")) |> 
+  fmt_number(
+    columns = penalty, 
+    decimals = 3)
+```
+
+
+#### Compare & Contrast
+
+Now that all the models have been built on various recipes we can compare their performances by recipe. This table shows that overall, the random forest model performs the best regardless of the recipe but that it performs better on the basic recipe than the ones that include more feature engineering. The same is true for the second-best performing model: the boosted tree. There is seemingly no difference that the interaction terms have made because the measure of performance is the same for both feature engineered recipes and the performance on the basic recipe is higher. On the next best performing model: nearest neighbors, the interaction terms do seem to have lead to a considerable increase in performance but the basic recipe still performs better. The only two lowest performing models other than the null: elastic net and logistic regression both had the more feature engineered recipe perform better than the basic recipe but by a very small difference and the recipe without interaction terms performs almost the same in both recipes. This has led me to conclude that overall, the interaction terms created did not help prediction and that handling missingness by keeping certain variables and using the fact that the value is unknown to help predict, was actually not useful in this case. We can mostly get a higher performing model by removing these variables with missingness instead of allowing that information to influence our predictions. It was an interesting idea to explore if missingness could be used to our advantage, but in this case it seems to be more useful to simply remove them. Overall, the model with the highest measure of the area under the ROC curve is the random forest model on the basic recipe and so that model performs the best and is selected as the final winning model. It is not surprising that this model performed the best since tuning and a fixed high number of trees was used to improve accuracy. 
+
+```{r}
+#| label: tbl-comparison
+#| tbl-cap: Comparison of All Model Types
+
+metrics |> 
+  mutate(recipe = "basic") |> 
+  bind_rows(metrics2 |> mutate(recipe = "main")) |>
+  bind_rows(metrics3 |> mutate(recipe = "interactions")) |> 
+  select(mean, n, std_err, model, recipe) |> 
+  relocate(recipe, model) |>
+  group_by(model) |> 
+  arrange(desc(mean)) |> 
+  gt() |> 
+  tab_header(title = md("**Assessment Metrics**"), 
+             subtitle = "All Models - All Recipes") |>
+  cols_label(recipe = md("Recipe"), 
+    std_err = md("Standard Error"), 
+    mean = md("Mean ROC AUC"), 
+    n = md("Number of Models")) |> 
+  fmt_number(
+    columns = mean, 
+    decimals = 3) |> 
+  fmt_number(
+    columns = std_err, 
+    decimals = 5) |> 
+  row_group_order(groups = c("rf", "bt", "knn", "en", "logistic")) |> 
+  tab_options(row_group.background.color = "grey50")
+
+```
+
+## Final Model Analysis
+This section will assess the best model: the random forest on the basic recipe, in more detail. 
+
+#### ROC_AUC & Accuracy
+This table shows two performance measures for the winning model, the primary one: area under the ROC curve and something more intuitive, accuracy. Like the area under the curve we want the accuracy to be closer to 1 than 0 since 1 would mean 100% accuracy and we'd like to get as close to that as possible. The fact that the accuracy is 0.917 is quite impressive, and means that this model does not perform perfectly but performs very well. The same logic is used to assess the area under the curve and its high value of 0.969 is quite impressive as well. 
+
+```{r}
+#| label: tbl-roc_accuracy
+#| tbl-cap: Assessment Metrics for the Winning Model
+
+load(here("final analysis/results/accuracy_roc_auc.rda"))
+
+#accuracy & roc_auc
+accuracy_roc_auc |> 
+  gt() |> 
+  tab_header(title = md("**ROC AUC & Accuracy**")) |>
+  cols_label(.metric = md("Assessment Metric"), 
+             .estimator = md("Estimator"), 
+             .estimate = md("Estimate")) |>
+  fmt_number(
+    columns = .estimate, 
+    decimals = 3)
+```
+
+#### ROC Curve
+Next, @fig-plot2 shows a visual representation of the ROC curve to better understand our assessment metric of the area under its curve. Since we want the area to be as big as it can be, we want the curve to be as close to almost outlining the top left corner of the graph as it can be. This is the case here, as it is clear that this ROC curve takes on that desired shape and has a very large area between it and the dotted line. This would mean a high true positive rate and a low false positive rate which means minimal error in prediction. 
+
+![ROC Curve for the Winning Model](final analysis/results/roc_curve.png){#fig-plot2}
+
+
+#### Confusion Matrix 
+To further explore this model we can use a confusion matrix to compare predictions to the accurate values. The top left is the number of correctly predicted satisfied apartment owners, 475, the bottom right is the number of correctly predicted unsatisfied apartment owners, 283. The bottom left is the number of wrongly predicted satisfied apartment owners as unsatisfied, only 12, and the top right is the number of wrongly predicted unsatisfied apartment owners as satisfied, 57. I am surprised that many more people who are unsatisfied with their apartment were incorrectly predicted than those who were really satisfied and wrongly predicted. 
+
+```{r}
+#| label: fig-confmat
+#| fig.cap: Confusion Matrix for the Winning Model
+load(here("final analysis/results/pred_rf.rda"))
+
+#confusion matrix
+conf_mat(pred_rf, satisfaction, rf_pred)
+```
+
+Overall, this model is clearly pretty successful in its predictions as primarily shown by our primary assessment metric of the area under the ROC curve. It is performing much better than any of the other models so it can be concluded that it is worth it to build a more complex predictive model. 
+
+## Conclusion
+
+## References
+
+Real Estate Dataset^[Kakas, Arnold. (2023, Nov.). *Real Estate Dataset*. Kaggle. --- [https://www.kaggle.com/datasets/arnoldkakas/real-estate-dataset/data](https://www.kaggle.com/datasets/arnoldkakas/real-estate-dataset/data)]
+
+## Appendix - EDA 
+
+Shown here is the EDA used to justify the creation of interaction terms. Even though they did not end up being as useful as I initially believed, there were enough noticeable differences in relationships between certain variables that exploring these interaction terms was an interesting idea. 
+
+@fid-plot3 shows the relationship between price and satisfaction for three different ranges of environmental rankings, which represent tenants ranking their environment on a scale of 0-100 with higher numbers meaning higher happiness. As you can see, for the first third and last third of the rankings, more people are satisfied, but for the middle third more people are unsatisfied. This means the relationship between price and satisfaction differs by environment and that is why an interaction term was created. I used this same logic to evaluate @fig-plot4, @fig-plot5, and @fig-plot6. 
+
+![Price by Satisfaction by Environment](setup/figures/price_environment.png){#fig-plot3}
+
+![Price by Satisfaction by Relaxation](setup/figures/price_relax.png){#fig-plot4}
+
+![Price by Satisfaction by Services](setup/figures/price_services.png){#fig-plot5}
+
+![Services by Satisfaction by Transportation](setup/figures/services_transport.png){#fig-plot6}
+
+I used similar logic to evaluate this next bargraph since the distributions of safety by different ranges of environmental rankings are different for each level of satisfaction. (I used 5 equal ranges this time instead of three to see more specific smaller range levels).
+
+
+![Safety by Environment by Satisfaction](setup/figures/safety_environment.png){#fig-bar7}
+Finally I decided not to create an interaction term for price and area even though in theory the fact that they might interact made sense to me. When explored in @fig-plot8 the range of values of area went to over 4500 square meters but very few apartments were bigger than 1000 square meters so there may not have been enough really big apartments to see if that made a considerable difference in satisfaction, at least enough to create an interaction term. 
+
+![Price by Satisfaction by Area Ranges](setup/figures/price_area.png){#fig-plot8}

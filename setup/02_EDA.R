@@ -37,6 +37,7 @@ training_sample |>
         axis.title.x = element_text(hjust = 0.5, size = 10, face = "bold"), 
         axis.title.y = element_text(hjust = 0.5, size = 10, face = "bold"))
 
+ggsave("setup/figures/price_environment.png")
 
 
 
@@ -62,6 +63,7 @@ training_sample |>
         axis.title.x = element_text(hjust = 0.5, size = 10, face = "bold"), 
         axis.title.y = element_text(hjust = 0.5, size = 10, face = "bold"))
 
+ggsave("setup/figures/price_relax.png")
 
 
 #interaction between price and services ------
@@ -86,6 +88,7 @@ training_sample |>
         axis.title.x = element_text(hjust = 0.5, size = 10, face = "bold"), 
         axis.title.y = element_text(hjust = 0.5, size = 10, face = "bold"))
 
+ggsave("setup/figures/price_services.png")
 
 
 
@@ -112,6 +115,7 @@ training_sample |>
         axis.title.x = element_text(hjust = 0.5, size = 10, face = "bold"), 
         axis.title.y = element_text(hjust = 0.5, size = 10, face = "bold"))
 
+ggsave("setup/figures/services_transport.png")
 
 
 
@@ -142,9 +146,7 @@ training_sample |>
         axis.title.x = element_text(hjust = 0.5, size = 10, face = "bold"), 
         axis.title.y = element_text(hjust = 0.5, size = 10, face = "bold"))
 
-
-
-
+ggsave("setup/figures/safety_environment.png")
 
 
 #interaction between price and area ------
@@ -169,4 +171,5 @@ training_sample |>
         axis.title.x = element_text(hjust = 0.5, size = 10, face = "bold"), 
         axis.title.y = element_text(hjust = 0.5, size = 10, face = "bold"))
 
+ggsave("setup/figures/price_area.png")
 

@@ -15,7 +15,8 @@ load(here("results/estate_split.rda"))
 
 
 #missingness qol
-miss_table1 <- miss_var_summary(clean_qol)
+miss_table1 <- miss_var_summary(clean_qol)|> 
+  filter(n_miss > 0)
 
 miss_names1 <- miss_table1 |> 
   pull(variable)
@@ -23,6 +24,9 @@ miss_names1 <- miss_table1 |>
 clean_qol |> 
   select(miss_names1) |> 
   gg_miss_var()
+
+ggsave("setup/figures/missingness_whole.png")
+
 
 #missingness qol - WITH TRAINING SET
 miss_table2 <- miss_var_summary(estate_train) |> 
@@ -34,6 +38,8 @@ miss_names2 <- miss_table2 |>
 estate_train |> 
   select(miss_names2) |> 
   gg_miss_var()
+
+ggsave("setup/figures/missingness_train.png")
 
 #mention these options in final report as potential other/future work
 # PREVIOUS PLAN - USING quality_of_living AS TARGET VARIABLE ------
@@ -94,7 +100,7 @@ estate_train |>
 load(here("data/training_sample.rda"))
 
 
-training_sample |> 
+target_analysis <- clean_qol |> 
   ggplot(aes(x = satisfaction, fill = satisfaction))+
   geom_bar(show.legend = FALSE)+
   scale_fill_brewer(palette = "Pastel2")+
@@ -105,4 +111,6 @@ training_sample |>
         axis.text.x = element_text(hjust = 0.5, size = 10), 
         axis.title.x = element_text(hjust = 0.5, size = 11, face = "bold"), 
         axis.title.y = element_text(hjust = 0.5, size = 11, face = "bold"))
+
+ggsave("setup/figures/target_analysis.png")
 

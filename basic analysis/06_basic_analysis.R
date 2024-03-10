@@ -95,3 +95,26 @@ metrics |>
     decimals = 5) 
   #row_group_order(groups = c("null", "logistic", "rf", "knn", "bt", "en")) |> 
   #tab_options(row_group.background.color = "grey50")
+
+select_best(tuned_rf, metric = "roc_auc") |> 
+  select(-.config) |> 
+  mutate(model = "rf") |> 
+  relocate(model)
+
+select_best(tuned_knn1, metric = "roc_auc") |> 
+  select(-.config) |> 
+  mutate(model = "knn") |> 
+  relocate(model)
+
+select_best(tuned_bt1, metric = "roc_auc") |> 
+  select(-.config) |> 
+  mutate(model = "bt") |> 
+  relocate(model)
+
+select_best(tuned_en1, metric = "roc_auc") |> 
+  select(-.config) |> 
+  mutate(model = "en") |> 
+  relocate(model)
+
+
+
