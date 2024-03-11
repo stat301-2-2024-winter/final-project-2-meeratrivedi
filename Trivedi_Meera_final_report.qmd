@@ -368,9 +368,10 @@ I used similar logic to evaluate @fig-plot7 since the distributions of safety by
 
 ![Safety by Environment by Satisfaction](setup/figures/safety_environment.png){#fig-plot7}
 
-Finally I decided not to create an interaction term for price and area even though in theory the fact that they might interact made sense to me. When explored in @fig-plot8 the range of values of area went to over 4500 square meters but very few apartments were bigger than 1000 square meters so there may not have been enough really big apartments to see if that made a considerable difference in satisfaction, at least enough to create an interaction term. 
+Finally, I decided not to create an interaction term for price and area even though in theory the fact that they might interact made sense to me. When explored in the faceted barplot @fig-plot8 the range of values of area went to over 4500 square meters but very few apartments were bigger than 1000 square meters so there may not have been enough really big apartments to see if that made a considerable difference in satisfaction, at least enough to create an interaction term. 
 
 ![Price by Satisfaction by Area Ranges](setup/figures/price_area.png){#fig-plot8}
+
 The density plot in @fig-plot9 shows the bimodal distribution of the quality of living variable in case one was curious and wanted to see what that looked like on the raw dataset. 
 
 ![Quality of Living Distribution](setup/figures/quality_of_living.png){#fig-plot9}
