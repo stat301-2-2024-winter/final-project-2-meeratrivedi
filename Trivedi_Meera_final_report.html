@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Meera Trivedi">
-<meta name="dcterms.date" content="2024-03-11">
+<meta name="dcterms.date" content="2024-03-13">
 
 <title>Predicting Tenant Satisfaction with Slovakian Apartments</title>
 <style>
@@ -3076,7 +3076,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 11, 2024</p>
+      <p class="date">March 13, 2024</p>
     </div>
   </div>
   
@@ -3109,14 +3109,14 @@ Github Repo Link
 </section>
 <section id="prediction-problem" class="level4">
 <h4 class="anchored" data-anchor-id="prediction-problem">Prediction Problem</h4>
-<p>My prediction problem was going to be to use various types of data on apartments in Slovakia, ranging from data on the actual construction of the building to the environment around it, to predict the overall quality of living of the people living in those properties. At first, quality of living was a numerical variable corresponding to an index but because of this I could change it to a factor variable with different ordered levels to make it a classification problem. However, since there were still many levels I decided to calculate a new target variable: satisfaction. It has two levels, “satisfied” and “unsatisfied”. I will explain how I calculated it further on. I think it’s very useful to uncover relationships between the satisfaction and every available aspect of a building because in order for a building to be marketable people have to gain some benefit from living there. The data I found happens to be from Slovakia which is interesting because I don’t ever see that country represented in the media so it would be nice to learn a little more about it. The main reason I chose this data though is because I am a sophomore moving off campus next year so I have looked into apartments both by myself and with friends and finally signed my own lease. In the process I had to evaluate data on each building to decide what would be the best option for me. I also used to watch house flipping and renovating shows with my dad when I was younger all the time so I thought it might be fun to look into what would make a property successful, and a way to measure that is quality of living. A model to predict something as useful as satisfaction would be helpful to understand the value of a building based on its various metrics and categorical data.</p>
+<p>My prediction problem was going to be to use various types of data on apartments in Slovakia, ranging from data on the actual construction of the building to the environment around it, to predict the overall quality of living of the people living in those properties. At first, quality of living was a numerical variable corresponding to an index but because of this I could change it to a factor variable with different ordered levels to make it a classification problem. However, since there were still many levels I decided to calculate a new target variable: satisfaction. It has two levels, “satisfied” and “unsatisfied”. I will explain how I calculated it further on. I think it’s very useful to uncover relationships between the satisfaction and every available aspect of a building because in order for a building to be marketable people have to gain some benefit from living there. The data I found happens to be from Slovakia which is interesting because I don’t ever see that country represented in the media so it would be nice to learn a little more about it. The main reason I chose this data though is because I am a sophomore moving off campus next year so I have looked into apartments both by myself and with friends and finally signed my own lease. In the process I had to evaluate data on each building to decide what would be the best option for me. I also used to watch house flipping and renovating shows with my dad when I was younger all the time so I thought it might be fun to look into what would make a property successful, and a way to measure that is satisfaction. A model to predict something as useful as satisfaction would be helpful to understand the value of a building based on its various metrics and categorical data.</p>
 </section>
 </section>
 <section id="data-overview" class="level2">
 <h2 class="anchored" data-anchor-id="data-overview">Data Overview</h2>
 <section id="original-data" class="level4">
 <h4 class="anchored" data-anchor-id="original-data">Original Data</h4>
-<p>This dataset has 27 variables and 15,403 observations. Out of the 27 variables, 7 are character variables: the name of the apartment, whether it is in its original condition or has gone through some sort of renovation, what energy certificate the building has, the material the apartment is made out of, like brick or paneling, the geographical direction it faces, the type of apartment it is in terms of the number of bedrooms (ex: 3-bedroom) and the name of the district in Slovakia it is in. The other 20 are numerical, and consist of the price of the listing in euros, a number on an Index of Living from 0-10; according to Kaggle this was “calculated by the Slovak startup City Performer” using the values of these 6 variables in the dataset corresponding to environment, quality of living, safety, transportation, services, and relaxation. Each value of these 6 variables represents an index rating for just that variable. Other variables include the area in square meters of the apartment,the energy costs in euros for that apartment, a binary variable with a value of 1 if the provision of the agency is included in the price, and if not is 0, the year it was built, the most recent year any sort of construction work was done on it, the floor of the building the apartment is on, whether or not the building has a lift or a cellar and more features, where the value of each is the number of features each individual apartment or building has.</p>
+<p>This dataset has 27 variables and 15,403 observations. Out of the 27 variables, 7 are character variables: the name of the apartment, whether it is in its original condition or has gone through some sort of renovation, what energy certificate the building has, the material the apartment is made out of, like brick or paneling, the geographical direction it faces, the type of apartment it is in terms of the number of bedrooms (ex: 3-bedroom) and the name of the district in Slovakia it is in. The other 20 are numerical, and consist of the price of the listing in euros, a number on an Index of Living from 0-10; according to Kaggle this was “calculated by the Slovak startup City Performer” using the values of these 6 variables in the dataset corresponding to environment, quality of living, safety, transportation, services, and relaxation. Each value of these 6 variables represents an index rating for just that variable. Other variables include the area in square meters of the apartment, the energy costs in euros for that apartment, a binary variable with a value of 1 if the provision of the agency is included in the price, and if not is 0, the year it was built, the most recent year any sort of construction work was done on it, the floor of the building the apartment is on, whether or not the building has a lift or a cellar and more features, where the value of each is the number of features each individual apartment or building has.</p>
 </section>
 <section id="cleaned-data" class="level4">
 <h4 class="anchored" data-anchor-id="cleaned-data">Cleaned Data</h4>
@@ -3138,7 +3138,7 @@ Figure 1: Missingness
 </section>
 <section id="target-variable-analysis" class="level4">
 <h4 class="anchored" data-anchor-id="target-variable-analysis">Target Variable Analysis</h4>
-<p><a href="#fig-bar1" class="quarto-xref">Figure 2</a> is a bar plot that shows the count of each level of satisfaction. This variable was calculated using the quality of living variable. The value of this variable is “unsatisfied” if the quality of living is below 85 (out of 100) and “satisfied” if the quality of living is from 85 to 100 (out of 100). Since the quality of living variable is on a scale out of 100 I decided to use the US grading system, which is also out of 100, to determine what would be a good cutoff for satisfaction. “C” range grades are typically considered average and “B” range grades are typically considered above average, and “A” is of course the highest achievable grade. So since 85 is the average of the “B” range grades I thought it made sense as a differentiator between above average and not.</p>
+<p><a href="#fig-bar1" class="quarto-xref">Figure 2</a> is a bar plot that shows the count of each level of satisfaction. This variable was calculated using the quality of living variable. The value of this variable is “unsatisfied” if the quality of living is below 85 (out of 100) and “satisfied” if the quality of living is from 85 to 100 (out of 100). Since the quality of living variable is on a scale out of 100 I decided to use the US grading system, which is also out of 100, to determine what would be a good cutoff for satisfaction versus dissatisfaction. “C” range grades are typically considered average and “B” range grades are typically considered above average, and “A” is of course the highest achievable grade. So since 85 is the average of the “B” range grades I thought it made sense as a differentiator between above average and not.</p>
 <div id="fig-bar1" class="quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-bar1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -3149,26 +3149,26 @@ Figure 2: Slovakian Apartment Tenants Satisfaction
 </figcaption>
 </figure>
 </div>
-<p>The target variable was originally intended to be the quality of living as a factor but since there was quite a bimodal distribution with a much higher density in values above 60 out of 100, it made more sense to use a factor with two levels to counteract what would have been a massive class imbalance. Using the US grading system helped to balance the distribution to an extent but there are still noticeably more values for satisfied than unsatisfied. However, considering the context of this data this makes sense, we would hope most people are happy with their living situation.</p>
+<p>The target variable was originally intended to be the quality of living as a factor but since there was quite a bimodal distribution with a much higher density in values above 60 out of 100, it made more sense to use a factor with two levels to counteract what would have been a massive class imbalance. Using the US grading system helped to balance the distribution to an extent but there are still noticeably more values for satisfied than unsatisfied. However, considering the context of this data this makes sense, we would hope most people are happy with their living situation. See the Appendix for the distribution of the quality of living variable.</p>
 </section>
 </section>
 <section id="methods" class="level2">
 <h2 class="anchored" data-anchor-id="methods">Methods</h2>
 <section id="data-splitting" class="level4">
 <h4 class="anchored" data-anchor-id="data-splitting">Data Splitting</h4>
-<p>The cleaned data was split using stratified splitting by the target variable, satisfaction, and using an 80%/20% split because the dataset is fairly large. This is a common split to use with large datasets. This means 80% of the data goes into the training set and the other 20% goes into the testing set.</p>
+<p>The cleaned data was split using stratified splitting by the target variable: satisfaction, and using an 80%/20% split because the dataset is fairly large. This is a common split to use with large datasets. This means 80% of the data goes into the training dataset and the other 20% goes into the testing dataset.</p>
 </section>
 <section id="resampling" class="level4">
 <h4 class="anchored" data-anchor-id="resampling">Resampling</h4>
-<p>The data was resampled using V-fold cross validation with 10 folds and 5 repeats which will then result in 50 models per fit. I used this method of resampling instead of bootstrap resampling because that would introduce the possibility of some observations in a bootstrap sample appearing multiple times with others not appearing at all. V-fold cross validation also has lower bias, and is more commonly used than bootstrap for big datasets. I used 10 fold and 5 repeats because they are common benchmark numbers and my computer could handle this much resampling.</p>
+<p>The data was resampled using V-fold cross validation with 10 folds and 5 repeats which will then result in 50 models per fit. I used this method of resampling instead of bootstrap resampling because that would introduce the possibility of some observations in a bootstrap sample appearing multiple times with others not appearing at all. V-fold cross validation also has lower bias, and is more commonly used than bootstrap for big datasets. I used 10 folds and 5 repeats because multiples of 5 are generally common benchmark numbers and my computer could handle this much resampling.</p>
 </section>
 <section id="recipes" class="level4">
 <h4 class="anchored" data-anchor-id="recipes">Recipes</h4>
 <p>Six recipes were used to create the models. Unfortunately multiple of my predictor variables had many missing values. They must have been added to the dataset as variables because a few apartments had data for them, but if most apartments don’t have data points for those variables, they can’t be useful predictors in a prediction model. As an example, one variable is about the type of energy certificate the apartment has but the most frequent value was “none” other than a missing value meaning that apartment didn’t have an energy certificate anyway. This means having an energy certificate can’t be that useful of a predictor if the majority of apartments either don’t have a certificate or have a missing value for it.</p>
 <p>For simplicity, the basic recipes have all the variables with missing data removed, as well as the factor variables with many levels removed to avoid overfitting and overworking the computer. It imputes the area variable because there is only a small amount of missingness, so imputation would only be making up for a small percentage of the values. And it creates dummy variables for the nominal predictors, removes variables with zero variance, and centers and scales all predictors. These are standard steps to take for a basic recipe.</p>
-<p>The main recipe does all of this as well except it does not remove all of the variables with missingness, instead for two variables: the total floors the building has and the floor number the apartment is on, it mutates them to be factors with three levels, one level replaces missing values with the word “unknown”, since seeing something is unknown could be interesting instead of removing those observations entirely. These differences will help evaluate if knowing something is unknown is actually useful in making predictions. These two variables were chosen specifically to be mutated because they have about half of their values missing so this unknown level would have a lot of values but not so much that the variables should be considered totally unusable in all recipes.</p>
-<p>The “interact” recipe builds on this recipe and additionally uses interaction terms to analyze the impact of them separately. EDA was conducted to understand the relationships between predictor variables to determine interaction terms. First I explored price (on a log 10 scale for visual purposes) by satisfaction by different levels of variables that represented rankings on different aspects of the apartment to see if there were differences in the satisfaction for each range. Every variable that represented ranking was factored and split into 3 equal levels (so if available values were from 4-99 each level was ⅓ of that range). There were considered to be clear differences in satisfaction if the level that had the most density for each range was different for the different ranges. This would mean that the different ranges could help contribute to determining satisfaction and so it would make sense to create an interaction term. This process was used to justify creating interaction terms for price and environment, price and relaxation ability, price and available services, and price and transportation services. Next, since I thought safety and environment could be related I explored their relationship by the two levels of satisfaction in the form of a faceted boxplot with environment factored with 5 equal levels and found that the distributions were quite different for the two levels of satisfaction especially between the middle two ranges of environment so it made sense to create an interaction term between safety and environment as well. Finally I explored the relationship between price and area since typically the bigger an apartment is the more expensive it is but found that the relationship did not differ much by satisfaction so I decided not to create an interaction term for this. So to conclude, I created 5 interaction terms based on this EDA, and the graphs can be found in the appendix.</p>
-<p>The basic, main, and interact recipes for the forest models do the same things as the aforementioned basic, main, and interact recipes respectively; however they use one-hot encoding.</p>
+<p>The main recipe does all of this as well except it does not remove all of the variables with missingness, instead for two variables: the total floors the building has and the floor number the apartment is on, it mutates them to be factors with three levels; one level replaces missing values with the word “unknown”, since seeing something is unknown could be interesting instead of removing those observations entirely. These differences will help evaluate if knowing something is unknown is actually useful in making predictions. These two variables were chosen specifically to be mutated because they have about half of their values missing so this unknown level would have a lot of values but not so much that the variables should be considered totally unusable in all recipes.</p>
+<p>The “interact” recipe builds on this recipe and additionally uses interaction terms to analyze the impact of them separately. EDA was conducted to understand the relationships between predictor variables to determine interaction terms. First I explored price (on a log 10 scale for visual purposes) by satisfaction by different levels of variables that represented rankings on different aspects of the apartment to see if there were differences in the satisfaction for each range. Every variable that represented rankings were factored and split into 3 equal levels (so if available ranking values were from 4-99 each level was ⅓ of that range). There were considered to be clear differences in satisfaction if the level that had the most density for each range was different for the different ranges. This would mean that the different ranges could help contribute to determining satisfaction and so it would make sense to create an interaction term. This process was used to justify creating interaction terms for price and environment, price and relaxation ability, price and available services, and price and transportation services. Next, since I thought safety and environment could be related I explored their relationship by the two levels of satisfaction in the form of a faceted boxplot with environment factored to have 5 equal levels representing ranges of values and found that the distributions were quite different for the two levels of satisfaction especially between the middle two ranges of environment so it made sense to create an interaction term between safety and environment as well. Finally I explored the relationship between price and area since typically the bigger an apartment is the more expensive it is but found that the relationship did not differ much by satisfaction so I decided not to create an interaction term for this. So to conclude, I created 5 interaction terms based on this EDA, and the graphs can be found in the appendix.</p>
+<p>The tree versions of the basic, main, and interact recipes do the same things as the aforementioned basic, main, and interact recipes respectively; however they use one-hot encoding.</p>
 </section>
 <section id="model-types" class="level4">
 <h4 class="anchored" data-anchor-id="model-types">Model Types</h4>
@@ -3184,14 +3184,14 @@ Figure 2: Slovakian Apartment Tenants Satisfaction
 </section>
 <section id="assessment-metrics" class="level4">
 <h4 class="anchored" data-anchor-id="assessment-metrics">Assessment Metrics</h4>
-<p>Since this is a classification problem, the assessment metric will be the area under the ROC curve. The ROC curve shows the relationship between the true positive rate, sensitivity, and false positive rate, 1 - specificity, for different thresholds of classification. It is a good measure to use for binary classification, in this case between satisfied and unsatisfied. The area under the curve can be from 0 to 1, with a higher measure indicating better performance. This is a good metric to use when there is imbalance in a dataset between levels of the target variable and since there seem to be noticeably more people satisfied with their apartments than not, this could be considered an imbalance.</p>
+<p>Since this is a classification problem, the assessment metric will be the area under the ROC curve. The ROC curve shows the relationship between the true positive rate: sensitivity, and false positive rate: 1 - specificity, for different thresholds of classification. It is a good measure to use for binary classification, in this case between satisfied and unsatisfied. The area under the curve can be from 0 to 1, with a higher measure indicating better performance. This is a good metric to use when there is imbalance in a dataset between levels of the target variable and since there seem to be noticeably more people satisfied with their apartments than not, this could be considered an imbalance.</p>
 </section>
 </section>
 <section id="models" class="level2">
 <h2 class="anchored" data-anchor-id="models">Models</h2>
 <section id="basic-recipes" class="level4">
 <h4 class="anchored" data-anchor-id="basic-recipes">Basic Recipes</h4>
-<p>First we can explore the 6 different model types fitted to the basic recipes. <a href="#tbl-basic" class="quarto-xref">Table 1</a> shows the best hyperparameter values for the elastic net model. shows that in comparison to the null model all models have a higher measure of performance, meaning making complex models is useful in making more accurate predictions. In this case, the random forest model performs the best with a performance measure of 0.958, which is very close to 1. It also has the lowest standard error out of all the models except the null. Standard error is not the primary assessment metric here but this information is still interesting nonetheless.</p>
+<p>First we can explore the 6 different model types fitted to the basic recipes. <a href="#tbl-basic" class="quarto-xref">Table 1</a> shows that in comparison to the null model all models have a higher measure of performance, meaning making complex models is useful in making more accurate predictions. In this case, the random forest model performs the best with a performance measure of 0.958, which is very close to 1. It also has the lowest standard error out of all the models except the null. Standard error is not the primary assessment metric here but this information is still interesting nonetheless.</p>
 <div class="cell">
 <div id="tbl-basic" class="cell anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -3200,20 +3200,20 @@ Table 1: Evaluation of six models on the basic recipes.
 </figcaption>
 <div aria-describedby="tbl-basic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div id="zllqksyjdo" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#zllqksyjdo table {
+<div id="jusykwlqoc" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#jusykwlqoc table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#zllqksyjdo thead, #zllqksyjdo tbody, #zllqksyjdo tfoot, #zllqksyjdo tr, #zllqksyjdo td, #zllqksyjdo th {
+#jusykwlqoc thead, #jusykwlqoc tbody, #jusykwlqoc tfoot, #jusykwlqoc tr, #jusykwlqoc td, #jusykwlqoc th {
 border-style: none;
 }
-#zllqksyjdo p {
+#jusykwlqoc p {
 margin: 0;
 padding: 0;
 }
-#zllqksyjdo .gt_table {
+#jusykwlqoc .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -3238,11 +3238,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#zllqksyjdo .gt_caption {
+#jusykwlqoc .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#zllqksyjdo .gt_title {
+#jusykwlqoc .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -3253,7 +3253,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#zllqksyjdo .gt_subtitle {
+#jusykwlqoc .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -3264,7 +3264,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#zllqksyjdo .gt_heading {
+#jusykwlqoc .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -3275,12 +3275,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#zllqksyjdo .gt_bottom_border {
+#jusykwlqoc .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#zllqksyjdo .gt_col_headings {
+#jusykwlqoc .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -3294,7 +3294,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#zllqksyjdo .gt_col_heading {
+#jusykwlqoc .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3313,7 +3313,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#zllqksyjdo .gt_column_spanner_outer {
+#jusykwlqoc .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3324,13 +3324,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#zllqksyjdo .gt_column_spanner_outer:first-child {
+#jusykwlqoc .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#zllqksyjdo .gt_column_spanner_outer:last-child {
+#jusykwlqoc .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#zllqksyjdo .gt_column_spanner {
+#jusykwlqoc .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -3341,10 +3341,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#zllqksyjdo .gt_spanner_row {
+#jusykwlqoc .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#zllqksyjdo .gt_group_heading {
+#jusykwlqoc .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3369,7 +3369,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#zllqksyjdo .gt_empty_group_heading {
+#jusykwlqoc .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -3383,13 +3383,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#zllqksyjdo .gt_from_md > :first-child {
+#jusykwlqoc .gt_from_md > :first-child {
 margin-top: 0;
 }
-#zllqksyjdo .gt_from_md > :last-child {
+#jusykwlqoc .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#zllqksyjdo .gt_row {
+#jusykwlqoc .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3407,7 +3407,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#zllqksyjdo .gt_stub {
+#jusykwlqoc .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3419,7 +3419,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#zllqksyjdo .gt_stub_row_group {
+#jusykwlqoc .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3432,13 +3432,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#zllqksyjdo .gt_row_group_first td {
+#jusykwlqoc .gt_row_group_first td {
 border-top-width: 2px;
 }
-#zllqksyjdo .gt_row_group_first th {
+#jusykwlqoc .gt_row_group_first th {
 border-top-width: 2px;
 }
-#zllqksyjdo .gt_summary_row {
+#jusykwlqoc .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -3447,14 +3447,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#zllqksyjdo .gt_first_summary_row {
+#jusykwlqoc .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#zllqksyjdo .gt_first_summary_row.thick {
+#jusykwlqoc .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#zllqksyjdo .gt_last_summary_row {
+#jusykwlqoc .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3463,7 +3463,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#zllqksyjdo .gt_grand_summary_row {
+#jusykwlqoc .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -3472,7 +3472,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#zllqksyjdo .gt_first_grand_summary_row {
+#jusykwlqoc .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3481,7 +3481,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#zllqksyjdo .gt_last_grand_summary_row_top {
+#jusykwlqoc .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3490,10 +3490,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#zllqksyjdo .gt_striped {
+#jusykwlqoc .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#zllqksyjdo .gt_table_body {
+#jusykwlqoc .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -3501,7 +3501,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#zllqksyjdo .gt_footnotes {
+#jusykwlqoc .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -3514,7 +3514,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#zllqksyjdo .gt_footnote {
+#jusykwlqoc .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -3522,7 +3522,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#zllqksyjdo .gt_sourcenotes {
+#jusykwlqoc .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -3535,57 +3535,57 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#zllqksyjdo .gt_sourcenote {
+#jusykwlqoc .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#zllqksyjdo .gt_left {
+#jusykwlqoc .gt_left {
 text-align: left;
 }
-#zllqksyjdo .gt_center {
+#jusykwlqoc .gt_center {
 text-align: center;
 }
-#zllqksyjdo .gt_right {
+#jusykwlqoc .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#zllqksyjdo .gt_font_normal {
+#jusykwlqoc .gt_font_normal {
 font-weight: normal;
 }
-#zllqksyjdo .gt_font_bold {
+#jusykwlqoc .gt_font_bold {
 font-weight: bold;
 }
-#zllqksyjdo .gt_font_italic {
+#jusykwlqoc .gt_font_italic {
 font-style: italic;
 }
-#zllqksyjdo .gt_super {
+#jusykwlqoc .gt_super {
 font-size: 65%;
 }
-#zllqksyjdo .gt_footnote_marks {
+#jusykwlqoc .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#zllqksyjdo .gt_asterisk {
+#jusykwlqoc .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#zllqksyjdo .gt_indent_1 {
+#jusykwlqoc .gt_indent_1 {
 text-indent: 5px;
 }
-#zllqksyjdo .gt_indent_2 {
+#jusykwlqoc .gt_indent_2 {
 text-indent: 10px;
 }
-#zllqksyjdo .gt_indent_3 {
+#jusykwlqoc .gt_indent_3 {
 text-indent: 15px;
 }
-#zllqksyjdo .gt_indent_4 {
+#jusykwlqoc .gt_indent_4 {
 text-indent: 20px;
 }
-#zllqksyjdo .gt_indent_5 {
+#jusykwlqoc .gt_indent_5 {
 text-indent: 25px;
 }
 </style>
@@ -3654,7 +3654,7 @@ text-indent: 25px;
 </section>
 <section id="main-recipes" class="level4">
 <h4 class="anchored" data-anchor-id="main-recipes">Main Recipes</h4>
-<p>Next we can explore the 5 model types other than the null model on the main recipe. <a href="#tbl-main" class="quarto-xref">Table 2</a> shows the best hyperparameter values for the elastic net model. shows that the random forest model still performs better than the other models by having a much higher measure of performance of 0.956, which is very close to 1. It still has the lowest standard error out of all the models. The order of the models by best performance is the same as on the basic recipes.</p>
+<p>Next we can explore the 5 model types other than the null model on the main recipe. <a href="#tbl-main" class="quarto-xref">Table 2</a> shows that the random forest model still performs better than the other models by having a much higher measure of performance of 0.956, which is very close to 1. It still has the lowest standard error out of all the models. The order of the models by best performance is the same as on the basic recipes.</p>
 <div class="cell">
 <div id="tbl-main" class="cell anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -3663,20 +3663,20 @@ Table 2: Evaluation of six models on the main recipes.
 </figcaption>
 <div aria-describedby="tbl-main-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div id="kakmyethqq" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#kakmyethqq table {
+<div id="gwguojwzgr" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#gwguojwzgr table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#kakmyethqq thead, #kakmyethqq tbody, #kakmyethqq tfoot, #kakmyethqq tr, #kakmyethqq td, #kakmyethqq th {
+#gwguojwzgr thead, #gwguojwzgr tbody, #gwguojwzgr tfoot, #gwguojwzgr tr, #gwguojwzgr td, #gwguojwzgr th {
 border-style: none;
 }
-#kakmyethqq p {
+#gwguojwzgr p {
 margin: 0;
 padding: 0;
 }
-#kakmyethqq .gt_table {
+#gwguojwzgr .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -3701,11 +3701,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#kakmyethqq .gt_caption {
+#gwguojwzgr .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#kakmyethqq .gt_title {
+#gwguojwzgr .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -3716,7 +3716,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#kakmyethqq .gt_subtitle {
+#gwguojwzgr .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -3727,7 +3727,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#kakmyethqq .gt_heading {
+#gwguojwzgr .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -3738,12 +3738,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#kakmyethqq .gt_bottom_border {
+#gwguojwzgr .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#kakmyethqq .gt_col_headings {
+#gwguojwzgr .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -3757,7 +3757,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#kakmyethqq .gt_col_heading {
+#gwguojwzgr .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3776,7 +3776,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#kakmyethqq .gt_column_spanner_outer {
+#gwguojwzgr .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3787,13 +3787,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#kakmyethqq .gt_column_spanner_outer:first-child {
+#gwguojwzgr .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#kakmyethqq .gt_column_spanner_outer:last-child {
+#gwguojwzgr .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#kakmyethqq .gt_column_spanner {
+#gwguojwzgr .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -3804,10 +3804,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#kakmyethqq .gt_spanner_row {
+#gwguojwzgr .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#kakmyethqq .gt_group_heading {
+#gwguojwzgr .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3832,7 +3832,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#kakmyethqq .gt_empty_group_heading {
+#gwguojwzgr .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -3846,13 +3846,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#kakmyethqq .gt_from_md > :first-child {
+#gwguojwzgr .gt_from_md > :first-child {
 margin-top: 0;
 }
-#kakmyethqq .gt_from_md > :last-child {
+#gwguojwzgr .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#kakmyethqq .gt_row {
+#gwguojwzgr .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3870,7 +3870,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#kakmyethqq .gt_stub {
+#gwguojwzgr .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3882,7 +3882,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#kakmyethqq .gt_stub_row_group {
+#gwguojwzgr .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3895,13 +3895,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#kakmyethqq .gt_row_group_first td {
+#gwguojwzgr .gt_row_group_first td {
 border-top-width: 2px;
 }
-#kakmyethqq .gt_row_group_first th {
+#gwguojwzgr .gt_row_group_first th {
 border-top-width: 2px;
 }
-#kakmyethqq .gt_summary_row {
+#gwguojwzgr .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -3910,14 +3910,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#kakmyethqq .gt_first_summary_row {
+#gwguojwzgr .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#kakmyethqq .gt_first_summary_row.thick {
+#gwguojwzgr .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#kakmyethqq .gt_last_summary_row {
+#gwguojwzgr .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3926,7 +3926,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#kakmyethqq .gt_grand_summary_row {
+#gwguojwzgr .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -3935,7 +3935,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#kakmyethqq .gt_first_grand_summary_row {
+#gwguojwzgr .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3944,7 +3944,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#kakmyethqq .gt_last_grand_summary_row_top {
+#gwguojwzgr .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3953,10 +3953,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#kakmyethqq .gt_striped {
+#gwguojwzgr .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#kakmyethqq .gt_table_body {
+#gwguojwzgr .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -3964,7 +3964,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#kakmyethqq .gt_footnotes {
+#gwguojwzgr .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -3977,7 +3977,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#kakmyethqq .gt_footnote {
+#gwguojwzgr .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -3985,7 +3985,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#kakmyethqq .gt_sourcenotes {
+#gwguojwzgr .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -3998,57 +3998,57 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#kakmyethqq .gt_sourcenote {
+#gwguojwzgr .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#kakmyethqq .gt_left {
+#gwguojwzgr .gt_left {
 text-align: left;
 }
-#kakmyethqq .gt_center {
+#gwguojwzgr .gt_center {
 text-align: center;
 }
-#kakmyethqq .gt_right {
+#gwguojwzgr .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#kakmyethqq .gt_font_normal {
+#gwguojwzgr .gt_font_normal {
 font-weight: normal;
 }
-#kakmyethqq .gt_font_bold {
+#gwguojwzgr .gt_font_bold {
 font-weight: bold;
 }
-#kakmyethqq .gt_font_italic {
+#gwguojwzgr .gt_font_italic {
 font-style: italic;
 }
-#kakmyethqq .gt_super {
+#gwguojwzgr .gt_super {
 font-size: 65%;
 }
-#kakmyethqq .gt_footnote_marks {
+#gwguojwzgr .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#kakmyethqq .gt_asterisk {
+#gwguojwzgr .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#kakmyethqq .gt_indent_1 {
+#gwguojwzgr .gt_indent_1 {
 text-indent: 5px;
 }
-#kakmyethqq .gt_indent_2 {
+#gwguojwzgr .gt_indent_2 {
 text-indent: 10px;
 }
-#kakmyethqq .gt_indent_3 {
+#gwguojwzgr .gt_indent_3 {
 text-indent: 15px;
 }
-#kakmyethqq .gt_indent_4 {
+#gwguojwzgr .gt_indent_4 {
 text-indent: 20px;
 }
-#kakmyethqq .gt_indent_5 {
+#gwguojwzgr .gt_indent_5 {
 text-indent: 25px;
 }
 </style>
@@ -4111,7 +4111,7 @@ text-indent: 25px;
 </section>
 <section id="interaction-recipes" class="level4">
 <h4 class="anchored" data-anchor-id="interaction-recipes">Interaction Recipes</h4>
-<p>Finally we can explore the 5 models other than the null on the recipe that additionally includes interaction terms. <a href="#tbl-interact" class="quarto-xref">Table 3</a> shows the best hyperparameter values for the elastic net model. shows that the random forest model still performs better than the other models by having a much higher measure of performance of 0.954, which is very close to 1. It still has the lowest standard error out of all the models. The order of the models by best performance is the same as on the basic and main recipes.</p>
+<p>Finally we can explore the 5 models other than the null on the recipe that additionally includes interaction terms. <a href="#tbl-interact" class="quarto-xref">Table 3</a> shows that the random forest model still performs better than the other models by having a much higher measure of performance of 0.954, which is very close to 1. It still has the lowest standard error out of all the models. The order of the models by best performance is the same as on the basic and main recipes.</p>
 <div class="cell">
 <div id="tbl-interact" class="cell anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -4120,20 +4120,20 @@ Table 3: Evaluation of six models on the interaction recipes.
 </figcaption>
 <div aria-describedby="tbl-interact-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div id="cqcgisbekw" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#cqcgisbekw table {
+<div id="mllzymislj" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#mllzymislj table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#cqcgisbekw thead, #cqcgisbekw tbody, #cqcgisbekw tfoot, #cqcgisbekw tr, #cqcgisbekw td, #cqcgisbekw th {
+#mllzymislj thead, #mllzymislj tbody, #mllzymislj tfoot, #mllzymislj tr, #mllzymislj td, #mllzymislj th {
 border-style: none;
 }
-#cqcgisbekw p {
+#mllzymislj p {
 margin: 0;
 padding: 0;
 }
-#cqcgisbekw .gt_table {
+#mllzymislj .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -4158,11 +4158,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#cqcgisbekw .gt_caption {
+#mllzymislj .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#cqcgisbekw .gt_title {
+#mllzymislj .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -4173,7 +4173,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#cqcgisbekw .gt_subtitle {
+#mllzymislj .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -4184,7 +4184,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#cqcgisbekw .gt_heading {
+#mllzymislj .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -4195,12 +4195,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#cqcgisbekw .gt_bottom_border {
+#mllzymislj .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#cqcgisbekw .gt_col_headings {
+#mllzymislj .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -4214,7 +4214,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#cqcgisbekw .gt_col_heading {
+#mllzymislj .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -4233,7 +4233,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#cqcgisbekw .gt_column_spanner_outer {
+#mllzymislj .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -4244,13 +4244,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#cqcgisbekw .gt_column_spanner_outer:first-child {
+#mllzymislj .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#cqcgisbekw .gt_column_spanner_outer:last-child {
+#mllzymislj .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#cqcgisbekw .gt_column_spanner {
+#mllzymislj .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -4261,10 +4261,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#cqcgisbekw .gt_spanner_row {
+#mllzymislj .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#cqcgisbekw .gt_group_heading {
+#mllzymislj .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4289,7 +4289,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#cqcgisbekw .gt_empty_group_heading {
+#mllzymislj .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -4303,13 +4303,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#cqcgisbekw .gt_from_md > :first-child {
+#mllzymislj .gt_from_md > :first-child {
 margin-top: 0;
 }
-#cqcgisbekw .gt_from_md > :last-child {
+#mllzymislj .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#cqcgisbekw .gt_row {
+#mllzymislj .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4327,7 +4327,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#cqcgisbekw .gt_stub {
+#mllzymislj .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -4339,7 +4339,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#cqcgisbekw .gt_stub_row_group {
+#mllzymislj .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -4352,13 +4352,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#cqcgisbekw .gt_row_group_first td {
+#mllzymislj .gt_row_group_first td {
 border-top-width: 2px;
 }
-#cqcgisbekw .gt_row_group_first th {
+#mllzymislj .gt_row_group_first th {
 border-top-width: 2px;
 }
-#cqcgisbekw .gt_summary_row {
+#mllzymislj .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -4367,14 +4367,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#cqcgisbekw .gt_first_summary_row {
+#mllzymislj .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#cqcgisbekw .gt_first_summary_row.thick {
+#mllzymislj .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#cqcgisbekw .gt_last_summary_row {
+#mllzymislj .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4383,7 +4383,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#cqcgisbekw .gt_grand_summary_row {
+#mllzymislj .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -4392,7 +4392,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#cqcgisbekw .gt_first_grand_summary_row {
+#mllzymislj .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4401,7 +4401,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#cqcgisbekw .gt_last_grand_summary_row_top {
+#mllzymislj .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4410,10 +4410,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#cqcgisbekw .gt_striped {
+#mllzymislj .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#cqcgisbekw .gt_table_body {
+#mllzymislj .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -4421,7 +4421,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#cqcgisbekw .gt_footnotes {
+#mllzymislj .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -4434,7 +4434,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#cqcgisbekw .gt_footnote {
+#mllzymislj .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -4442,7 +4442,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#cqcgisbekw .gt_sourcenotes {
+#mllzymislj .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -4455,57 +4455,57 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#cqcgisbekw .gt_sourcenote {
+#mllzymislj .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#cqcgisbekw .gt_left {
+#mllzymislj .gt_left {
 text-align: left;
 }
-#cqcgisbekw .gt_center {
+#mllzymislj .gt_center {
 text-align: center;
 }
-#cqcgisbekw .gt_right {
+#mllzymislj .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#cqcgisbekw .gt_font_normal {
+#mllzymislj .gt_font_normal {
 font-weight: normal;
 }
-#cqcgisbekw .gt_font_bold {
+#mllzymislj .gt_font_bold {
 font-weight: bold;
 }
-#cqcgisbekw .gt_font_italic {
+#mllzymislj .gt_font_italic {
 font-style: italic;
 }
-#cqcgisbekw .gt_super {
+#mllzymislj .gt_super {
 font-size: 65%;
 }
-#cqcgisbekw .gt_footnote_marks {
+#mllzymislj .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#cqcgisbekw .gt_asterisk {
+#mllzymislj .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#cqcgisbekw .gt_indent_1 {
+#mllzymislj .gt_indent_1 {
 text-indent: 5px;
 }
-#cqcgisbekw .gt_indent_2 {
+#mllzymislj .gt_indent_2 {
 text-indent: 10px;
 }
-#cqcgisbekw .gt_indent_3 {
+#mllzymislj .gt_indent_3 {
 text-indent: 15px;
 }
-#cqcgisbekw .gt_indent_4 {
+#mllzymislj .gt_indent_4 {
 text-indent: 20px;
 }
-#cqcgisbekw .gt_indent_5 {
+#mllzymislj .gt_indent_5 {
 text-indent: 25px;
 }
 </style>
@@ -4580,20 +4580,20 @@ Table 4: Best hyperparameters for Random Forest models on all three tree recipe
 </figcaption>
 <div aria-describedby="tbl-rf-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div id="uzupakqqle" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#uzupakqqle table {
+<div id="qeunytmsyt" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#qeunytmsyt table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#uzupakqqle thead, #uzupakqqle tbody, #uzupakqqle tfoot, #uzupakqqle tr, #uzupakqqle td, #uzupakqqle th {
+#qeunytmsyt thead, #qeunytmsyt tbody, #qeunytmsyt tfoot, #qeunytmsyt tr, #qeunytmsyt td, #qeunytmsyt th {
 border-style: none;
 }
-#uzupakqqle p {
+#qeunytmsyt p {
 margin: 0;
 padding: 0;
 }
-#uzupakqqle .gt_table {
+#qeunytmsyt .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -4618,11 +4618,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#uzupakqqle .gt_caption {
+#qeunytmsyt .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#uzupakqqle .gt_title {
+#qeunytmsyt .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -4633,7 +4633,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#uzupakqqle .gt_subtitle {
+#qeunytmsyt .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -4644,7 +4644,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#uzupakqqle .gt_heading {
+#qeunytmsyt .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -4655,12 +4655,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#uzupakqqle .gt_bottom_border {
+#qeunytmsyt .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#uzupakqqle .gt_col_headings {
+#qeunytmsyt .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -4674,7 +4674,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#uzupakqqle .gt_col_heading {
+#qeunytmsyt .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -4693,7 +4693,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#uzupakqqle .gt_column_spanner_outer {
+#qeunytmsyt .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -4704,13 +4704,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#uzupakqqle .gt_column_spanner_outer:first-child {
+#qeunytmsyt .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#uzupakqqle .gt_column_spanner_outer:last-child {
+#qeunytmsyt .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#uzupakqqle .gt_column_spanner {
+#qeunytmsyt .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -4721,10 +4721,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#uzupakqqle .gt_spanner_row {
+#qeunytmsyt .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#uzupakqqle .gt_group_heading {
+#qeunytmsyt .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4749,7 +4749,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#uzupakqqle .gt_empty_group_heading {
+#qeunytmsyt .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -4763,13 +4763,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#uzupakqqle .gt_from_md > :first-child {
+#qeunytmsyt .gt_from_md > :first-child {
 margin-top: 0;
 }
-#uzupakqqle .gt_from_md > :last-child {
+#qeunytmsyt .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#uzupakqqle .gt_row {
+#qeunytmsyt .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4787,7 +4787,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#uzupakqqle .gt_stub {
+#qeunytmsyt .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -4799,7 +4799,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#uzupakqqle .gt_stub_row_group {
+#qeunytmsyt .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -4812,13 +4812,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#uzupakqqle .gt_row_group_first td {
+#qeunytmsyt .gt_row_group_first td {
 border-top-width: 2px;
 }
-#uzupakqqle .gt_row_group_first th {
+#qeunytmsyt .gt_row_group_first th {
 border-top-width: 2px;
 }
-#uzupakqqle .gt_summary_row {
+#qeunytmsyt .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -4827,14 +4827,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#uzupakqqle .gt_first_summary_row {
+#qeunytmsyt .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#uzupakqqle .gt_first_summary_row.thick {
+#qeunytmsyt .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#uzupakqqle .gt_last_summary_row {
+#qeunytmsyt .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4843,7 +4843,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#uzupakqqle .gt_grand_summary_row {
+#qeunytmsyt .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -4852,7 +4852,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#uzupakqqle .gt_first_grand_summary_row {
+#qeunytmsyt .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4861,7 +4861,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#uzupakqqle .gt_last_grand_summary_row_top {
+#qeunytmsyt .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4870,10 +4870,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#uzupakqqle .gt_striped {
+#qeunytmsyt .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#uzupakqqle .gt_table_body {
+#qeunytmsyt .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -4881,7 +4881,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#uzupakqqle .gt_footnotes {
+#qeunytmsyt .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -4894,7 +4894,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#uzupakqqle .gt_footnote {
+#qeunytmsyt .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -4902,7 +4902,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#uzupakqqle .gt_sourcenotes {
+#qeunytmsyt .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -4915,57 +4915,57 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#uzupakqqle .gt_sourcenote {
+#qeunytmsyt .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#uzupakqqle .gt_left {
+#qeunytmsyt .gt_left {
 text-align: left;
 }
-#uzupakqqle .gt_center {
+#qeunytmsyt .gt_center {
 text-align: center;
 }
-#uzupakqqle .gt_right {
+#qeunytmsyt .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#uzupakqqle .gt_font_normal {
+#qeunytmsyt .gt_font_normal {
 font-weight: normal;
 }
-#uzupakqqle .gt_font_bold {
+#qeunytmsyt .gt_font_bold {
 font-weight: bold;
 }
-#uzupakqqle .gt_font_italic {
+#qeunytmsyt .gt_font_italic {
 font-style: italic;
 }
-#uzupakqqle .gt_super {
+#qeunytmsyt .gt_super {
 font-size: 65%;
 }
-#uzupakqqle .gt_footnote_marks {
+#qeunytmsyt .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#uzupakqqle .gt_asterisk {
+#qeunytmsyt .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#uzupakqqle .gt_indent_1 {
+#qeunytmsyt .gt_indent_1 {
 text-indent: 5px;
 }
-#uzupakqqle .gt_indent_2 {
+#qeunytmsyt .gt_indent_2 {
 text-indent: 10px;
 }
-#uzupakqqle .gt_indent_3 {
+#qeunytmsyt .gt_indent_3 {
 text-indent: 15px;
 }
-#uzupakqqle .gt_indent_4 {
+#qeunytmsyt .gt_indent_4 {
 text-indent: 20px;
 }
-#uzupakqqle .gt_indent_5 {
+#qeunytmsyt .gt_indent_5 {
 text-indent: 25px;
 }
 </style>
@@ -5024,20 +5024,20 @@ Table 5: Best hyperparameters for Boosted Tree models on all three tree recipes
 </figcaption>
 <div aria-describedby="tbl-bt-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div id="kbolqxufht" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#kbolqxufht table {
+<div id="nlcplgyrgz" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#nlcplgyrgz table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#kbolqxufht thead, #kbolqxufht tbody, #kbolqxufht tfoot, #kbolqxufht tr, #kbolqxufht td, #kbolqxufht th {
+#nlcplgyrgz thead, #nlcplgyrgz tbody, #nlcplgyrgz tfoot, #nlcplgyrgz tr, #nlcplgyrgz td, #nlcplgyrgz th {
 border-style: none;
 }
-#kbolqxufht p {
+#nlcplgyrgz p {
 margin: 0;
 padding: 0;
 }
-#kbolqxufht .gt_table {
+#nlcplgyrgz .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -5062,11 +5062,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#kbolqxufht .gt_caption {
+#nlcplgyrgz .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#kbolqxufht .gt_title {
+#nlcplgyrgz .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -5077,7 +5077,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#kbolqxufht .gt_subtitle {
+#nlcplgyrgz .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -5088,7 +5088,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#kbolqxufht .gt_heading {
+#nlcplgyrgz .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -5099,12 +5099,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#kbolqxufht .gt_bottom_border {
+#nlcplgyrgz .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#kbolqxufht .gt_col_headings {
+#nlcplgyrgz .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -5118,7 +5118,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#kbolqxufht .gt_col_heading {
+#nlcplgyrgz .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -5137,7 +5137,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#kbolqxufht .gt_column_spanner_outer {
+#nlcplgyrgz .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -5148,13 +5148,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#kbolqxufht .gt_column_spanner_outer:first-child {
+#nlcplgyrgz .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#kbolqxufht .gt_column_spanner_outer:last-child {
+#nlcplgyrgz .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#kbolqxufht .gt_column_spanner {
+#nlcplgyrgz .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -5165,10 +5165,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#kbolqxufht .gt_spanner_row {
+#nlcplgyrgz .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#kbolqxufht .gt_group_heading {
+#nlcplgyrgz .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -5193,7 +5193,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#kbolqxufht .gt_empty_group_heading {
+#nlcplgyrgz .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -5207,13 +5207,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#kbolqxufht .gt_from_md > :first-child {
+#nlcplgyrgz .gt_from_md > :first-child {
 margin-top: 0;
 }
-#kbolqxufht .gt_from_md > :last-child {
+#nlcplgyrgz .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#kbolqxufht .gt_row {
+#nlcplgyrgz .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -5231,7 +5231,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#kbolqxufht .gt_stub {
+#nlcplgyrgz .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -5243,7 +5243,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#kbolqxufht .gt_stub_row_group {
+#nlcplgyrgz .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -5256,13 +5256,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#kbolqxufht .gt_row_group_first td {
+#nlcplgyrgz .gt_row_group_first td {
 border-top-width: 2px;
 }
-#kbolqxufht .gt_row_group_first th {
+#nlcplgyrgz .gt_row_group_first th {
 border-top-width: 2px;
 }
-#kbolqxufht .gt_summary_row {
+#nlcplgyrgz .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -5271,14 +5271,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#kbolqxufht .gt_first_summary_row {
+#nlcplgyrgz .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#kbolqxufht .gt_first_summary_row.thick {
+#nlcplgyrgz .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#kbolqxufht .gt_last_summary_row {
+#nlcplgyrgz .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -5287,7 +5287,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#kbolqxufht .gt_grand_summary_row {
+#nlcplgyrgz .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -5296,7 +5296,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#kbolqxufht .gt_first_grand_summary_row {
+#nlcplgyrgz .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -5305,7 +5305,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#kbolqxufht .gt_last_grand_summary_row_top {
+#nlcplgyrgz .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -5314,10 +5314,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#kbolqxufht .gt_striped {
+#nlcplgyrgz .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#kbolqxufht .gt_table_body {
+#nlcplgyrgz .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -5325,7 +5325,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#kbolqxufht .gt_footnotes {
+#nlcplgyrgz .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -5338,7 +5338,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#kbolqxufht .gt_footnote {
+#nlcplgyrgz .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -5346,7 +5346,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#kbolqxufht .gt_sourcenotes {
+#nlcplgyrgz .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -5359,57 +5359,57 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#kbolqxufht .gt_sourcenote {
+#nlcplgyrgz .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#kbolqxufht .gt_left {
+#nlcplgyrgz .gt_left {
 text-align: left;
 }
-#kbolqxufht .gt_center {
+#nlcplgyrgz .gt_center {
 text-align: center;
 }
-#kbolqxufht .gt_right {
+#nlcplgyrgz .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#kbolqxufht .gt_font_normal {
+#nlcplgyrgz .gt_font_normal {
 font-weight: normal;
 }
-#kbolqxufht .gt_font_bold {
+#nlcplgyrgz .gt_font_bold {
 font-weight: bold;
 }
-#kbolqxufht .gt_font_italic {
+#nlcplgyrgz .gt_font_italic {
 font-style: italic;
 }
-#kbolqxufht .gt_super {
+#nlcplgyrgz .gt_super {
 font-size: 65%;
 }
-#kbolqxufht .gt_footnote_marks {
+#nlcplgyrgz .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#kbolqxufht .gt_asterisk {
+#nlcplgyrgz .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#kbolqxufht .gt_indent_1 {
+#nlcplgyrgz .gt_indent_1 {
 text-indent: 5px;
 }
-#kbolqxufht .gt_indent_2 {
+#nlcplgyrgz .gt_indent_2 {
 text-indent: 10px;
 }
-#kbolqxufht .gt_indent_3 {
+#nlcplgyrgz .gt_indent_3 {
 text-indent: 15px;
 }
-#kbolqxufht .gt_indent_4 {
+#nlcplgyrgz .gt_indent_4 {
 text-indent: 20px;
 }
-#kbolqxufht .gt_indent_5 {
+#nlcplgyrgz .gt_indent_5 {
 text-indent: 25px;
 }
 </style>
@@ -5478,20 +5478,20 @@ Table 6: Best hyperparameters for Nearest Neighbors models on all three tree re
 </figcaption>
 <div aria-describedby="tbl-knn-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div id="ibtrqpsnga" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#ibtrqpsnga table {
+<div id="ipcjztcdyg" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#ipcjztcdyg table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#ibtrqpsnga thead, #ibtrqpsnga tbody, #ibtrqpsnga tfoot, #ibtrqpsnga tr, #ibtrqpsnga td, #ibtrqpsnga th {
+#ipcjztcdyg thead, #ipcjztcdyg tbody, #ipcjztcdyg tfoot, #ipcjztcdyg tr, #ipcjztcdyg td, #ipcjztcdyg th {
 border-style: none;
 }
-#ibtrqpsnga p {
+#ipcjztcdyg p {
 margin: 0;
 padding: 0;
 }
-#ibtrqpsnga .gt_table {
+#ipcjztcdyg .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -5516,11 +5516,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#ibtrqpsnga .gt_caption {
+#ipcjztcdyg .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#ibtrqpsnga .gt_title {
+#ipcjztcdyg .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -5531,7 +5531,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#ibtrqpsnga .gt_subtitle {
+#ipcjztcdyg .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -5542,7 +5542,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#ibtrqpsnga .gt_heading {
+#ipcjztcdyg .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -5553,12 +5553,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#ibtrqpsnga .gt_bottom_border {
+#ipcjztcdyg .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#ibtrqpsnga .gt_col_headings {
+#ipcjztcdyg .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -5572,7 +5572,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#ibtrqpsnga .gt_col_heading {
+#ipcjztcdyg .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -5591,7 +5591,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#ibtrqpsnga .gt_column_spanner_outer {
+#ipcjztcdyg .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -5602,13 +5602,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#ibtrqpsnga .gt_column_spanner_outer:first-child {
+#ipcjztcdyg .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#ibtrqpsnga .gt_column_spanner_outer:last-child {
+#ipcjztcdyg .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#ibtrqpsnga .gt_column_spanner {
+#ipcjztcdyg .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -5619,10 +5619,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#ibtrqpsnga .gt_spanner_row {
+#ipcjztcdyg .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#ibtrqpsnga .gt_group_heading {
+#ipcjztcdyg .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -5647,7 +5647,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#ibtrqpsnga .gt_empty_group_heading {
+#ipcjztcdyg .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -5661,13 +5661,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#ibtrqpsnga .gt_from_md > :first-child {
+#ipcjztcdyg .gt_from_md > :first-child {
 margin-top: 0;
 }
-#ibtrqpsnga .gt_from_md > :last-child {
+#ipcjztcdyg .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#ibtrqpsnga .gt_row {
+#ipcjztcdyg .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -5685,7 +5685,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#ibtrqpsnga .gt_stub {
+#ipcjztcdyg .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -5697,7 +5697,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#ibtrqpsnga .gt_stub_row_group {
+#ipcjztcdyg .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -5710,13 +5710,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#ibtrqpsnga .gt_row_group_first td {
+#ipcjztcdyg .gt_row_group_first td {
 border-top-width: 2px;
 }
-#ibtrqpsnga .gt_row_group_first th {
+#ipcjztcdyg .gt_row_group_first th {
 border-top-width: 2px;
 }
-#ibtrqpsnga .gt_summary_row {
+#ipcjztcdyg .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -5725,14 +5725,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#ibtrqpsnga .gt_first_summary_row {
+#ipcjztcdyg .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#ibtrqpsnga .gt_first_summary_row.thick {
+#ipcjztcdyg .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#ibtrqpsnga .gt_last_summary_row {
+#ipcjztcdyg .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -5741,7 +5741,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#ibtrqpsnga .gt_grand_summary_row {
+#ipcjztcdyg .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -5750,7 +5750,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#ibtrqpsnga .gt_first_grand_summary_row {
+#ipcjztcdyg .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -5759,7 +5759,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#ibtrqpsnga .gt_last_grand_summary_row_top {
+#ipcjztcdyg .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -5768,10 +5768,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#ibtrqpsnga .gt_striped {
+#ipcjztcdyg .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#ibtrqpsnga .gt_table_body {
+#ipcjztcdyg .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -5779,7 +5779,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#ibtrqpsnga .gt_footnotes {
+#ipcjztcdyg .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -5792,7 +5792,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#ibtrqpsnga .gt_footnote {
+#ipcjztcdyg .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -5800,7 +5800,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#ibtrqpsnga .gt_sourcenotes {
+#ipcjztcdyg .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -5813,57 +5813,57 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#ibtrqpsnga .gt_sourcenote {
+#ipcjztcdyg .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#ibtrqpsnga .gt_left {
+#ipcjztcdyg .gt_left {
 text-align: left;
 }
-#ibtrqpsnga .gt_center {
+#ipcjztcdyg .gt_center {
 text-align: center;
 }
-#ibtrqpsnga .gt_right {
+#ipcjztcdyg .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#ibtrqpsnga .gt_font_normal {
+#ipcjztcdyg .gt_font_normal {
 font-weight: normal;
 }
-#ibtrqpsnga .gt_font_bold {
+#ipcjztcdyg .gt_font_bold {
 font-weight: bold;
 }
-#ibtrqpsnga .gt_font_italic {
+#ipcjztcdyg .gt_font_italic {
 font-style: italic;
 }
-#ibtrqpsnga .gt_super {
+#ipcjztcdyg .gt_super {
 font-size: 65%;
 }
-#ibtrqpsnga .gt_footnote_marks {
+#ipcjztcdyg .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#ibtrqpsnga .gt_asterisk {
+#ipcjztcdyg .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#ibtrqpsnga .gt_indent_1 {
+#ipcjztcdyg .gt_indent_1 {
 text-indent: 5px;
 }
-#ibtrqpsnga .gt_indent_2 {
+#ipcjztcdyg .gt_indent_2 {
 text-indent: 10px;
 }
-#ibtrqpsnga .gt_indent_3 {
+#ipcjztcdyg .gt_indent_3 {
 text-indent: 15px;
 }
-#ibtrqpsnga .gt_indent_4 {
+#ipcjztcdyg .gt_indent_4 {
 text-indent: 20px;
 }
-#ibtrqpsnga .gt_indent_5 {
+#ipcjztcdyg .gt_indent_5 {
 text-indent: 25px;
 }
 </style>
@@ -5906,7 +5906,7 @@ text-indent: 25px;
 </section>
 <section id="elastic-net" class="level5">
 <h5 class="anchored" data-anchor-id="elastic-net">Elastic Net</h5>
-<p><a href="#tbl-en" class="quarto-xref">Table 7</a> shows the best hyperparameter values for the elastic net model. It was really interesting that the best hyperparameter value for the mixture was consistently 0, meaning that a full ridge regression model indicated higher performance. It could be interesting in the future to split this up and explore ridge and lasso regression separately to see if this makes differences in performance. The optimal value of penalty is on the higher end of the range from 10^-5 to 10^0.2. The optimal value being on the higher end of the range means that the model likely benefits from stronger regularization which controls overfitting and improves generalizability. It might be interesting to test a range shifted a bit higher than this one in the future to see if that increases performance.</p>
+<p><a href="#tbl-en" class="quarto-xref">Table 7</a> shows the best hyperparameter values for the elastic net model. It was really interesting that the best hyperparameter value for the mixture was consistently 0, meaning that a full ridge regression type of model indicated higher performance. It could be interesting in the future to split this up and explore ridge and lasso regression separately to see if this makes differences in performance. The optimal value of penalty is on the higher end of the range from 10^-5 to 10^0.2. The optimal value being on the higher end of the range means that the model likely benefits from stronger regularization which controls overfitting and improves generalizability. It might be interesting to test a range shifted a bit higher than this one in the future to see if that increases performance.</p>
 <div class="cell">
 <div id="tbl-en" class="cell anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -5915,20 +5915,20 @@ Table 7: Best hyperparameters for Elastic Net models on all three non-tree reci
 </figcaption>
 <div aria-describedby="tbl-en-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div id="oiusxpxfmg" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#oiusxpxfmg table {
+<div id="yhgurhcynh" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#yhgurhcynh table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#oiusxpxfmg thead, #oiusxpxfmg tbody, #oiusxpxfmg tfoot, #oiusxpxfmg tr, #oiusxpxfmg td, #oiusxpxfmg th {
+#yhgurhcynh thead, #yhgurhcynh tbody, #yhgurhcynh tfoot, #yhgurhcynh tr, #yhgurhcynh td, #yhgurhcynh th {
 border-style: none;
 }
-#oiusxpxfmg p {
+#yhgurhcynh p {
 margin: 0;
 padding: 0;
 }
-#oiusxpxfmg .gt_table {
+#yhgurhcynh .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -5953,11 +5953,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#oiusxpxfmg .gt_caption {
+#yhgurhcynh .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#oiusxpxfmg .gt_title {
+#yhgurhcynh .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -5968,7 +5968,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#oiusxpxfmg .gt_subtitle {
+#yhgurhcynh .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -5979,7 +5979,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#oiusxpxfmg .gt_heading {
+#yhgurhcynh .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -5990,12 +5990,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#oiusxpxfmg .gt_bottom_border {
+#yhgurhcynh .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#oiusxpxfmg .gt_col_headings {
+#yhgurhcynh .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -6009,7 +6009,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#oiusxpxfmg .gt_col_heading {
+#yhgurhcynh .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -6028,7 +6028,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#oiusxpxfmg .gt_column_spanner_outer {
+#yhgurhcynh .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -6039,13 +6039,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#oiusxpxfmg .gt_column_spanner_outer:first-child {
+#yhgurhcynh .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#oiusxpxfmg .gt_column_spanner_outer:last-child {
+#yhgurhcynh .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#oiusxpxfmg .gt_column_spanner {
+#yhgurhcynh .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -6056,10 +6056,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#oiusxpxfmg .gt_spanner_row {
+#yhgurhcynh .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#oiusxpxfmg .gt_group_heading {
+#yhgurhcynh .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -6084,7 +6084,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#oiusxpxfmg .gt_empty_group_heading {
+#yhgurhcynh .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -6098,13 +6098,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#oiusxpxfmg .gt_from_md > :first-child {
+#yhgurhcynh .gt_from_md > :first-child {
 margin-top: 0;
 }
-#oiusxpxfmg .gt_from_md > :last-child {
+#yhgurhcynh .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#oiusxpxfmg .gt_row {
+#yhgurhcynh .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -6122,7 +6122,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#oiusxpxfmg .gt_stub {
+#yhgurhcynh .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -6134,7 +6134,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#oiusxpxfmg .gt_stub_row_group {
+#yhgurhcynh .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -6147,13 +6147,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#oiusxpxfmg .gt_row_group_first td {
+#yhgurhcynh .gt_row_group_first td {
 border-top-width: 2px;
 }
-#oiusxpxfmg .gt_row_group_first th {
+#yhgurhcynh .gt_row_group_first th {
 border-top-width: 2px;
 }
-#oiusxpxfmg .gt_summary_row {
+#yhgurhcynh .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -6162,14 +6162,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#oiusxpxfmg .gt_first_summary_row {
+#yhgurhcynh .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#oiusxpxfmg .gt_first_summary_row.thick {
+#yhgurhcynh .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#oiusxpxfmg .gt_last_summary_row {
+#yhgurhcynh .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -6178,7 +6178,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#oiusxpxfmg .gt_grand_summary_row {
+#yhgurhcynh .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -6187,7 +6187,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#oiusxpxfmg .gt_first_grand_summary_row {
+#yhgurhcynh .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -6196,7 +6196,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#oiusxpxfmg .gt_last_grand_summary_row_top {
+#yhgurhcynh .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -6205,10 +6205,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#oiusxpxfmg .gt_striped {
+#yhgurhcynh .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#oiusxpxfmg .gt_table_body {
+#yhgurhcynh .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -6216,7 +6216,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#oiusxpxfmg .gt_footnotes {
+#yhgurhcynh .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -6229,7 +6229,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#oiusxpxfmg .gt_footnote {
+#yhgurhcynh .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -6237,7 +6237,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#oiusxpxfmg .gt_sourcenotes {
+#yhgurhcynh .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -6250,57 +6250,57 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#oiusxpxfmg .gt_sourcenote {
+#yhgurhcynh .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#oiusxpxfmg .gt_left {
+#yhgurhcynh .gt_left {
 text-align: left;
 }
-#oiusxpxfmg .gt_center {
+#yhgurhcynh .gt_center {
 text-align: center;
 }
-#oiusxpxfmg .gt_right {
+#yhgurhcynh .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#oiusxpxfmg .gt_font_normal {
+#yhgurhcynh .gt_font_normal {
 font-weight: normal;
 }
-#oiusxpxfmg .gt_font_bold {
+#yhgurhcynh .gt_font_bold {
 font-weight: bold;
 }
-#oiusxpxfmg .gt_font_italic {
+#yhgurhcynh .gt_font_italic {
 font-style: italic;
 }
-#oiusxpxfmg .gt_super {
+#yhgurhcynh .gt_super {
 font-size: 65%;
 }
-#oiusxpxfmg .gt_footnote_marks {
+#yhgurhcynh .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#oiusxpxfmg .gt_asterisk {
+#yhgurhcynh .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#oiusxpxfmg .gt_indent_1 {
+#yhgurhcynh .gt_indent_1 {
 text-indent: 5px;
 }
-#oiusxpxfmg .gt_indent_2 {
+#yhgurhcynh .gt_indent_2 {
 text-indent: 10px;
 }
-#oiusxpxfmg .gt_indent_3 {
+#yhgurhcynh .gt_indent_3 {
 text-indent: 15px;
 }
-#oiusxpxfmg .gt_indent_4 {
+#yhgurhcynh .gt_indent_4 {
 text-indent: 20px;
 }
-#oiusxpxfmg .gt_indent_5 {
+#yhgurhcynh .gt_indent_5 {
 text-indent: 25px;
 }
 </style>
@@ -6348,7 +6348,7 @@ text-indent: 25px;
 </section>
 <section id="compare-contrast" class="level4">
 <h4 class="anchored" data-anchor-id="compare-contrast">Compare &amp; Contrast</h4>
-<p>Now that all the models have been built on various recipes we can compare their performances by recipe. <a href="#tbl-comparison" class="quarto-xref">Table 8</a> shows that overall, the random forest model performs the best regardless of the recipe but that it performs better on the basic recipe than the ones that include more feature engineering. The same is true for the second-best performing model: the boosted tree. There is seemingly no difference that the interaction terms have made because the measure of performance is the same for both feature engineered recipes and the performance on the basic recipe is higher. On the next best performing model: nearest neighbors, the interaction terms do seem to have lead to a considerable increase in performance but the basic recipe still performs better. The two lowest performing models other than the null: elastic net and logistic regression both had the more feature engineered recipe perform better than the basic recipe but by a very small difference and the recipe without interaction terms performs almost the same as the main for both model types This has led me to conclude that overall, the interaction terms created did not help prediction and that handling missingness by keeping certain variables and using the fact that the value is unknown to help predict, was actually not useful in this case. More of the time, we can get a higher performing model by removing these variables with missingness instead of allowing that information to influence our predictions. It was an interesting idea to explore if missingness could be used to our advantage, but in this case it seems to be more useful to simply remove them. Overall, the model with the highest measure of the area under the ROC curve is the random forest model on the basic recipe, and so that model performs the best and is selected as the final winning model. It is not surprising that this model performed the best since using tuning and a fixed high number of trees is designed to improve accuracy.</p>
+<p>Now that all the models have been built on various recipes, we can compare their performances by recipe. <a href="#tbl-comparison" class="quarto-xref">Table 8</a> shows that overall, the random forest model performs the best regardless of the recipe but that it performs better on the basic recipe than the ones that include more feature engineering steps. The same is true for the second-best performing model: the boosted tree. There is seemingly no difference that the interaction terms have made because the measure of performance is the same for both more feature engineered recipes and the performance on the basic recipe is higher. On the next best performing model: nearest neighbors, the interaction terms do seem to have lead to a considerable increase in performance but the basic recipe still performs better. The two lowest performing models other than the null: elastic net and logistic regression both had the more feature engineered recipes perform better than the basic recipe but by a very small difference. And the recipe with interaction terms performs almost the same as the recipe without interaction terms for both model types. This has led me to conclude that overall, the interaction terms created did not help prediction and that handling missingness by keeping certain variables and using the fact that the value is unknown to help predict, was actually not useful in this case. More of the time, we can get a higher performing model by removing these variables with missingness instead of allowing that information to influence our predictions. It was an interesting idea to explore, if missingness could be used to our advantage, but in this case it seems to be more useful to simply remove it. Overall, the model with the highest measure of the area under the ROC curve is the random forest model on the basic recipe, and so that model performs the best and is selected as the final winning model. It is not surprising that this model performed the best since using tuning and a fixed high number of trees is designed to improve accuracy.</p>
 <div class="cell">
 <div id="tbl-comparison" class="cell anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -6357,20 +6357,20 @@ Table 8: Comparison of All Model Types
 </figcaption>
 <div aria-describedby="tbl-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div id="ixmehssdnp" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#ixmehssdnp table {
+<div id="cvrwdwplwh" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#cvrwdwplwh table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#ixmehssdnp thead, #ixmehssdnp tbody, #ixmehssdnp tfoot, #ixmehssdnp tr, #ixmehssdnp td, #ixmehssdnp th {
+#cvrwdwplwh thead, #cvrwdwplwh tbody, #cvrwdwplwh tfoot, #cvrwdwplwh tr, #cvrwdwplwh td, #cvrwdwplwh th {
 border-style: none;
 }
-#ixmehssdnp p {
+#cvrwdwplwh p {
 margin: 0;
 padding: 0;
 }
-#ixmehssdnp .gt_table {
+#cvrwdwplwh .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -6395,11 +6395,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#ixmehssdnp .gt_caption {
+#cvrwdwplwh .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#ixmehssdnp .gt_title {
+#cvrwdwplwh .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -6410,7 +6410,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#ixmehssdnp .gt_subtitle {
+#cvrwdwplwh .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -6421,7 +6421,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#ixmehssdnp .gt_heading {
+#cvrwdwplwh .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -6432,12 +6432,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#ixmehssdnp .gt_bottom_border {
+#cvrwdwplwh .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#ixmehssdnp .gt_col_headings {
+#cvrwdwplwh .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -6451,7 +6451,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#ixmehssdnp .gt_col_heading {
+#cvrwdwplwh .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -6470,7 +6470,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#ixmehssdnp .gt_column_spanner_outer {
+#cvrwdwplwh .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -6481,13 +6481,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#ixmehssdnp .gt_column_spanner_outer:first-child {
+#cvrwdwplwh .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#ixmehssdnp .gt_column_spanner_outer:last-child {
+#cvrwdwplwh .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#ixmehssdnp .gt_column_spanner {
+#cvrwdwplwh .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -6498,10 +6498,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#ixmehssdnp .gt_spanner_row {
+#cvrwdwplwh .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#ixmehssdnp .gt_group_heading {
+#cvrwdwplwh .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -6526,7 +6526,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#ixmehssdnp .gt_empty_group_heading {
+#cvrwdwplwh .gt_empty_group_heading {
 padding: 0.5px;
 color: #FFFFFF;
 background-color: #7F7F7F;
@@ -6540,13 +6540,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#ixmehssdnp .gt_from_md > :first-child {
+#cvrwdwplwh .gt_from_md > :first-child {
 margin-top: 0;
 }
-#ixmehssdnp .gt_from_md > :last-child {
+#cvrwdwplwh .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#ixmehssdnp .gt_row {
+#cvrwdwplwh .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -6564,7 +6564,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#ixmehssdnp .gt_stub {
+#cvrwdwplwh .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -6576,7 +6576,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#ixmehssdnp .gt_stub_row_group {
+#cvrwdwplwh .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -6589,13 +6589,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#ixmehssdnp .gt_row_group_first td {
+#cvrwdwplwh .gt_row_group_first td {
 border-top-width: 2px;
 }
-#ixmehssdnp .gt_row_group_first th {
+#cvrwdwplwh .gt_row_group_first th {
 border-top-width: 2px;
 }
-#ixmehssdnp .gt_summary_row {
+#cvrwdwplwh .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -6604,14 +6604,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#ixmehssdnp .gt_first_summary_row {
+#cvrwdwplwh .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#ixmehssdnp .gt_first_summary_row.thick {
+#cvrwdwplwh .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#ixmehssdnp .gt_last_summary_row {
+#cvrwdwplwh .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -6620,7 +6620,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#ixmehssdnp .gt_grand_summary_row {
+#cvrwdwplwh .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -6629,7 +6629,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#ixmehssdnp .gt_first_grand_summary_row {
+#cvrwdwplwh .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -6638,7 +6638,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#ixmehssdnp .gt_last_grand_summary_row_top {
+#cvrwdwplwh .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -6647,10 +6647,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#ixmehssdnp .gt_striped {
+#cvrwdwplwh .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#ixmehssdnp .gt_table_body {
+#cvrwdwplwh .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -6658,7 +6658,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#ixmehssdnp .gt_footnotes {
+#cvrwdwplwh .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -6671,7 +6671,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#ixmehssdnp .gt_footnote {
+#cvrwdwplwh .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -6679,7 +6679,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#ixmehssdnp .gt_sourcenotes {
+#cvrwdwplwh .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -6692,57 +6692,57 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#ixmehssdnp .gt_sourcenote {
+#cvrwdwplwh .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#ixmehssdnp .gt_left {
+#cvrwdwplwh .gt_left {
 text-align: left;
 }
-#ixmehssdnp .gt_center {
+#cvrwdwplwh .gt_center {
 text-align: center;
 }
-#ixmehssdnp .gt_right {
+#cvrwdwplwh .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#ixmehssdnp .gt_font_normal {
+#cvrwdwplwh .gt_font_normal {
 font-weight: normal;
 }
-#ixmehssdnp .gt_font_bold {
+#cvrwdwplwh .gt_font_bold {
 font-weight: bold;
 }
-#ixmehssdnp .gt_font_italic {
+#cvrwdwplwh .gt_font_italic {
 font-style: italic;
 }
-#ixmehssdnp .gt_super {
+#cvrwdwplwh .gt_super {
 font-size: 65%;
 }
-#ixmehssdnp .gt_footnote_marks {
+#cvrwdwplwh .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#ixmehssdnp .gt_asterisk {
+#cvrwdwplwh .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#ixmehssdnp .gt_indent_1 {
+#cvrwdwplwh .gt_indent_1 {
 text-indent: 5px;
 }
-#ixmehssdnp .gt_indent_2 {
+#cvrwdwplwh .gt_indent_2 {
 text-indent: 10px;
 }
-#ixmehssdnp .gt_indent_3 {
+#cvrwdwplwh .gt_indent_3 {
 text-indent: 15px;
 }
-#ixmehssdnp .gt_indent_4 {
+#cvrwdwplwh .gt_indent_4 {
 text-indent: 20px;
 }
-#ixmehssdnp .gt_indent_5 {
+#cvrwdwplwh .gt_indent_5 {
 text-indent: 25px;
 }
 </style>
@@ -6902,20 +6902,20 @@ Table 9: Assessment Metrics for the Winning Model
 </figcaption>
 <div aria-describedby="tbl-roc_accuracy-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div id="yquamrzaud" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#yquamrzaud table {
+<div id="gekzbpyqbo" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#gekzbpyqbo table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#yquamrzaud thead, #yquamrzaud tbody, #yquamrzaud tfoot, #yquamrzaud tr, #yquamrzaud td, #yquamrzaud th {
+#gekzbpyqbo thead, #gekzbpyqbo tbody, #gekzbpyqbo tfoot, #gekzbpyqbo tr, #gekzbpyqbo td, #gekzbpyqbo th {
 border-style: none;
 }
-#yquamrzaud p {
+#gekzbpyqbo p {
 margin: 0;
 padding: 0;
 }
-#yquamrzaud .gt_table {
+#gekzbpyqbo .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -6940,11 +6940,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#yquamrzaud .gt_caption {
+#gekzbpyqbo .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#yquamrzaud .gt_title {
+#gekzbpyqbo .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -6955,7 +6955,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#yquamrzaud .gt_subtitle {
+#gekzbpyqbo .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -6966,7 +6966,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#yquamrzaud .gt_heading {
+#gekzbpyqbo .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -6977,12 +6977,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#yquamrzaud .gt_bottom_border {
+#gekzbpyqbo .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#yquamrzaud .gt_col_headings {
+#gekzbpyqbo .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -6996,7 +6996,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#yquamrzaud .gt_col_heading {
+#gekzbpyqbo .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -7015,7 +7015,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#yquamrzaud .gt_column_spanner_outer {
+#gekzbpyqbo .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -7026,13 +7026,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#yquamrzaud .gt_column_spanner_outer:first-child {
+#gekzbpyqbo .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#yquamrzaud .gt_column_spanner_outer:last-child {
+#gekzbpyqbo .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#yquamrzaud .gt_column_spanner {
+#gekzbpyqbo .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -7043,10 +7043,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#yquamrzaud .gt_spanner_row {
+#gekzbpyqbo .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#yquamrzaud .gt_group_heading {
+#gekzbpyqbo .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -7071,7 +7071,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#yquamrzaud .gt_empty_group_heading {
+#gekzbpyqbo .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -7085,13 +7085,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#yquamrzaud .gt_from_md > :first-child {
+#gekzbpyqbo .gt_from_md > :first-child {
 margin-top: 0;
 }
-#yquamrzaud .gt_from_md > :last-child {
+#gekzbpyqbo .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#yquamrzaud .gt_row {
+#gekzbpyqbo .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -7109,7 +7109,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#yquamrzaud .gt_stub {
+#gekzbpyqbo .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -7121,7 +7121,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#yquamrzaud .gt_stub_row_group {
+#gekzbpyqbo .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -7134,13 +7134,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#yquamrzaud .gt_row_group_first td {
+#gekzbpyqbo .gt_row_group_first td {
 border-top-width: 2px;
 }
-#yquamrzaud .gt_row_group_first th {
+#gekzbpyqbo .gt_row_group_first th {
 border-top-width: 2px;
 }
-#yquamrzaud .gt_summary_row {
+#gekzbpyqbo .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -7149,14 +7149,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#yquamrzaud .gt_first_summary_row {
+#gekzbpyqbo .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#yquamrzaud .gt_first_summary_row.thick {
+#gekzbpyqbo .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#yquamrzaud .gt_last_summary_row {
+#gekzbpyqbo .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -7165,7 +7165,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#yquamrzaud .gt_grand_summary_row {
+#gekzbpyqbo .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -7174,7 +7174,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#yquamrzaud .gt_first_grand_summary_row {
+#gekzbpyqbo .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -7183,7 +7183,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#yquamrzaud .gt_last_grand_summary_row_top {
+#gekzbpyqbo .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -7192,10 +7192,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#yquamrzaud .gt_striped {
+#gekzbpyqbo .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#yquamrzaud .gt_table_body {
+#gekzbpyqbo .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -7203,7 +7203,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#yquamrzaud .gt_footnotes {
+#gekzbpyqbo .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -7216,7 +7216,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#yquamrzaud .gt_footnote {
+#gekzbpyqbo .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -7224,7 +7224,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#yquamrzaud .gt_sourcenotes {
+#gekzbpyqbo .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -7237,57 +7237,57 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#yquamrzaud .gt_sourcenote {
+#gekzbpyqbo .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#yquamrzaud .gt_left {
+#gekzbpyqbo .gt_left {
 text-align: left;
 }
-#yquamrzaud .gt_center {
+#gekzbpyqbo .gt_center {
 text-align: center;
 }
-#yquamrzaud .gt_right {
+#gekzbpyqbo .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#yquamrzaud .gt_font_normal {
+#gekzbpyqbo .gt_font_normal {
 font-weight: normal;
 }
-#yquamrzaud .gt_font_bold {
+#gekzbpyqbo .gt_font_bold {
 font-weight: bold;
 }
-#yquamrzaud .gt_font_italic {
+#gekzbpyqbo .gt_font_italic {
 font-style: italic;
 }
-#yquamrzaud .gt_super {
+#gekzbpyqbo .gt_super {
 font-size: 65%;
 }
-#yquamrzaud .gt_footnote_marks {
+#gekzbpyqbo .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#yquamrzaud .gt_asterisk {
+#gekzbpyqbo .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#yquamrzaud .gt_indent_1 {
+#gekzbpyqbo .gt_indent_1 {
 text-indent: 5px;
 }
-#yquamrzaud .gt_indent_2 {
+#gekzbpyqbo .gt_indent_2 {
 text-indent: 10px;
 }
-#yquamrzaud .gt_indent_3 {
+#gekzbpyqbo .gt_indent_3 {
 text-indent: 15px;
 }
-#yquamrzaud .gt_indent_4 {
+#gekzbpyqbo .gt_indent_4 {
 text-indent: 20px;
 }
-#yquamrzaud .gt_indent_5 {
+#gekzbpyqbo .gt_indent_5 {
 text-indent: 25px;
 }
 </style>
@@ -7337,7 +7337,7 @@ Figure 3: ROC Curve for the Winning Model
 </section>
 <section id="confusion-matrix" class="level4">
 <h4 class="anchored" data-anchor-id="confusion-matrix">Confusion Matrix</h4>
-<p>To further explore this model we can use the confusion matrix in <a href="#fig-bar2" class="quarto-xref">Figure 4</a> to compare predictions to the accurate values. The top left is the number of correctly predicted satisfied apartment owners, 475, the bottom right is the number of correctly predicted unsatisfied apartment owners, 283. The bottom left is the number of wrongly predicted satisfied apartment owners as unsatisfied, only 12, and the top right is the number of wrongly predicted unsatisfied apartment owners as satisfied, 57. I am surprised that many more people who are unsatisfied with their apartment were incorrectly predicted than those who were really satisfied and wrongly predicted.</p>
+<p>To further explore this model we can use the confusion matrix in <a href="#fig-bar2" class="quarto-xref">Figure 4</a> to compare predictions to the accurate values. The top left is the number of correctly predicted satisfied apartment owners, 475, the bottom right is the number of correctly predicted unsatisfied apartment owners, 283. The bottom left is the number of wrongly predicted satisfied apartment owners as unsatisfied, only 12, and the top right is the number of wrongly predicted unsatisfied apartment owners as satisfied, 57. I am surprised that many more people who are unsatisfied with their apartment were incorrectly predicted than those who were really satisfied and wrongly predicted. This could have something to do with the original class imbalance.</p>
 <div id="fig-bar2" class="quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-bar2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
